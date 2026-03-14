@@ -1,0 +1,2 @@
+[console_scripts]
+workflow-dataset = workflow_dataset.cli:app

@@ -1,0 +1,24 @@
+project:
+  name: workflow_llm_dataset
+  version: v1
+  output_excel: outputs/excel/workflow_llm_primary_dataset_v1.xlsx
+  output_csv_dir: outputs/csv
+  output_parquet_dir: outputs/parquet
+  qa_report_path: outputs/qa/build_report.md
+
+runtime:
+  timezone: UTC
+  long_run_profile: true
+  max_workers: 4
+  fail_on_missing_provenance: true
+  infer_low_confidence_threshold: 0.45
+  infer_high_confidence_threshold: 0.8
+
+paths:
+  raw_official: data/raw/official
+  raw_private: data/raw/private_examples
+  interim: data/interim
+  processed: data/processed
+  prompts: prompts
+  context: context
+  sqlite_path: workflow_dataset.sqlite
