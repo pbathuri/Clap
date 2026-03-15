@@ -8,6 +8,7 @@ __pycache__/
 outputs/
 data/interim/
 data/processed/
+data/local/
 *.sqlite
 *.db
 *.log

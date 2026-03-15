@@ -22,3 +22,26 @@ paths:
   prompts: prompts
   context: context
   sqlite_path: workflow_dataset.sqlite
+  # Personal agent (local-first)
+  event_log_dir: data/local/event_log
+  graph_store_path: data/local/work_graph.sqlite
+  audit_log_path: data/local/agent_audit.sqlite
+
+# Personal agent: observation and execution (local-first; see docs/PRIVACY_AND_LOCAL_FIRST_MODEL.md)
+agent:
+  observation_enabled: false
+  observation_tier: 1
+  allowed_observation_sources: []  # empty = none; or [file, app, browser, terminal, calendar, teaching]
+  privacy_mode: local_only
+  sync_enabled: false
+  execution_mode: simulate
+  hardware_profile: pi5
+  local_model_profile: small
+  vector_store_path: data/local/vector_store
+  sandbox_enabled: true
+  file_observer:
+    root_paths: []  # e.g. [./data] to scan; empty = no file observation
+    max_files_per_scan: 10000
+    exclude_dirs: [.git, __pycache__, node_modules, .venv, .tox, venv]
+    allowed_extensions: []  # empty = all
+    graph_update_enabled: true

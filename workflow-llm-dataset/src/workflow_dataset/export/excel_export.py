@@ -97,11 +97,11 @@ def export_excel(settings) -> None:
                         "Refresh instructions",
                     ],
                     "Content": [
-                        "Primary-source-first occupational workflow dataset for LLM development.",
+                        "Primary-source-first occupational workflow dataset (global work priors for personal agent) and LLM development.",
                         utc_now_iso(),
                         "O*NET 30.2; ISIC Rev.4; NAICS 2022; SOC 2018 when present.",
                         "Ingest -> normalize (taxonomies + occupations) -> export. Every row retains source_id.",
-                        "Workflow inference not yet run. Large sheets capped at 100k rows; full data in parquet/csv.",
+                        "Workflow steps inferred from tasks/DWA (global priors). Large sheets capped at 100k rows; full data in parquet/csv.",
                         "Taxonomy sheets = industry/SOC hierarchy. Occupations_Master = canonical occupations. Source_Register = ingested files.",
                         "Re-run: python -m workflow_dataset.cli build --config configs/settings.yaml",
                     ],
