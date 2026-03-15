@@ -60,9 +60,14 @@ def create_bundle(
     source_artifact_path: str = "",
     style_profile_refs: list[str] | None = None,
     revision_note: str = "",
+    populate: bool = False,
+    allow_xlsx: bool = False,
+    population_max_rows: int = 1000,
+    population_max_sections: int = 50,
 ) -> tuple[OutputBundle, OutputBundleManifest] | None:
     """
     Create an output bundle via named adapter. Persists manifest to bundle_store_path.
+    M14: populate=True fills bundle from source; allow_xlsx enables XLSX when supported.
     Returns (bundle, manifest) or None if adapter not found / error.
     """
     entry = get_adapter(adapter_type)
@@ -81,6 +86,10 @@ def create_bundle(
             source_content=source_content,
             style_profile_refs=style_profile_refs,
             revision_note=revision_note,
+            populate=populate,
+            allow_xlsx=allow_xlsx,
+            population_max_rows=population_max_rows,
+            population_max_sections=population_max_sections,
         )
         save_bundle_manifest(manifest, bundle_store_path)
         return bundle, manifest

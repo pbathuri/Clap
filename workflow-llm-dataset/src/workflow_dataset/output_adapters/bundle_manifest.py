@@ -70,6 +70,10 @@ def list_bundles(store_path: Path | str, limit: int = 50) -> list[dict]:
                 "manifest_id": m.manifest_id,
                 "adapter_used": m.adapter_used,
                 "created_utc": m.created_utc,
+                "populated_paths": getattr(m, "populated_paths", []) or [],
+                "scaffold_only_paths": getattr(m, "scaffold_only_paths", []) or [],
+                "fallback_used": getattr(m, "fallback_used", False),
+                "xlsx_created": getattr(m, "xlsx_created", False),
             })
         except Exception:
             continue

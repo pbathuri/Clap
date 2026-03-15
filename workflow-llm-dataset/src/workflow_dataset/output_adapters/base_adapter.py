@@ -30,9 +30,14 @@ class BaseOutputAdapter(ABC):
         source_content: str = "",
         style_profile_refs: list[str] | None = None,
         revision_note: str = "",
+        populate: bool = False,
+        allow_xlsx: bool = False,
+        population_max_rows: int = 1000,
+        population_max_sections: int = 50,
     ) -> tuple[OutputBundle, OutputBundleManifest]:
         """
         Create a toolchain-native bundle under workspace_path.
+        M14: populate=True uses source_content to fill bundle; allow_xlsx enables XLSX when supported.
         Returns (bundle, manifest). All paths in bundle are relative to workspace_path.
         """
         ...

@@ -57,25 +57,30 @@ class MLXBackend(TrainBackend):
     ) -> Path:
         """Run LoRA training via mlx_lm.lora CLI. Data dir must contain train.jsonl (and optionally valid.jsonl)."""
         if not _check_mlx_lm():
-            raise RuntimeError("mlx-lm is not installed. Install with: pip install 'mlx-lm[train]'")
-        data_dir = Path(train_data_path)
+            raise RuntimeError(
+                "mlx-lm is not installed. Install with: pip install 'mlx-lm[train]'")
+        data_dir = Path(train_data_path).resolve()
         if not data_dir.is_dir():
-            raise FileNotFoundError(f"Training data directory not found: {data_dir}")
+            raise FileNotFoundError(
+                f"Training data directory not found: {data_dir}")
         train_file = data_dir / "train.jsonl"
         if not train_file.exists():
             raise FileNotFoundError(f"train.jsonl not found in {data_dir}")
         _val_to_valid(data_dir)
-        output_dir = Path(output_dir)
+        output_dir = Path(output_dir).resolve()
         output_dir.mkdir(parents=True, exist_ok=True)
         adapter_path = output_dir / "adapters"
-        # Compute iters from epochs and dataset size if needed
-        num_epochs = config.num_epochs
-        with open(train_file) as f:
-            n_lines = sum(1 for _ in f)
-        steps_per_epoch = max(1, n_lines // max(1, config.train_batch_size * config.grad_accumulation))
-        iters = num_epochs * steps_per_epoch
+        if getattr(config, "max_iters", None) is not None and config.max_iters is not None:
+            iters = config.max_iters
+        else:
+            num_epochs = config.num_epochs
+            with open(train_file) as f:
+                n_lines = sum(1 for _ in f)
+            steps_per_epoch = max(
+                1, n_lines // max(1, config.train_batch_size * config.grad_accumulation))
+            iters = num_epochs * steps_per_epoch
         cmd = [
-            sys.executable, "-m", "mlx_lm.lora",
+            sys.executable, "-m", "mlx_lm", "lora",
             "--model", config.base_model,
             "--train",
             "--data", str(data_dir),
@@ -83,12 +88,13 @@ class MLXBackend(TrainBackend):
             "--iters", str(iters),
             "--batch-size", str(config.train_batch_size),
             "--learning-rate", str(config.learning_rate),
-            "--lora-layers", "16",
+            "--num-layers", "16",
         ]
         if config.max_seq_length:
             cmd.extend(["--max-seq-length", str(config.max_seq_length)])
         try:
-            subprocess.run(cmd, check=True, cwd=str(output_dir), timeout=3600 * 24)
+            subprocess.run(cmd, check=True, cwd=str(
+                output_dir), timeout=3600 * 24)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"mlx_lm.lora training failed: {e}") from e
         except subprocess.TimeoutExpired:
@@ -111,23 +117,37 @@ class MLXBackend(TrainBackend):
         model_path: str | Path,
         prompt: str,
         max_tokens: int = 256,
+        adapter_path: str | Path | None = None,
         **kwargs: Any,
     ) -> str:
-        """Run inference via mlx_lm.generate. model_path can be base model or adapter dir."""
+        """Run inference via mlx_lm generate. Use --model base and --adapter-path when adapter_path is set."""
+        # Resolve only local paths so HuggingFace repo ids (e.g. mlx-community/...) are passed as-is.
+        base_path = Path(model_path)
+        base = str(base_path.resolve()) if base_path.exists() else str(model_path)
+        cmd = [
+            sys.executable, "-m", "mlx_lm", "generate",
+            "--model", base,
+            "--prompt", prompt,
+            "--max-tokens", str(max_tokens),
+        ]
+        if adapter_path:
+            ap = Path(adapter_path)
+            cmd.extend(["--adapter-path", str(ap.resolve()) if ap.exists() else str(adapter_path)])
         try:
             result = subprocess.run(
-                [
-                    sys.executable, "-m", "mlx_lm.generate",
-                    "--model", str(model_path),
-                    "--prompt", prompt,
-                    "--max-tokens", str(max_tokens),
-                ],
+                cmd,
                 capture_output=True,
                 text=True,
                 timeout=120,
             )
             if result.returncode != 0:
                 return f"[inference error: {result.stderr or result.stdout}]"
-            return result.stdout or ""
+            out = result.stdout or ""
+            # mlx_lm generate appends "==========\nPrompt: N tokens..." — strip so eval sees only generation
+            if "\n==========\n" in out and "Prompt:" in out:
+                out = out.split("Prompt:")[0].strip()
+                if out.endswith("=========="):
+                    out = out.rsplit("==========", 1)[0].strip()
+            return out
         except Exception as e:
             return f"[inference error: {e}]"

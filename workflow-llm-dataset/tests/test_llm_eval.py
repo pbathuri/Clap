@@ -85,3 +85,38 @@ def test_run_eval_missing_file(tmp_path: Path) -> None:
     result = run_eval(tmp_path / "nonexistent.jsonl", predict, tmp_path / "out", run_id="x", model_id="y", retrieval_used=False)
     assert result.num_examples == 0
     assert result.metrics == {}
+
+
+def test_run_eval_prediction_mode_in_result_and_metrics(test_jsonl: Path, tmp_path: Path) -> None:
+    """run_eval records prediction_mode in EvalResult and in metrics.json."""
+    def predict(ex: dict) -> str:
+        for m in reversed(ex.get("messages", [])):
+            if m.get("role") == "assistant":
+                return m.get("content", "")
+        return ""
+
+    out_dir = tmp_path / "eval_out"
+    result = run_eval(
+        test_jsonl, predict, out_dir,
+        run_id="test", model_id="dummy", retrieval_used=False,
+        prediction_mode="real_model",
+    )
+    assert result.prediction_mode == "real_model"
+    metrics = json.loads((out_dir / "metrics.json").read_text())
+    assert metrics.get("prediction_mode") == "real_model"
+
+
+def test_run_eval_retrieval_used_in_summary(test_jsonl: Path, tmp_path: Path) -> None:
+    """run_eval with retrieval_used=True records it in eval_summary.md."""
+    def predict(ex: dict) -> str:
+        return "ref"
+
+    out_dir = tmp_path / "eval_out"
+    result = run_eval(
+        test_jsonl, predict, out_dir,
+        run_id="test", model_id="dummy", retrieval_used=True,
+        prediction_mode="real_model",
+    )
+    assert result.retrieval_used is True
+    summary = (out_dir / "eval_summary.md").read_text()
+    assert "Retrieval: True" in summary or "retrieval" in summary.lower()

@@ -100,6 +100,16 @@ def compute_metrics(
     return {k: sum(v) / len(v) if v else 0.0 for k, v in scores.items()}
 
 
+def _messages_to_prompt(messages: list[dict[str, Any]]) -> str:
+    """Format chat messages as a single prompt string for inference (e.g. last user message or concat)."""
+    if not messages:
+        return ""
+    for m in reversed(messages):
+        if m.get("role") == "user":
+            return (m.get("content") or "").strip()
+    return (messages[-1].get("content") or "").strip() if messages else ""
+
+
 def run_eval(
     test_path: Path | str,
     predict_fn: Callable[[dict[str, Any]], str],
@@ -107,10 +117,12 @@ def run_eval(
     run_id: str = "",
     model_id: str = "",
     retrieval_used: bool = False,
+    prediction_mode: str = "baseline",
 ) -> EvalResult:
     """
     Load test JSONL, run predict_fn on each example, compute metrics, save predictions and metrics.
     predict_fn(ex) -> predicted string. ex has keys: eval_id, task_type, messages, reference, reference_short, ...
+    prediction_mode: "baseline" (reference-as-prediction) or "real_model" (model inference).
     """
     test_path = Path(test_path)
     output_dir = Path(output_dir)
@@ -121,6 +133,7 @@ def run_eval(
             run_id=run_id,
             model_id=model_id,
             retrieval_used=retrieval_used,
+            prediction_mode=prediction_mode,
             metrics={},
             num_examples=0,
             predictions_path="",
@@ -145,11 +158,12 @@ def run_eval(
         for ex in predictions:
             f.write(json.dumps(ex, ensure_ascii=False) + "\n")
     metrics_path = output_dir / "metrics.json"
+    metrics_with_mode = {**metrics, "prediction_mode": prediction_mode}
     with open(metrics_path, "w", encoding="utf-8") as f:
-        json.dump(metrics, f, indent=2)
+        json.dump(metrics_with_mode, f, indent=2)
     summary_path = output_dir / "eval_summary.md"
     with open(summary_path, "w", encoding="utf-8") as f:
-        f.write(f"# Eval summary\n\nRun: {run_id}\nModel: {model_id}\nRetrieval: {retrieval_used}\n\n")
+        f.write(f"# Eval summary\n\nRun: {run_id}\nModel: {model_id}\nPrediction mode: {prediction_mode}\nRetrieval: {retrieval_used}\n\n")
         f.write("## Metrics\n\n")
         for k, v in metrics.items():
             f.write(f"- **{k}**: {v:.4f}\n")
@@ -158,6 +172,7 @@ def run_eval(
         run_id=run_id,
         model_id=model_id,
         retrieval_used=retrieval_used,
+        prediction_mode=prediction_mode,
         metrics=metrics,
         num_examples=len(predictions),
         predictions_path=str(pred_path),

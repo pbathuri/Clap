@@ -167,13 +167,20 @@ class GenerationSettings(BaseModel):
 
 
 class OutputAdaptersSettings(BaseModel):
-    """M13 toolchain-native output adapters. Sandbox-first; no real project writes without apply."""
+    """M13/M14 toolchain-native output adapters. Sandbox-first; no real project writes without apply."""
     output_adapters_enabled: bool = True
     output_adapter_registry: list[str] = Field(default_factory=lambda: ["spreadsheet", "creative_package", "design_package", "ops_handoff"])
     output_adapter_allow_xlsx: bool = False
     output_adapter_bundle_root: str = "data/local/bundles"
     output_adapter_graph_persistence: bool = True
     output_adapter_preview_enabled: bool = True
+    # M14 content population
+    output_adapter_population_enabled: bool = True
+    output_adapter_population_use_refined_artifacts: bool = True
+    output_adapter_population_use_generated_artifacts: bool = True
+    output_adapter_population_max_rows: int = 1000
+    output_adapter_population_max_sections: int = 50
+    output_adapter_population_require_provenance: bool = False
 
 
 class Settings(BaseModel):

@@ -42,6 +42,32 @@ We are **not** pretraining a base LM. We use a small instruction-tuned base (e.g
 - **Richer eval**: Retrieval-only baseline, base-model baseline, fine-tuned, fine-tuned+retrieval comparison; more task categories and metrics.
 - **Eval set builder**: Dedicated held-out builder for occupational knowledge, workflow inference, routine explanation, project classification, next-step suggestion, suggestion justification, safety/boundary reasoning.
 
+## M16 — Full-train and comparison (recommended command sequence)
+
+After smoke-train has verified the path, run a **strong full-train** and evaluate personalization:
+
+1. **Prepare/update corpus**  
+   `workflow-dataset llm prepare-corpus --config configs/settings.yaml --llm-config configs/llm_training_full.yaml`
+
+2. **Build/update SFT**  
+   `workflow-dataset llm build-sft --config configs/settings.yaml --llm-config configs/llm_training_full.yaml`
+
+3. **Launch full-train** (uses `configs/llm_training_full.yaml`: more epochs, M4/24GB-friendly)  
+   `workflow-dataset llm train --llm-config configs/llm_training_full.yaml`
+
+4. **Run comparison** (baseline vs smoke vs full adapter, retrieval off/on)  
+   `workflow-dataset llm compare-runs --llm-config configs/llm_training_full.yaml`
+
+5. **Run demo-suite** (curated personalization prompts for qualitative check)  
+   `workflow-dataset llm demo-suite --llm-config configs/llm_training_full.yaml`  
+   With retrieval: `workflow-dataset llm demo-suite --retrieval`
+
+6. **Inspect reports**  
+   - `data/local/llm/runs/comparison_latest.md` — slice metrics and retrieval impact  
+   - `data/local/llm/runs/<run_dir>/quality_report.md` — per full-run summary and recommendation  
+
+Naming: smoke runs live in `runs/smoke_YYYYMMDD_HHMMSS/`; full runs in `runs/YYYYMMDD_HHMMSS/`. Eval outputs go under `runs/eval_out/` or `runs/comparison_YYYYMMDD_HHMMSS/`.
+
 ## Local-first preservation
 
 - All training inputs and outputs live under `data/local/llm/` (or configurable equivalent).

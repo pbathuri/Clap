@@ -12,7 +12,7 @@ from rich.table import Table
 from workflow_dataset.settings import Settings
 from workflow_dataset.ui.models import Screen
 from workflow_dataset.ui.state_store import ConsoleState
-from workflow_dataset.ui.services import get_home_counts
+from workflow_dataset.ui.services import get_home_counts, get_llm_status
 
 
 def render_home(console: Console, state: ConsoleState, settings: Settings) -> Screen:
@@ -33,6 +33,13 @@ def render_home(console: Console, state: ConsoleState, settings: Settings) -> Sc
     table.add_row("Workspaces", str(counts["workspaces"]))
     table.add_row("Rollback records", str(counts["rollback_records"]))
     table.add_row("Generations", str(counts.get("generations", 0)))
+    llm = get_llm_status()
+    llm_label = []
+    if llm.get("smoke_available"):
+        llm_label.append("smoke")
+    if llm.get("full_available"):
+        llm_label.append("full")
+    table.add_row("LLM adapter", ", ".join(llm_label) if llm_label else "—")
     console.print(table)
 
     if state.selected_session_id:
@@ -49,6 +56,7 @@ def render_home(console: Console, state: ConsoleState, settings: Settings) -> Sc
     console.print("  [cyan]7[/cyan] Rollback")
     console.print("  [cyan]8[/cyan] Chat / explain")
     console.print("  [cyan]9[/cyan] Generation (style pack, prompt pack, asset plan)")
+    console.print("  [cyan]L[/cyan] LLM status (runs, comparison report, demo-suite hint)")
     console.print("  [cyan]q[/cyan] Quit")
 
     choice = Prompt.ask("Choice", default="1").strip().lower()
@@ -73,4 +81,6 @@ def render_home(console: Console, state: ConsoleState, settings: Settings) -> Sc
         return Screen.CHAT
     if choice == "9":
         return Screen.GENERATION
+    if choice == "l":
+        return Screen.LLM_STATUS
     return Screen.HOME

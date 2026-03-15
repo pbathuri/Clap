@@ -143,7 +143,7 @@ generation:
   generation_adoption_bridge_enabled: true
   generation_preview_enabled: true
 
-# M13 toolchain-native output adapters (sandbox-first)
+# M13/M14 toolchain-native output adapters (sandbox-first; M14 content population)
 output_adapters:
   output_adapters_enabled: true
   output_adapter_registry: [spreadsheet, creative_package, design_package, ops_handoff]
@@ -151,3 +151,10 @@ output_adapters:
   output_adapter_bundle_root: data/local/bundles
   output_adapter_graph_persistence: true
   output_adapter_preview_enabled: true
+  # M14 content-aware population
+  output_adapter_population_enabled: true
+  output_adapter_population_use_refined_artifacts: true
+  output_adapter_population_use_generated_artifacts: true
+  output_adapter_population_max_rows: 1000
+  output_adapter_population_max_sections: 50
+  output_adapter_population_require_provenance: false

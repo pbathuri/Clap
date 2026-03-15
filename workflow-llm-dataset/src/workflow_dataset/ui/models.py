@@ -21,6 +21,7 @@ class Screen(str, Enum):
     ROLLBACK = "rollback"
     CHAT = "chat"
     GENERATION = "generation"
+    LLM_STATUS = "llm_status"
     EXIT = "exit"
 
 

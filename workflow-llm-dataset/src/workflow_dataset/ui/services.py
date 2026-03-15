@@ -818,8 +818,9 @@ def create_bundle_from_console(
     artifact_path: str = "",
     project_id: str = "",
     domain: str = "",
-) -> tuple[str, list[str]] | None:
-    """Create an output bundle. Returns (bundle_id, output_paths) or None."""
+    populate: bool = True,
+) -> tuple[str, list[str], dict[str, Any]] | None:
+    """Create an output bundle. Returns (bundle_id, output_paths, info) or None. info has populated_paths, xlsx_created."""
     oa = getattr(settings, "output_adapters", None)
     if not oa or not getattr(oa, "output_adapters_enabled", True):
         return None
@@ -845,6 +846,11 @@ def create_bundle_from_console(
         workspace_path=str(bundle_root),
         created_utc=ts,
     )
+    population_enabled = getattr(oa, "output_adapter_population_enabled", True)
+    do_populate = populate and population_enabled and bool(artifact_path)
+    allow_xlsx = getattr(oa, "output_adapter_allow_xlsx", False)
+    max_rows = getattr(oa, "output_adapter_population_max_rows", 1000)
+    max_sections = getattr(oa, "output_adapter_population_max_sections", 50)
     result = create_bundle(
         adapter_type,
         request,
@@ -852,6 +858,10 @@ def create_bundle_from_console(
         bundle_store_path=bundle_root,
         source_artifact_path=artifact_path or "",
         revision_note="",
+        populate=do_populate,
+        allow_xlsx=allow_xlsx,
+        population_max_rows=max_rows,
+        population_max_sections=max_sections,
     )
     if not result:
         return None
@@ -862,7 +872,13 @@ def create_bundle_from_console(
             from workflow_dataset.output_adapters.graph_integration import persist_adapter_request, persist_output_bundle
             persist_adapter_request(graph_path, request)
             persist_output_bundle(graph_path, bundle, manifest)
-    return bundle.bundle_id, bundle.output_paths
+    info: dict[str, Any] = {
+        "populated_paths": getattr(manifest, "populated_paths", []) or [],
+        "scaffold_only_paths": getattr(manifest, "scaffold_only_paths", []) or [],
+        "fallback_used": getattr(manifest, "fallback_used", False),
+        "xlsx_created": getattr(manifest, "xlsx_created", False),
+    }
+    return bundle.bundle_id, bundle.output_paths, info
 
 
 def list_bundles_for_console(settings: Settings, limit: int = 20) -> list[dict[str, Any]]:
@@ -933,3 +949,37 @@ def get_home_counts(settings: Settings, session_id: str | None = None) -> dict[s
         "rollback_records": len(rollbacks),
         "generations": len(generations),
     }
+
+
+def get_llm_status(runs_dir: Path | str | None = None) -> dict[str, Any]:
+    """LLM training status for console: latest run type, smoke/full adapter availability, comparison report path."""
+    rdir = Path(runs_dir) if runs_dir else Path("data/local/llm/runs")
+    out: dict[str, Any] = {
+        "latest_run_type": None,
+        "smoke_available": False,
+        "full_available": False,
+        "comparison_report": None,
+        "latest_run_dir": None,
+    }
+    if not rdir.exists():
+        return out
+    try:
+        from workflow_dataset.llm.run_summary import (
+            find_latest_successful_adapter,
+            find_latest_successful_adapter_by_type,
+            get_run_type,
+        )
+        adapter_path, run_dir = find_latest_successful_adapter(rdir)
+        if run_dir:
+            out["latest_run_dir"] = run_dir
+            out["latest_run_type"] = get_run_type(Path(run_dir))
+        smoke_path, _ = find_latest_successful_adapter_by_type(rdir, "smoke")
+        full_path, _ = find_latest_successful_adapter_by_type(rdir, "full")
+        out["smoke_available"] = bool(smoke_path)
+        out["full_available"] = bool(full_path)
+        report = rdir / "comparison_latest.md"
+        if report.exists():
+            out["comparison_report"] = str(report)
+    except Exception:
+        pass
+    return out

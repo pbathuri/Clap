@@ -50,9 +50,10 @@ class TrainBackend(ABC):
         model_path: str | Path,
         prompt: str,
         max_tokens: int = 256,
+        adapter_path: str | Path | None = None,
         **kwargs: Any,
     ) -> str:
-        """Run inference and return generated text."""
+        """Run inference. If adapter_path is set, load base model from model_path and apply adapter."""
         pass
 
 

@@ -1,6 +1,6 @@
 """
-M13: Toolchain-native output adapters. Spreadsheet, creative, design, ops handoff bundles.
-
+M13/M14: Toolchain-native output adapters. Spreadsheet, creative, design, ops handoff bundles.
+M14: Content-aware population from reviewed/refined artifacts; optional XLSX.
 Local-only; sandbox-first; adoptable via existing apply flow.
 """
 
@@ -25,6 +25,13 @@ from workflow_dataset.output_adapters.bundle_manifest import (
     load_manifest_for_bundle,
     list_bundles,
 )
+from workflow_dataset.output_adapters.content_extractors import extract_content
+from workflow_dataset.output_adapters.population_models import (
+    SourceContentSlice,
+    PopulatedSection,
+    PopulatedTablePlan,
+    PopulationResult,
+)
 
 __all__ = [
     "OutputAdapterRequest",
@@ -41,4 +48,9 @@ __all__ = [
     "load_bundle_manifest",
     "load_manifest_for_bundle",
     "list_bundles",
+    "extract_content",
+    "SourceContentSlice",
+    "PopulatedSection",
+    "PopulatedTablePlan",
+    "PopulationResult",
 ]

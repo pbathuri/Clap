@@ -1,5 +1,5 @@
 """
-Tests for M13 toolchain-native output adapters.
+Tests for M13/M14 toolchain-native output adapters and content-aware population.
 """
 
 from __future__ import annotations
@@ -207,3 +207,168 @@ def test_graph_integration(tmp_path: Path, bundle_root: Path, sample_request: Ou
         assert node.node_type == NodeType.OUTPUT_BUNDLE
     finally:
         conn.close()
+
+
+# ----- M14 content extraction and population -----
+
+
+def test_content_extraction_markdown() -> None:
+    from workflow_dataset.output_adapters.content_extractors import (
+        extract_content,
+        get_first_table,
+        get_narrative_sections,
+    )
+    md = "# Goals\n\nWe need to ship by Q2.\n\n## Tasks\n\n| id | title |\n|----|-------|\n| 1 | Alpha |\n| 2 | Beta |"
+    slices = extract_content(md, source_artifact_ref="art1", max_sections=20)
+    assert len(slices) >= 1
+    table = get_first_table(slices)
+    assert table is not None
+    headers, rows = table
+    assert "id" in headers or "title" in headers
+    assert len(rows) >= 2
+    sections = get_narrative_sections(slices)
+    assert any("ship" in t for _, t in sections)
+
+
+def test_content_extraction_csv() -> None:
+    from workflow_dataset.output_adapters.content_extractors import extract_content, get_first_table
+    csv_content = "name,value\nA,1\nB,2\nC,3"
+    slices = extract_content(csv_content, source_artifact_ref="art1", source_path="x.csv")
+    assert len(slices) == 1
+    table = get_first_table(slices)
+    assert table is not None
+    headers, rows = table
+    assert headers == ["name", "value"]
+    assert len(rows) == 3
+
+
+def test_spreadsheet_populated(bundle_root: Path, sample_request: OutputAdapterRequest) -> None:
+    sample_request.adapter_type = "spreadsheet"
+    adapter = SpreadsheetAdapter()
+    bundle_root.mkdir(parents=True, exist_ok=True)
+    source = "id,label,value\nr1,First,10\nr2,Second,20"
+    bundle, manifest = adapter.create_bundle(
+        sample_request,
+        bundle_root,
+        source_content=source,
+        populate=True,
+    )
+    assert bundle.bundle_id
+    data_path = bundle_root / bundle.bundle_id / "data.csv"
+    assert data_path.exists()
+    content = data_path.read_text(encoding="utf-8")
+    assert "r1" in content and "First" in content and "10" in content
+    assert len(manifest.populated_paths) >= 1
+    assert any("data.csv" in p for p in manifest.populated_paths)
+
+
+def test_spreadsheet_xlsx_when_enabled(bundle_root: Path, sample_request: OutputAdapterRequest) -> None:
+    sample_request.adapter_type = "spreadsheet"
+    adapter = SpreadsheetAdapter()
+    bundle_root.mkdir(parents=True, exist_ok=True)
+    bundle, manifest = adapter.create_bundle(
+        sample_request,
+        bundle_root,
+        source_content="x,y\n1,2",
+        populate=True,
+        allow_xlsx=True,
+    )
+    xlsx_path = bundle_root / bundle.bundle_id / "workbook.xlsx"
+    if xlsx_path.exists():
+        assert manifest.xlsx_created is True
+        assert any("workbook.xlsx" in p for p in bundle.output_paths)
+    else:
+        assert manifest.xlsx_created is False
+
+
+def test_creative_package_populated(bundle_root: Path, sample_request: OutputAdapterRequest) -> None:
+    sample_request.adapter_type = "creative_package"
+    adapter = CreativePackageAdapter()
+    bundle_root.mkdir(parents=True, exist_ok=True)
+    source = "# Objective\n\nLaunch the campaign by Friday.\n\n- [ ] Brief approved\n- [ ] Assets ready"
+    bundle, manifest = adapter.create_bundle(
+        sample_request,
+        bundle_root,
+        source_content=source,
+        populate=True,
+    )
+    brief_path = bundle_root / bundle.bundle_id / "brief" / "creative_brief.md"
+    assert brief_path.exists()
+    brief_text = brief_path.read_text(encoding="utf-8")
+    assert "Objective" in brief_text or "campaign" in brief_text or "Friday" in brief_text
+    assert len(manifest.populated_paths) >= 1 or "Launch" in brief_text
+
+
+def test_design_package_populated(bundle_root: Path, sample_request: OutputAdapterRequest) -> None:
+    sample_request.adapter_type = "design_package"
+    adapter = DesignPackageAdapter()
+    bundle_root.mkdir(parents=True, exist_ok=True)
+    source = "# Scope\n\nDeliver drawings and presentation deck.\n\n| ID | Desc |\n|----|------|\n| 1 | Rev A |"
+    bundle, manifest = adapter.create_bundle(
+        sample_request,
+        bundle_root,
+        source_content=source,
+        populate=True,
+    )
+    brief_path = bundle_root / bundle.bundle_id / "brief" / "design_brief.md"
+    assert brief_path.exists()
+    assert "Scope" in brief_path.read_text(encoding="utf-8") or "drawings" in brief_path.read_text(encoding="utf-8")
+
+
+def test_ops_handoff_populated(bundle_root: Path, sample_request: OutputAdapterRequest) -> None:
+    sample_request.adapter_type = "ops_handoff"
+    adapter = OpsHandoffAdapter()
+    bundle_root.mkdir(parents=True, exist_ok=True)
+    source = "# Summary\n\nWeekly review complete.\n\n| id | item | status |\n|----|------|--------|\n| 1 | Task A | done |"
+    bundle, manifest = adapter.create_bundle(
+        sample_request,
+        bundle_root,
+        source_content=source,
+        populate=True,
+    )
+    report_path = bundle_root / bundle.bundle_id / "report.md"
+    assert report_path.exists()
+    assert "Summary" in report_path.read_text(encoding="utf-8") or "review" in report_path.read_text(encoding="utf-8")
+    tracker_path = bundle_root / bundle.bundle_id / "tracker.csv"
+    assert tracker_path.exists()
+
+
+def test_manifest_provenance(bundle_root: Path, sample_request: OutputAdapterRequest) -> None:
+    bundle_root.mkdir(parents=True, exist_ok=True)
+    result = create_bundle(
+        "spreadsheet",
+        sample_request,
+        workspace_path=bundle_root,
+        bundle_store_path=bundle_root,
+        source_artifact_path="",
+        populate=True,
+    )
+    assert result is not None
+    _, manifest = result
+    assert hasattr(manifest, "populated_paths")
+    assert hasattr(manifest, "scaffold_only_paths")
+    assert hasattr(manifest, "fallback_used")
+    assert isinstance(manifest.fallback_used, bool)
+
+
+def test_list_bundles_includes_population(
+    bundle_root: Path, sample_request: OutputAdapterRequest, tmp_path: Path
+) -> None:
+    bundle_root.mkdir(parents=True, exist_ok=True)
+    source_file = tmp_path / "source.csv"
+    source_file.write_text("a,b\n1,2", encoding="utf-8")
+    sample_request.source_artifact_path = str(source_file)
+    result = create_bundle(
+        "spreadsheet",
+        sample_request,
+        workspace_path=bundle_root,
+        bundle_store_path=bundle_root,
+        source_artifact_path=str(source_file),
+        populate=True,
+    )
+    assert result is not None
+    save_bundle_manifest(result[1], bundle_root)
+    items = list_bundles(bundle_root, limit=5)
+    assert len(items) >= 1
+    assert "populated_paths" in items[0]
+    assert "xlsx_created" in items[0]

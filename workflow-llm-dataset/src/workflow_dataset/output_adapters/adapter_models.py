@@ -37,7 +37,7 @@ class OutputBundle(BaseModel):
 
 
 class OutputBundleManifest(BaseModel):
-    """Manifest for an output bundle: provenance, paths, adapter used."""
+    """Manifest for an output bundle: provenance, paths, adapter used. M14: population flags."""
 
     manifest_id: str = Field(default="")
     bundle_id: str = Field(default="")
@@ -47,3 +47,9 @@ class OutputBundleManifest(BaseModel):
     style_profile_refs: list[str] = Field(default_factory=list)
     revision_note: str = Field(default="")
     created_utc: str = Field(default="")
+    # M14: content population and provenance
+    populated_paths: list[str] = Field(default_factory=list, description="Paths that were content-populated from source")
+    scaffold_only_paths: list[str] = Field(default_factory=list, description="Paths that are scaffold/template only")
+    fallback_used: bool = Field(default=False, description="True if source was weak and scaffold fallback was used")
+    xlsx_created: bool = Field(default=False, description="True if optional XLSX workbook was written")
+    population_result_ref: str = Field(default="", description="Optional ref to population result id for audit")

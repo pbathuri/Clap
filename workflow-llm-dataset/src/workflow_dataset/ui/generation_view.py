@@ -227,8 +227,13 @@ def render_generation(console: Console, state: ConsoleState, settings: Settings)
                 art_path = Prompt.ask("Artifact path (optional)", default="").strip()
                 result = create_bundle_from_console(settings, adapter, generation_id=gen_id, artifact_path=art_path)
                 if result:
-                    bid, paths = result
+                    bid, paths, info = result
                     console.print(f"[green]Bundle created: {bid}[/green]")
+                    pop_count = len(info.get("populated_paths") or [])
+                    if pop_count:
+                        console.print(f"  [dim]populated: {pop_count} paths from source[/dim]")
+                    if info.get("xlsx_created"):
+                        console.print("  [dim]XLSX workbook created[/dim]")
                     for p in (paths or [])[:8]:
                         console.print(f"  [dim]{p}[/dim]")
                 else:
@@ -244,7 +249,9 @@ def render_generation(console: Console, state: ConsoleState, settings: Settings)
             console.print("[dim]No bundles yet. Create one with action 7.[/dim]")
         else:
             for i, b in enumerate(bundles[:10], 1):
-                console.print(f"  [cyan]{i}[/cyan] {b['bundle_id']}  adapter={b['adapter_used']}")
+                pop_count = len(b.get("populated_paths") or [])
+                xlsx = " xlsx" if b.get("xlsx_created") else ""
+                console.print(f"  [cyan]{i}[/cyan] {b['bundle_id']}  adapter={b['adapter_used']}  populated={pop_count}{xlsx}")
             bid = Prompt.ask("Bundle ID to adopt (or Enter to skip)", default="").strip()
             if bid:
                 cand = adopt_bundle_for_console(settings, bid)

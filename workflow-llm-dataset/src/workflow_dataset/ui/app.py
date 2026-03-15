@@ -27,6 +27,7 @@ from workflow_dataset.ui.apply_view import render_apply
 from workflow_dataset.ui.rollback_view import render_rollback
 from workflow_dataset.ui.chat_view import render_chat
 from workflow_dataset.ui.generation_view import render_generation
+from workflow_dataset.ui.llm_status_view import render_llm_status
 
 
 def run_console(config_path: str = "configs/settings.yaml") -> int:
@@ -77,6 +78,8 @@ def run_console(config_path: str = "configs/settings.yaml") -> int:
                 current = render_chat(console, state, settings)
             elif current == Screen.GENERATION:
                 current = render_generation(console, state, settings)
+            elif current == Screen.LLM_STATUS:
+                current = render_llm_status(console, state, settings)
             else:
                 current = Screen.HOME
         except KeyboardInterrupt:
