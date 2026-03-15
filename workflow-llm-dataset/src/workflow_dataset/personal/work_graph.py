@@ -37,6 +37,36 @@ class NodeType(str, Enum):
     PAIN_POINT = "pain_point"
     GOAL = "goal"
     APPROVAL_BOUNDARY = "approval_boundary"
+    # Setup/onboarding enrichment
+    DOCUMENT_ARTIFACT = "document_artifact"
+    TABULAR_ARTIFACT = "tabular_artifact"
+    MEDIA_ARTIFACT = "media_artifact"
+    DOMAIN = "domain"
+    WORKFLOW_HINT = "workflow_hint"
+    STYLE_PATTERN = "style_pattern"
+    # M5 assistive loop
+    STYLE_PROFILE = "style_profile"
+    IMITATION_CANDIDATE = "imitation_candidate"
+    DRAFT_STRUCTURE = "draft_structure"
+    STYLE_AWARE_SUGGESTION = "style_aware_suggestion"
+    # M7 materialization (sandbox only)
+    MATERIALIZED_ARTIFACT = "materialized_artifact"
+    WORKSPACE = "workspace"
+    # M8 apply-to-project (user-approved)
+    APPLY_REQUEST = "apply_request"
+    APPLY_PLAN = "apply_plan"
+    APPLIED_ARTIFACT = "applied_artifact"
+    ROLLBACK_RECORD = "rollback_record"
+    # M10 generation scaffolding (sandboxed)
+    GENERATION_REQUEST = "generation_request"
+    STYLE_PACK = "style_pack"
+    PROMPT_PACK = "prompt_pack"
+    ASSET_PLAN = "asset_plan"
+    GENERATION_MANIFEST = "generation_manifest"
+    # M13 toolchain-native output adapters
+    ADAPTER_REQUEST = "adapter_request"
+    OUTPUT_BUNDLE = "output_bundle"
+    BUNDLE_MANIFEST = "bundle_manifest"
 
 
 class PersonalWorkGraphNode(BaseModel):
@@ -46,7 +76,8 @@ class PersonalWorkGraphNode(BaseModel):
     node_type: NodeType
     label: str = Field(default="", description="Human-readable label")
     attributes: dict[str, Any] = Field(default_factory=dict)
-    source: str = Field(default="observation", description="observation | teaching | import")
+    source: str = Field(default="observation",
+                        description="observation | teaching | import")
     created_utc: str = Field(default="")
     updated_utc: str = Field(default="")
     confidence: float | None = Field(default=None, ge=0.0, le=1.0)
@@ -123,7 +154,8 @@ def ingest_file_events(
                 src = getattr(evt.source, "value", str(evt.source))
             if src != "file":
                 continue
-            payload = getattr(evt, "payload", evt) if hasattr(evt, "payload") else evt
+            payload = getattr(evt, "payload", evt) if hasattr(
+                evt, "payload") else evt
             if isinstance(payload, dict):
                 path_str = payload.get("path")
             else:
@@ -146,11 +178,13 @@ def ingest_file_events(
                 except ValueError:
                     continue
             if not project_label and path_obj.parts:
-                project_label = path_obj.parts[-2] if len(path_obj.parts) >= 2 else path_obj.parts[0]
+                project_label = path_obj.parts[-2] if len(
+                    path_obj.parts) >= 2 else path_obj.parts[0]
 
             node_type = NodeType.FOLDER if is_dir else NodeType.FILE_REF
             node_id = stable_id("node", path_str, prefix="node")
-            attrs = {k: v for k, v in payload.items() if k not in ("path", "filename", "event_kind")}
+            attrs = {k: v for k, v in payload.items() if k not in (
+                "path", "filename", "event_kind")}
             node = PersonalWorkGraphNode(
                 node_id=node_id,
                 node_type=node_type,
@@ -187,7 +221,8 @@ def ingest_file_events(
 
             # file_in_project: link to observed_project (top-level folder)
             if project_label:
-                project_id = stable_id("project", project_label, prefix="project")
+                project_id = stable_id(
+                    "project", project_label, prefix="project")
                 proj = _gs.get_node(conn, project_id)
                 if proj is None:
                     proj = PersonalWorkGraphNode(
@@ -236,7 +271,8 @@ def persist_routines(
     n = 0
     try:
         for r in routines:
-            routine_id = r.get("routine_id") or stable_id("routine", r.get("routine_type", ""), r.get("label", ""), ts, prefix="routine")
+            routine_id = r.get("routine_id") or stable_id("routine", r.get(
+                "routine_type", ""), r.get("label", ""), ts, prefix="routine")
             node = PersonalWorkGraphNode(
                 node_id=routine_id,
                 node_type=NodeType.ROUTINE,

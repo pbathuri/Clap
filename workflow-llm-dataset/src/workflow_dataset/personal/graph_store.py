@@ -148,6 +148,29 @@ def save_suggestion(
     )
 
 
+def list_nodes(
+    conn: sqlite3.Connection,
+    node_type: str | None = None,
+    limit: int = 5000,
+) -> list[dict[str, Any]]:
+    """List nodes, optionally filtered by node_type. Returns list of dicts with node_id, node_type, label, attributes."""
+    if node_type:
+        rows = conn.execute(
+            "SELECT node_id, node_type, label, attributes FROM nodes WHERE node_type = ? LIMIT ?",
+            (node_type, limit),
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT node_id, node_type, label, attributes FROM nodes LIMIT ?",
+            (limit,),
+        ).fetchall()
+    out = []
+    for r in rows:
+        attrs = json.loads(r[3]) if r[3] else {}
+        out.append({"node_id": r[0], "node_type": r[1], "label": r[2], "attributes": attrs})
+    return out
+
+
 def list_suggestions(
     conn: sqlite3.Connection,
     status_filter: str | None = None,

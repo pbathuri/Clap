@@ -37,21 +37,83 @@ This is **not** the end product; it is the prior knowledge base that helps the d
 
 See **docs/** for architecture, vision, edge device plan, privacy model, and observation phases; **docs/schemas/** for personal graph, observation events, action log, and execution modes.
 
+### 3. Local LLM training pipeline (Apple Silicon–first)
+
+A **first-pass local training pipeline** lets the system:
+
+1. **Prepare a domain-adaptation corpus** from global work priors (processed parquet).
+2. **Build an instruction/SFT dataset** from priors + local graph (routines, suggestions).
+3. **Train a small LoRA adapter** locally using **MLX / mlx-lm** (no CUDA-only or QLoRA-primary path).
+4. **Evaluate** on repo-specific tasks (knowledge QA, workflow inference, routine explanation, next-step suggestion, etc.).
+5. Stay **local-first** and **retrieval-friendly**: fine-tuning augments, and does not replace, the graph/store/parquet.
+
+- **Why we don’t train from scratch**: We adapt a small instruction-tuned base model to the domain; the agent still relies on **retrieval** over corpus and graph for up-to-date facts and user-specific state.
+- **Config**: `configs/llm_training.yaml` (backend, base_model, LoRA and data paths). All artifacts under `data/local/llm/`.
+- **Details**: See **docs/LLM_TRAINING_PLAN.md** for scope, backend choice, risks, and future JAX/Flax option.
+
 ## Quick start (dataset build)
 
+Run from the **workflow-llm-dataset** directory. On zsh, quote the optional extra: `'.[dev]'`.
+
 ```bash
+cd workflow-llm-dataset   # if you're in the parent Clap repo
 python -m venv .venv
 source .venv/bin/activate
-pip install -e .[dev]
+pip install -e '.[dev]'
 python scripts/bootstrap_data_dirs.py
 python -m workflow_dataset.cli build --config configs/settings.yaml
 ```
 
 **Outputs:** `outputs/parquet/`, `outputs/csv/`, `outputs/excel/workflow_llm_primary_dataset_v1.xlsx`, `outputs/qa/build_report.md`.
 
+### Quick start (LLM pipeline, Apple Silicon)
+
+Prerequisites: processed outputs (run `build` above) and optionally observation + suggest (for routines/suggestions). Install MLX: `pip install 'mlx-lm[train]'` (optional, for training).
+
+```bash
+# 1. Prepare corpus from processed parquet
+workflow-dataset llm prepare-corpus
+
+# 2. Build SFT train/val/test from corpus + local graph
+workflow-dataset llm build-sft
+
+# 3. Train LoRA adapter (MLX)
+workflow-dataset llm train
+
+# 4. Evaluate on test split
+workflow-dataset llm eval --run-dir data/local/llm/runs/eval_out
+
+# 5. Demo: single prompt, optional retrieval
+workflow-dataset llm demo --prompt "What does an operations coordinator do?" --retrieve 3
+```
+
+Corpus → `data/local/llm/corpus/corpus.jsonl`. SFT → `data/local/llm/sft/*.jsonl`. Runs → `data/local/llm/runs/<timestamp>/`. No cloud APIs; retrieval remains first-class.
+
+### Local Operator Console (M9)
+
+A guided TUI for setup, projects, suggestions, drafts, materialize, apply, rollback, and chat — without memorizing CLI commands. Local-only; apply and rollback require explicit confirmation.
+
+```bash
+workflow-dataset console
+```
+
+See **docs/LOCAL_OPERATOR_CONSOLE.md** for what it can do, safety/confirmation behavior, and limitations.
+
+### Running tests
+
+From the **workflow-llm-dataset** directory (not the parent `Clap` repo). Use `'.[dev]'` in zsh so the bracket is not globbed.
+
+```bash
+cd workflow-llm-dataset   # only if you're in Clap/
+pip install -e '.[dev]'
+pytest tests/test_ui_services.py tests/test_ui_state_store.py tests/test_console_cli.py -v
+# or: pytest -v
+```
+
 ## Config
 
 - **configs/settings.yaml** — project paths, runtime, and **agent** section (observation, privacy, sync, execution mode, hardware/model profile, sandbox). Defaults: observation off, sync off, **execution_mode: simulate**.
+- **configs/llm_training.yaml** — LLM pipeline: backend (mlx), base_model, LoRA hyperparameters, data paths (`corpus_path`, `sft_train_dir`, `runs_dir`), eval options.
 
 ## Architecture summary
 
