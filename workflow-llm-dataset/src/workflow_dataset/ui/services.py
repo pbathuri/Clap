@@ -983,3 +983,25 @@ def get_llm_status(runs_dir: Path | str | None = None) -> dict[str, Any]:
     except Exception:
         pass
     return out
+
+
+def get_trials_status(trials_dir: Path | str | None = None) -> dict[str, Any]:
+    """Workflow trials status for console: available trials, result count, report path."""
+    from workflow_dataset.trials.trial_registry import list_trials
+    from workflow_dataset.trials.trial_scenarios import register_all_trials
+    if not list_trials():
+        register_all_trials()
+    trials = list_trials()
+    out: dict[str, Any] = {
+        "trial_count": len(trials),
+        "domains": list({t.domain for t in trials if t.domain}),
+        "report_path": None,
+        "result_count": 0,
+    }
+    base = Path(trials_dir) if trials_dir else Path("data/local/trials")
+    if base.exists():
+        report = base / "latest_trial_report.md"
+        if report.exists():
+            out["report_path"] = str(report)
+        out["result_count"] = len(list(base.glob("res_*.json")))
+    return out

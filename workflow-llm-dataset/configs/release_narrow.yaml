@@ -1,0 +1,22 @@
+# M18: First narrow release preset — Operations reporting assistant.
+# Load in addition to configs/settings.yaml when running release commands.
+# Keeps local-first/sandbox-first; no cloud; no uncontrolled writes.
+
+release:
+  scope: ops
+  scope_label: "Operations reporting assistant"
+  # Best-performing mode from M16: full adapter; retrieval optional (can hurt overlap on eval).
+  default_llm_config: configs/llm_training_full.yaml
+  default_model_mode: adapter
+  use_retrieval_by_default: false
+  trial_domain: ops
+  trial_ids:
+    - ops_summarize_reporting
+    - ops_scaffold_status
+    - ops_next_steps
+  # Paths
+  release_report_dir: data/local/release
+  trials_output_dir: data/local/trials
+  # Safety: unchanged from main config
+  sandbox_only: true
+  require_apply_confirm: true

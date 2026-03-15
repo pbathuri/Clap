@@ -1,0 +1,32 @@
+{
+  "pack_id": "ops_pack",
+  "name": "Ops reporting pack",
+  "version": "0.1.0",
+  "description": "Role pack for ops reporting workflows (summarize, scaffold, next steps).",
+  "role_tags": ["ops"],
+  "industry_tags": ["general"],
+  "workflow_tags": ["reporting"],
+  "task_tags": ["summarize", "scaffold", "next_steps"],
+  "supported_modes": ["baseline", "adapter", "retrieval"],
+  "required_models": [],
+  "recommended_models": ["local/small"],
+  "retrieval_profile": { "top_k": 5 },
+  "prompts": [],
+  "templates": ["ops_summarize_reporting", "ops_scaffold_status", "ops_next_steps"],
+  "output_adapters": ["ops_handoff"],
+  "parser_profiles": [],
+  "optional_wrappers": [],
+  "recipe_steps": [
+    { "type": "create_config", "name": "ops_config", "content": {} },
+    { "type": "register_templates" }
+  ],
+  "safety_policies": {
+    "sandbox_only": true,
+    "require_apply_confirm": true,
+    "no_network_default": true
+  },
+  "safety_constraints": [],
+  "hardware_constraints": [],
+  "license": "MIT",
+  "source_repo": ""
+}

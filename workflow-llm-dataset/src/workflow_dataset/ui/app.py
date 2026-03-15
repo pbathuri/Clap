@@ -28,6 +28,11 @@ from workflow_dataset.ui.rollback_view import render_rollback
 from workflow_dataset.ui.chat_view import render_chat
 from workflow_dataset.ui.generation_view import render_generation
 from workflow_dataset.ui.llm_status_view import render_llm_status
+from workflow_dataset.ui.trials_view import render_trials
+from workflow_dataset.ui.release_view import render_release
+from workflow_dataset.ui.trial_friendly_view import render_trial_friendly
+from workflow_dataset.ui.pilot_view import render_pilot
+from workflow_dataset.ui.runtime_view import render_runtime
 
 
 def run_console(config_path: str = "configs/settings.yaml") -> int:
@@ -80,6 +85,16 @@ def run_console(config_path: str = "configs/settings.yaml") -> int:
                 current = render_generation(console, state, settings)
             elif current == Screen.LLM_STATUS:
                 current = render_llm_status(console, state, settings)
+            elif current == Screen.TRIALS:
+                current = render_trials(console, state, settings)
+            elif current == Screen.RELEASE:
+                current = render_release(console, state, settings)
+            elif current == Screen.TRIAL_FRIENDLY:
+                current = render_trial_friendly(console, state, settings)
+            elif current == Screen.PILOT:
+                current = render_pilot(console, state, settings)
+            elif current == Screen.RUNTIME:
+                current = render_runtime(console, state, settings)
             else:
                 current = Screen.HOME
         except KeyboardInterrupt:

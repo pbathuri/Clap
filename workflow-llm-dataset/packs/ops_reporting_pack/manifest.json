@@ -1,0 +1,37 @@
+{
+  "pack_id": "ops_reporting_pack",
+  "name": "Ops reporting pack",
+  "version": "1.0.0",
+  "description": "First real role pack: ops reporting workflows (summarize, scaffold, next steps). Aligns with narrow release scope.",
+  "role_tags": ["ops"],
+  "industry_tags": ["general"],
+  "workflow_tags": ["reporting", "summarize_reporting", "scaffold_status", "next_steps"],
+  "task_tags": ["summarize", "scaffold", "next_steps"],
+  "supported_modes": ["baseline", "adapter", "adapter_retrieval"],
+  "required_models": [],
+  "recommended_models": ["local/small"],
+  "retrieval_profile": { "top_k": 5 },
+  "prompts": [],
+  "templates": ["ops_summarize_reporting", "ops_scaffold_status", "ops_next_steps"],
+  "workflow_templates": ["ops_summarize_reporting", "ops_scaffold_status", "ops_next_steps"],
+  "evaluation_tasks": ["ops_summarize_reporting", "ops_scaffold_status", "ops_next_steps"],
+  "output_adapters": ["ops_handoff"],
+  "parser_profiles": [],
+  "optional_wrappers": [],
+  "recipe_steps": [
+    { "type": "create_config", "name": "ops_pack_config", "content": { "retrieval_top_k": 5 } },
+    { "type": "register_templates" }
+  ],
+  "safety_policies": {
+    "sandbox_only": true,
+    "require_apply_confirm": true,
+    "no_network_default": true
+  },
+  "safety_constraints": [],
+  "hardware_constraints": [],
+  "release_modes": ["adapter"],
+  "license": "MIT",
+  "source_repo": "",
+  "dependencies": [],
+  "supported_os_hardware": ["macos", "linux"]
+}

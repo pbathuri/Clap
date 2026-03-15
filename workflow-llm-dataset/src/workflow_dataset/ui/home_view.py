@@ -57,12 +57,19 @@ def render_home(console: Console, state: ConsoleState, settings: Settings) -> Sc
     console.print("  [cyan]8[/cyan] Chat / explain")
     console.print("  [cyan]9[/cyan] Generation (style pack, prompt pack, asset plan)")
     console.print("  [cyan]L[/cyan] LLM status (runs, comparison report, demo-suite hint)")
+    console.print("  [cyan]T[/cyan] Workflow trials (scenarios, report)")
+    console.print("  [cyan]R[/cyan] Release (narrow scope, verify, demo)")
+    console.print("  [cyan]F[/cyan] Friendly trial (session, tasks, feedback)")
+    console.print("  [cyan]P[/cyan] Pilot (status, ready/degraded, report)")
+    console.print("  [cyan]X[/cyan] Runtime (installed packs, active capabilities)")
     console.print("  [cyan]q[/cyan] Quit")
 
     choice = Prompt.ask("Choice", default="1").strip().lower()
 
     if choice == "q":
         return Screen.EXIT
+    if choice == "f":
+        return Screen.TRIAL_FRIENDLY
     if choice == "1":
         return Screen.SETUP
     if choice == "2":
@@ -83,4 +90,12 @@ def render_home(console: Console, state: ConsoleState, settings: Settings) -> Sc
         return Screen.GENERATION
     if choice == "l":
         return Screen.LLM_STATUS
+    if choice == "t":
+        return Screen.TRIALS
+    if choice == "r":
+        return Screen.RELEASE
+    if choice == "p":
+        return Screen.PILOT
+    if choice == "x":
+        return Screen.RUNTIME
     return Screen.HOME

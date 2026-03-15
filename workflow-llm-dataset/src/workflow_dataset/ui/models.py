@@ -22,6 +22,11 @@ class Screen(str, Enum):
     CHAT = "chat"
     GENERATION = "generation"
     LLM_STATUS = "llm_status"
+    TRIALS = "trials"
+    RELEASE = "release"
+    TRIAL_FRIENDLY = "trial_friendly"
+    PILOT = "pilot"
+    RUNTIME = "runtime"
     EXIT = "exit"
 
 
