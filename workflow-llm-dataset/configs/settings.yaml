@@ -1,0 +1,160 @@
+project:
+  name: workflow_llm_dataset
+  version: v1
+  output_excel: outputs/excel/workflow_llm_primary_dataset_v1.xlsx
+  output_csv_dir: outputs/csv
+  output_parquet_dir: outputs/parquet
+  qa_report_path: outputs/qa/build_report.md
+
+runtime:
+  timezone: UTC
+  long_run_profile: true
+  max_workers: 4
+  fail_on_missing_provenance: true
+  infer_low_confidence_threshold: 0.45
+  infer_high_confidence_threshold: 0.8
+
+paths:
+  raw_official: data/raw/official
+  raw_private: data/raw/private_examples
+  interim: data/interim
+  processed: data/processed
+  prompts: prompts
+  context: context
+  sqlite_path: workflow_dataset.sqlite
+  # Personal agent (local-first)
+  event_log_dir: data/local/event_log
+  graph_store_path: data/local/work_graph.sqlite
+  audit_log_path: data/local/agent_audit.sqlite
+
+# Personal agent: observation and execution (local-first; see docs/PRIVACY_AND_LOCAL_FIRST_MODEL.md)
+agent:
+  observation_enabled: false
+  observation_tier: 1
+  allowed_observation_sources: []  # empty = none; or [file, app, browser, terminal, calendar, teaching]
+  privacy_mode: local_only
+  sync_enabled: false
+  execution_mode: simulate
+  hardware_profile: pi5
+  local_model_profile: small
+  vector_store_path: data/local/vector_store
+  sandbox_enabled: true
+  file_observer:
+    root_paths: []  # e.g. [./data] to scan; empty = no file observation
+    max_files_per_scan: 10000
+    exclude_dirs: [.git, __pycache__, node_modules, .venv, .tox, venv]
+    allowed_extensions: []  # empty = all
+    graph_update_enabled: true
+
+# Initial setup/onboarding analyzer (long-running, local-only)
+setup:
+  setup_enabled: false
+  setup_mode: conservative  # conservative | full_onboarding
+  setup_scan_roots: []  # e.g. [./projects] to analyze; empty = no setup scan
+  setup_max_runtime_hours: 36
+  setup_resume_enabled: true
+  setup_stage_controls: []
+  allow_raw_text_parsing: false  # true when full_onboarding and user opted in
+  allow_raw_text_persistence: false
+  allow_llm_corpus_from_parsed_signals: false
+  allow_llm_corpus_from_raw_text: false
+  allowed_extensions: []  # empty = all supported
+  max_file_size: 52428800  # 50MB (or set max_file_size_mb)
+  enabled_artifact_families: []
+  enabled_domain_adapters: [document, tabular, creative, design, finance, ops]
+  enable_media_metadata: true
+  enable_style_signature_extraction: true
+  exclude_paths: [.git, __pycache__, node_modules, .venv]
+  low_power_mode: false
+  setup_dir: data/local/setup
+  parsed_artifacts_dir: data/local/parsed_artifacts
+  style_signals_dir: data/local/style_signals
+  style_profiles_dir: data/local/style_profiles
+  setup_reports_dir: data/local/setup_reports
+  suggestions_dir: data/local/suggestions
+  draft_structures_dir: data/local/draft_structures
+  persist_style_signals: true
+  allow_personal_corpus_from_setup: false
+  allow_personal_sft_from_setup: false
+  allow_raw_text_for_personal_corpus: false
+  allow_raw_text_for_personal_sft: false
+  max_media_metadata_files: 10000
+
+# M6 assistive agent loop (retrieval-backed, graph-grounded, no execution)
+agent_loop:
+  agent_loop_enabled: true
+  agent_loop_default_use_retrieval: true
+  agent_loop_default_use_llm: false
+  agent_loop_max_context_docs: 5
+  agent_loop_project_scope_default: ""
+  agent_loop_save_sessions: true
+  agent_sessions_dir: data/local/agent_sessions
+  agent_responses_dir: data/local/agent_responses
+
+# M7 sandboxed artifact materialization (local workspace only)
+materialization:
+  materialization_enabled: true
+  materialization_default_use_llm: false
+  materialization_workspace_root: data/local/workspaces
+  materialization_allow_csv: true
+  materialization_allow_markdown: true
+  materialization_allow_json: true
+  materialization_allow_xlsx: false
+  materialization_allow_folder_scaffolds: true
+  materialization_save_manifests: true
+  materialization_graph_persistence: true
+  materialization_preview_enabled: true
+
+# M8 user-approved apply-to-project (sandbox -> real path with confirm)
+apply:
+  apply_enabled: false
+  apply_require_confirm: true
+  apply_default_dry_run: true
+  apply_allow_overwrite: false
+  apply_create_backups: true
+  apply_allowed_target_roots: []  # e.g. [./projects] to restrict targets
+  apply_backup_root: data/local/applies
+  apply_manifest_root: data/local/applies
+  apply_graph_persistence: true
+  apply_rollback_enabled: true
+
+# M10/M11 sandboxed multimodal generation (local-only; backend execution config-gated)
+generation:
+  generation_enabled: true
+  generation_default_use_llm: false
+  generation_workspace_root: data/local/generation
+  generation_allow_style_packs: true
+  generation_allow_prompt_packs: true
+  generation_allow_asset_plans: true
+  generation_enable_demo_backend: false
+  generation_enable_document_backend: false
+  generation_enable_image_demo_backend: false
+  generation_default_backend: mock
+  generation_backend_timeout_sec: 300
+  generation_backend_allow_llm: false
+  generation_backend_fallback_enabled: true
+  generation_backend_registry: [mock, document, image_demo]
+  generation_graph_persistence: true
+  # M12 review / refinement / adoption
+  generation_review_enabled: true
+  generation_refinement_enabled: true
+  generation_refinement_default_use_llm: false
+  generation_variant_retention: 50
+  generation_adoption_bridge_enabled: true
+  generation_preview_enabled: true
+
+# M13/M14 toolchain-native output adapters (sandbox-first; M14 content population)
+output_adapters:
+  output_adapters_enabled: true
+  output_adapter_registry: [spreadsheet, creative_package, design_package, ops_handoff]
+  output_adapter_allow_xlsx: false
+  output_adapter_bundle_root: data/local/bundles
+  output_adapter_graph_persistence: true
+  output_adapter_preview_enabled: true
+  # M14 content-aware population
+  output_adapter_population_enabled: true
+  output_adapter_population_use_refined_artifacts: true
+  output_adapter_population_use_generated_artifacts: true
+  output_adapter_population_max_rows: 1000
+  output_adapter_population_max_sections: 50
+  output_adapter_population_require_provenance: false

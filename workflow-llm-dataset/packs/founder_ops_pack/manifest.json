@@ -1,0 +1,32 @@
+{
+  "pack_id": "founder_ops_pack",
+  "name": "Founder ops pack",
+  "version": "0.1.0",
+  "description": "M24 fixture: founder/ops overlap for multi-pack coexistence. Smaller than ops_reporting_pack; exercises conflict resolution.",
+  "role_tags": ["founder"],
+  "industry_tags": ["general"],
+  "workflow_tags": ["project_scaffold", "deliverables_phases", "cadence"],
+  "task_tags": ["scaffold", "next_steps"],
+  "supported_modes": ["baseline", "adapter"],
+  "required_models": [],
+  "recommended_models": ["local/small"],
+  "retrieval_profile": { "top_k": 3 },
+  "prompts": [],
+  "templates": ["founder_project_scaffold", "founder_deliverables_phases", "founder_cadence"],
+  "workflow_templates": ["founder_project_scaffold", "founder_deliverables_phases", "founder_cadence"],
+  "evaluation_tasks": ["founder_project_scaffold"],
+  "output_adapters": ["ops_handoff", "design_package"],
+  "parser_profiles": [],
+  "optional_wrappers": [],
+  "recipe_steps": [{ "type": "register_templates" }],
+  "safety_policies": {
+    "sandbox_only": true,
+    "require_apply_confirm": true,
+    "no_network_default": true
+  },
+  "safety_constraints": [],
+  "license": "MIT",
+  "source_repo": "",
+  "dependencies": [],
+  "supported_os_hardware": ["macos", "linux"]
+}

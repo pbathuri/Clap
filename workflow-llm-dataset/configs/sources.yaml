@@ -1,0 +1,29 @@
+sources:
+  - source_name: isic
+    source_type: taxonomy
+    path: data/raw/official/isic
+    required: true
+  - source_name: naics
+    source_type: taxonomy
+    path: data/raw/official/naics
+    required: true
+  - source_name: soc
+    source_type: taxonomy
+    path: data/raw/official/soc
+    required: true
+  - source_name: onet
+    source_type: occupation_database
+    path: data/raw/official/onet
+    required: true
+  - source_name: bls
+    source_type: labor_market
+    path: data/raw/official/bls
+    required: true
+  - source_name: esco
+    source_type: skills_graph
+    path: data/raw/official/esco
+    required: false
+  - source_name: private_examples
+    source_type: private_documents
+    path: data/raw/private_examples
+    required: false
