@@ -1,0 +1,1 @@
+**Action register** (golden fixture)

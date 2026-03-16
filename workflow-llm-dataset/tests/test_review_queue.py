@@ -47,6 +47,25 @@ def test_get_workspace_inventory_ops_reporting_workspace(tmp_path: Path) -> None
     assert "weekly_status.md" in inv["artifacts"]
 
 
+def test_get_workspace_inventory_includes_template_fields(tmp_path: Path) -> None:
+    """M22E-F6: Inventory includes template_id and template_version when present in manifest."""
+    (tmp_path / "workspace_manifest.json").write_text(
+        json.dumps({
+            "workflow": "ops_reporting_workspace",
+            "timestamp": "2025-03-16T10:00:00Z",
+            "grounding": "task_context_only",
+            "template_id": "ops_reporting_core",
+            "template_version": "1.0",
+            "template_params": {"owner": "Alex"},
+        }, indent=2),
+        encoding="utf-8",
+    )
+    inv = get_workspace_inventory(tmp_path)
+    assert inv is not None
+    assert inv.get("template_id") == "ops_reporting_core"
+    assert inv.get("template_version") == "1.0"
+
+
 def test_get_workspace_inventory_weekly_status(tmp_path: Path) -> None:
     """Inventory for weekly_status with manifest.json."""
     (tmp_path / "manifest.json").write_text(
@@ -463,6 +482,31 @@ def test_staging_build_apply_plan_from_staging(tmp_path: Path) -> None:
     path = get_last_apply_plan_preview_path(repo_root=tmp_path)
     assert path and Path(path).exists()
     assert "Apply plan preview" in Path(path).read_text()
+
+
+def test_staging_board_stage_artifact_and_build_plan(tmp_path: Path) -> None:
+    """Stage one artifact from workspace; build apply-plan from staging; preview saved."""
+    from workflow_dataset.release.staging_board import (
+        add_staged_artifact,
+        build_apply_plan_from_staging,
+        get_last_apply_plan_preview_path,
+    )
+    ws = tmp_path / "ws"
+    ws.mkdir()
+    (ws / "weekly_status.md").write_text("**Summary:** Done.", encoding="utf-8")
+    (ws / "manifest.json").write_text(
+        json.dumps({"artifact_type": "weekly_status", "timestamp": "2025-03-15T12:00:00Z"}, indent=2),
+        encoding="utf-8",
+    )
+    add_staged_artifact(ws, "weekly_status.md", repo_root=tmp_path)
+    target = tmp_path / "target"
+    target.mkdir()
+    plan, err = build_apply_plan_from_staging(target, repo_root=tmp_path, save_preview=True)
+    assert plan is not None
+    assert err == "" or not err
+    path = get_last_apply_plan_preview_path(repo_root=tmp_path)
+    assert path and Path(path).exists()
+    assert "no apply performed" in Path(path).read_text().lower()
 
 
 def test_review_staging_board_cli() -> None:

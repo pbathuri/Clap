@@ -101,6 +101,8 @@ def get_dashboard_data(
             "approved_count": len(approved),
             "has_package": has_package,
             "status": "package_ready" if has_package else ("package_pending" if approved else "review_pending"),
+            "template_id": inv.get("template_id"),
+            "template_version": inv.get("template_version"),
         })
 
     out["review_package"]["unreviewed_count"] = unreviewed_count
@@ -319,6 +321,8 @@ def get_dashboard_drilldown(
             "approved_artifacts": approved,
             "review_state": state.get("artifacts") or {},
             "last_package_path": state.get("last_package_path"),
+            "template_id": inv.get("template_id"),
+            "template_version": inv.get("template_version"),
             "inspect_command": f"workflow-dataset review show-workspace {out['ref']}",
             "build_package_command": f"workflow-dataset review build-package {out['ref']}",
         }

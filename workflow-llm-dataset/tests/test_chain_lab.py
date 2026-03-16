@@ -25,6 +25,7 @@ from workflow_dataset.chain_lab.manifest import (
     list_run_ids,
     get_latest_run_id,
 )
+from workflow_dataset.chain_lab.eval_bridge import list_chain_runs_for_eval, get_chain_run_for_eval
 from workflow_dataset.chain_lab.report import (
     chain_run_report,
     chain_artifact_tree,
@@ -287,6 +288,14 @@ def test_failure_report_section(tmp_path: Path) -> None:
     assert "1" in "".join(lines)
     assert "Artifacts already produced" in "".join(lines)
     assert "Resume possible" in "".join(lines)
+    # With run_id, recommended next commands appear
+    lines_with_run = failure_report_section(manifest, None, run_id="my_run_id")
+    joined = "".join(lines_with_run)
+    assert "Recommended" in joined
+    assert "retry-step" in joined
+    assert "resume" in joined
+    assert "my_run_id" in joined
+    assert "s2" in joined
 
 
 def test_resume_chain(tmp_path: Path) -> None:
@@ -315,8 +324,8 @@ def test_retry_step(tmp_path: Path) -> None:
 
 
 def test_compare_with_output_inventory(tmp_path: Path) -> None:
-    save_run_manifest("ia", "c", "v1", "success", [{"step_index": 0, "step_id": "s1", "output_paths": ["/a/1.txt"]}], "2025-01-01T00:00:00Z", repo_root=tmp_path)
-    save_run_manifest("ib", "c", "v2", "success", [{"step_index": 0, "step_id": "s1", "output_paths": ["/b/1.txt"]}], "2025-01-01T00:00:00Z", repo_root=tmp_path)
+    save_run_manifest("ia", "c", "v1", "success", [{"step_index": 0, "step_id": "s1", "output_paths": ["/a/1.txt"]}], "2025-01-01T00:00:00Z", "2025-01-01T00:01:00Z", repo_root=tmp_path)
+    save_run_manifest("ib", "c", "v2", "success", [{"step_index": 0, "step_id": "s1", "output_paths": ["/b/1.txt"]}], "2025-01-01T00:00:00Z", "2025-01-01T00:02:00Z", repo_root=tmp_path)
     diff = compare_chain_runs("ia", "ib", repo_root=tmp_path, include_artifact_diff=True)
     assert "output_inventory_a" in diff
     assert "output_inventory_b" in diff
@@ -324,6 +333,11 @@ def test_compare_with_output_inventory(tmp_path: Path) -> None:
     assert diff.get("artifact_diff") is not None
     assert diff["artifact_diff"]["only_in_a"] == ["/a/1.txt"]
     assert diff["artifact_diff"]["only_in_b"] == ["/b/1.txt"]
+    # Timing in run_a / run_b
+    assert diff["run_a"].get("started_at") == "2025-01-01T00:00:00Z"
+    assert diff["run_a"].get("ended_at") == "2025-01-01T00:01:00Z"
+    assert diff["run_b"].get("started_at") == "2025-01-01T00:00:00Z"
+    assert diff["run_b"].get("ended_at") == "2025-01-01T00:02:00Z"
 
 
 def test_report_with_latest(tmp_path: Path) -> None:
@@ -331,3 +345,163 @@ def test_report_with_latest(tmp_path: Path) -> None:
     report = chain_run_report("latest", repo_root=tmp_path)
     assert "latest_run" in report or "Chain run report" in report
     assert "Run not found" not in report
+
+
+# ----- M23A-F6: Eval-ready metadata, benchmark hooks, compare benchmark view -----
+def test_manifest_has_eval_ready_fields(tmp_path: Path) -> None:
+    save_run_manifest(
+        "eval_run",
+        "template_1",
+        "v2",
+        "success",
+        [
+            {"step_index": 0, "step_id": "s1", "status": "success", "output_paths": ["/out/a.txt", "/out/b.txt"]},
+        ],
+        started_at="2025-01-01T00:00:00Z",
+        ended_at="2025-01-01T00:01:30Z",
+        repo_root=tmp_path,
+    )
+    manifest = load_run_manifest("eval_run", tmp_path)
+    assert manifest is not None
+    assert manifest.get("chain_template_id") == "template_1"
+    assert manifest.get("variant_id") == "v2"
+    assert manifest.get("final_artifacts") == ["/out/a.txt", "/out/b.txt"]
+    assert manifest.get("duration_seconds") == 90.0
+
+
+def test_list_chain_runs_for_eval(tmp_path: Path) -> None:
+    save_run_manifest("er1", "c1", "v1", "success", [], "2025-01-01T00:00:00Z", "2025-01-01T00:00:05Z", repo_root=tmp_path)
+    runs = list_chain_runs_for_eval(limit=10, repo_root=tmp_path)
+    assert len(runs) >= 1
+    r = runs[0]
+    assert "run_id" in r and "chain_template_id" in r and "variant_id" in r
+    assert "status" in r and "final_artifacts" in r and "duration_seconds" in r
+    assert "run_path" in r
+    assert r["chain_template_id"] == "c1" and r["variant_id"] == "v1"
+
+
+def test_get_chain_run_for_eval(tmp_path: Path) -> None:
+    save_run_manifest("single_eval", "chain_x", "var_y", "failed", [], "2025-01-01T00:00:00Z", "2025-01-01T00:00:01Z", repo_root=tmp_path)
+    r = get_chain_run_for_eval("single_eval", repo_root=tmp_path)
+    assert r is not None
+    assert r["run_id"] == "single_eval"
+    assert r["chain_template_id"] == "chain_x"
+    assert r["variant_id"] == "var_y"
+    assert r["status"] == "failed"
+    assert r["duration_seconds"] == 1.0
+    assert get_chain_run_for_eval("nonexistent", repo_root=tmp_path) is None
+
+
+def test_compare_benchmark_view(tmp_path: Path) -> None:
+    save_run_manifest("bva", "c", "v1", "success", [{"step_index": 0, "step_id": "s1", "output_paths": ["/a/1.txt"]}], "2025-01-01T00:00:00Z", "2025-01-01T00:00:10Z", repo_root=tmp_path)
+    save_run_manifest("bvb", "c", "v2", "success", [{"step_index": 0, "step_id": "s1", "output_paths": ["/b/1.txt", "/b/2.txt"]}], "2025-01-01T00:00:00Z", "2025-01-01T00:00:20Z", repo_root=tmp_path)
+    diff = compare_chain_runs("bva", "bvb", repo_root=tmp_path, benchmark_view=True)
+    assert "benchmark_summary" in diff
+    bs = diff["benchmark_summary"]
+    assert bs["run_id_a"] == "bva" and bs["run_id_b"] == "bvb"
+    assert bs["status_a"] == "success" and bs["status_b"] == "success"
+    assert bs["duration_seconds_a"] == 10.0 and bs["duration_seconds_b"] == 20.0
+    assert bs["artifact_count_a"] == 1 and bs["artifact_count_b"] == 2
+    assert "summary_line" in bs
+    assert "A=success" in bs["summary_line"] and "B=success" in bs["summary_line"]
+
+
+def test_benchmark_summary_text(tmp_path: Path) -> None:
+    """benchmark_summary_text returns multi-line string when benchmark_summary present."""
+    from workflow_dataset.chain_lab.compare import benchmark_summary_text, compare_chain_runs
+    save_run_manifest("t1", "c", "v1", "success", [{"step_index": 0, "step_id": "s1", "output_paths": []}], "2025-01-01T00:00:00Z", "2025-01-01T00:00:05Z", repo_root=tmp_path)
+    save_run_manifest("t2", "c", "v2", "success", [{"step_index": 0, "step_id": "s1", "output_paths": []}], "2025-01-01T00:00:00Z", "2025-01-01T00:00:10Z", repo_root=tmp_path)
+    diff = compare_chain_runs("t1", "t2", repo_root=tmp_path, benchmark_view=True)
+    text = benchmark_summary_text(diff)
+    assert "t1" in text and "t2" in text
+    assert "success" in text
+    assert "5.0" in text or "5" in text
+    assert "10.0" in text or "10" in text
+    assert benchmark_summary_text({}) == ""
+    assert benchmark_summary_text({"benchmark_summary": None}) == ""
+
+
+# ----- M23A-F5: Examples, cleanup, archive -----
+
+
+def test_list_example_chains() -> None:
+    """Bundled examples are listed with id, description, step_count."""
+    from workflow_dataset.chain_lab.examples import list_example_chains
+    examples = list_example_chains()
+    assert isinstance(examples, list)
+    for ex in examples:
+        assert "id" in ex and "step_count" in ex
+
+
+def test_get_example_path() -> None:
+    """get_example_path returns path for known example id or None for missing."""
+    from workflow_dataset.chain_lab.examples import get_example_path, list_example_chains
+    examples = list_example_chains()
+    if not examples:
+        pytest.skip("No bundled examples")
+    first_id = examples[0]["id"]
+    path = get_example_path(first_id)
+    assert path is not None and path.exists()
+    assert get_example_path("_nonexistent_example_99_") is None
+
+
+def test_install_example(tmp_path: Path) -> None:
+    """install_example copies example into chains dir."""
+    from workflow_dataset.chain_lab.examples import list_example_chains, install_example
+    from workflow_dataset.chain_lab.definition import load_chain
+    examples = list_example_chains()
+    if not examples:
+        pytest.skip("No bundled examples")
+    first_id = examples[0]["id"]
+    path = install_example(first_id, repo_root=tmp_path)
+    assert path.exists()
+    loaded = load_chain(first_id, repo_root=tmp_path)
+    assert loaded["id"] == first_id
+    assert len(loaded.get("steps") or []) == examples[0]["step_count"]
+
+
+def test_list_runs_with_meta(tmp_path: Path) -> None:
+    """list_runs_with_meta returns run_id, chain_id, status, started_at."""
+    from workflow_dataset.chain_lab.cleanup import list_runs_with_meta
+    save_run_manifest("meta_run", "my_chain", "v1", "success", [], "2025-03-16T12:00:00Z", repo_root=tmp_path)
+    runs = list_runs_with_meta(repo_root=tmp_path, limit=10)
+    assert len(runs) >= 1
+    r = next((x for x in runs if x["run_id"] == "meta_run"), None)
+    assert r is not None
+    assert r["chain_id"] == "my_chain"
+    assert r["status"] == "success"
+    assert "2025-03-16" in (r.get("started_at") or "")
+
+
+def test_list_runs_older_than(tmp_path: Path) -> None:
+    """list_runs_older_than returns run_ids older than N days."""
+    from workflow_dataset.chain_lab.cleanup import list_runs_older_than
+    save_run_manifest("old_run", "c", "", "success", [], "2020-01-01T00:00:00Z", repo_root=tmp_path)
+    older = list_runs_older_than(repo_root=tmp_path, days=30)
+    assert "old_run" in older
+
+
+def test_archive_run(tmp_path: Path) -> None:
+    """archive_run moves run dir to runs/archive/<run_id>."""
+    from workflow_dataset.chain_lab.cleanup import archive_run, list_runs_with_meta
+    from workflow_dataset.chain_lab.config import get_runs_dir
+    save_run_manifest("to_archive", "c", "", "success", [], "2025-01-01T00:00:00Z", repo_root=tmp_path)
+    runs_dir = get_runs_dir(tmp_path)
+    assert (runs_dir / "to_archive").exists()
+    path = archive_run("to_archive", repo_root=tmp_path)
+    assert path == runs_dir / "archive" / "to_archive"
+    assert not (runs_dir / "to_archive").exists()
+    assert (runs_dir / "archive" / "to_archive").exists()
+    runs = list_runs_with_meta(repo_root=tmp_path, limit=10)
+    run_ids = [r["run_id"] for r in runs]
+    assert "to_archive" not in run_ids
+
+
+def test_cleanup_older_runs_dry_run(tmp_path: Path) -> None:
+    """cleanup_older_runs with dry_run only lists run_ids, does not archive."""
+    from workflow_dataset.chain_lab.cleanup import cleanup_older_runs
+    save_run_manifest("dry_run_old", "c", "", "success", [], "2020-01-01T00:00:00Z", repo_root=tmp_path)
+    result = cleanup_older_runs(repo_root=tmp_path, older_than_days=30, dry_run=True, archive=False)
+    assert result["dry_run"] is True
+    assert "dry_run_old" in result["run_ids"]
+    assert result["archived"] == []

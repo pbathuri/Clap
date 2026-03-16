@@ -29,13 +29,32 @@ def list_proposals(root: Path | str | None = None) -> list[dict[str, Any]]:
             out.append(data)
         except Exception:
             pass
+    for o in out:
+        if "proposal_id" not in o and o.get("created_at"):
+            o["proposal_id"] = Path(o.get("proposal_path", "")).name or ""
     out.sort(key=lambda x: x.get("created_at", ""), reverse=True)
     return out
 
 
-def get_proposal(proposal_id: str, root: Path | str | None = None) -> dict[str, Any] | None:
-    """Load proposal manifest and paths to artifacts."""
+def resolve_proposal_id(proposal_id: str, root: Path | str | None = None) -> str | None:
+    """Resolve proposal_id: 'latest' -> newest proposal id; otherwise return id if it exists."""
+    if (proposal_id or "").strip().lower() == "latest":
+        proposals = list_proposals(root)
+        if not proposals:
+            return None
+        return proposals[0].get("proposal_id") or Path(proposals[0].get("proposal_path", "")).name or None
     prop_dir = get_proposals_dir(root) / proposal_id
+    if prop_dir.exists() and prop_dir.is_dir() and (prop_dir / "manifest.json").exists():
+        return proposal_id
+    return None
+
+
+def get_proposal(proposal_id: str, root: Path | str | None = None) -> dict[str, Any] | None:
+    """Load proposal manifest and paths to artifacts. proposal_id may be 'latest'."""
+    resolved = resolve_proposal_id(proposal_id, root)
+    if not resolved:
+        return None
+    prop_dir = get_proposals_dir(root) / resolved
     if not prop_dir.exists() or not prop_dir.is_dir():
         return None
     m = prop_dir / "manifest.json"

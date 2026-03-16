@@ -102,6 +102,13 @@ def load_template(
                 data["compatibility_note"] = None
             if "migration_hints" not in data:
                 data["migration_hints"] = []
+            # M22E-F3: pass through optional typed parameters (list of {name, type, required?, default?, description?})
+            if "parameters" not in data:
+                data["parameters"] = []
+            elif isinstance(data["parameters"], list):
+                data["parameters"] = [p if isinstance(p, dict) else {} for p in data["parameters"]]
+            else:
+                data["parameters"] = []
             workflow_id = (data.get("workflow_id") or "").strip() or "ops_reporting_workspace"
             if workflow_id not in VALID_WORKFLOW_IDS:
                 workflow_id = "ops_reporting_workspace"
@@ -170,3 +177,89 @@ def template_artifact_order_and_filenames(template: dict[str, Any]) -> list[tupl
         if key in ARTIFACT_TO_FILENAME:
             out.append((key, ARTIFACT_TO_FILENAME[key]))
     return out
+
+
+# ----- M22E-F3: Export / Import -----
+
+def _export_payload(template: dict[str, Any]) -> dict[str, Any]:
+    """Build exportable dict (id, version, description, workflow_id, artifacts, versioning, parameters)."""
+    return {
+        "id": template.get("id"),
+        "name": template.get("name"),
+        "description": template.get("description"),
+        "workflow_id": template.get("workflow_id"),
+        "artifacts": list(template.get("artifacts") or []),
+        "version": template.get("version"),
+        "deprecated": template.get("deprecated", False),
+        "compatibility_note": template.get("compatibility_note"),
+        "migration_hints": list(template.get("migration_hints") or []),
+        "parameters": list(template.get("parameters") or []),
+        "wording_hints": template.get("wording_hints"),
+    }
+
+
+def export_template(
+    template_id: str,
+    out_path: Path | str,
+    repo_root: Path | str | None = None,
+) -> Path:
+    """Export a registered template to a local .tmpl.json file. Returns path written."""
+    t = load_template(template_id, repo_root=repo_root)
+    path = Path(out_path).resolve()
+    if path.suffix.lower() not in (".json", ".tmpl.json"):
+        path = path.parent / (path.name.rstrip(".tmpl") + ".tmpl.json")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    import json
+    path.write_text(json.dumps(_export_payload(t), indent=2), encoding="utf-8")
+    return path
+
+
+def import_template_from_file(
+    file_path: Path | str,
+    overwrite: bool = False,
+    as_id: str | None = None,
+    repo_root: Path | str | None = None,
+) -> dict[str, Any]:
+    """
+    Import a template from a local file (.tmpl.json or .yaml/.json). Validates before registration.
+    If overwrite=False and template id already exists, raises ValueError. If as_id is set, use that id.
+    Returns the loaded template dict after writing to templates dir.
+    """
+    from workflow_dataset.templates.validation import validate_template
+    path = Path(file_path).resolve()
+    if not path.exists() or not path.is_file():
+        raise FileNotFoundError(f"Template file not found: {path}")
+    raw = path.read_text(encoding="utf-8")
+    if path.suffix.lower() in (".json", ".tmpl.json"):
+        import json
+        data = json.loads(raw)
+    else:
+        try:
+            import yaml
+            data = yaml.safe_load(raw) or {}
+        except Exception:
+            import json
+            data = json.loads(raw) if raw.strip().startswith("{") else {}
+    data = dict(data)
+    tid = (as_id or data.get("id") or "").strip()
+    if not tid:
+        raise ValueError("Template has no id and --as-id not provided")
+    tid = _safe_id(tid)
+    data["id"] = tid
+    result = validate_template(data, repo_root=repo_root)
+    if not result.get("valid"):
+        raise ValueError(
+            "Template validation failed: " + "; ".join(result.get("errors", ["invalid"]))
+        )
+    base = _templates_path(repo_root)
+    base.mkdir(parents=True, exist_ok=True)
+    dest = base / f"{tid}.json"
+    if dest.exists() and not overwrite and not as_id:
+        raise ValueError(
+            f"Template id '{tid}' already exists. Use --overwrite to replace or --as-id <new_id> to import under a new id."
+        )
+    if dest.exists() and not overwrite and as_id:
+        raise ValueError(f"Template id '{as_id}' already exists. Use --overwrite to replace.")
+    import json
+    dest.write_text(json.dumps(_export_payload(data), indent=2), encoding="utf-8")
+    return load_template(tid, repo_root=repo_root)

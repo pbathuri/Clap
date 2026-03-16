@@ -1,5 +1,6 @@
 """
 M23A: Chain run manifest and state persistence. One run = one directory with run_manifest.json.
+M23A-F6: Eval-ready metadata: chain_template_id, variant_id, final_artifacts, duration_seconds.
 """
 
 from __future__ import annotations
@@ -13,6 +14,33 @@ from workflow_dataset.utils.dates import utc_now_iso
 
 RUN_MANIFEST_FILENAME = "run_manifest.json"
 STEP_RESULTS_DIR = "steps"
+
+
+def _duration_seconds(started_at: str | None, ended_at: str | None) -> float | None:
+    """Parse ISO started_at/ended_at and return duration in seconds, or None if unparseable."""
+    if not started_at or not ended_at:
+        return None
+    try:
+        from datetime import datetime, timezone
+        start = datetime.fromisoformat(started_at.replace("Z", "+00:00"))
+        end = datetime.fromisoformat(ended_at.replace("Z", "+00:00"))
+        if start.tzinfo is None:
+            start = start.replace(tzinfo=timezone.utc)
+        if end.tzinfo is None:
+            end = end.replace(tzinfo=timezone.utc)
+        return max(0.0, (end - start).total_seconds())
+    except Exception:
+        return None
+
+
+def _final_artifacts_from_step_results(step_results: list[dict[str, Any]]) -> list[str]:
+    """Flatten all output_paths from step_results into a single list (eval-consumable)."""
+    out: list[str] = []
+    for s in step_results or []:
+        for p in s.get("output_paths") or []:
+            if p and p not in out:
+                out.append(p)
+    return out
 
 
 def get_run_dir(run_id: str, repo_root: Path | str | None = None, create: bool = False) -> Path:
@@ -59,7 +87,9 @@ def save_run_manifest(
     failure_summary: str | None = None,
     repo_root: Path | str | None = None,
 ) -> Path:
-    """Write run_manifest.json for this run. step_results: list of {step_index, step_id, status, started_at, ended_at, output_paths, error}."""
+    """Write run_manifest.json for this run. step_results: list of {step_index, step_id, status, started_at, ended_at, output_paths, error}.
+    F6: Also writes eval-ready fields: chain_template_id, variant_id, final_artifacts, duration_seconds."""
+    ended = ended_at or utc_now_iso()
     d = run_dir_for(run_id, repo_root)
     path = d / RUN_MANIFEST_FILENAME
     payload: dict[str, Any] = {
@@ -69,8 +99,12 @@ def save_run_manifest(
         "status": status,
         "step_results": list(step_results),
         "started_at": started_at,
-        "ended_at": ended_at or utc_now_iso(),
+        "ended_at": ended,
         "failure_summary": failure_summary,
+        "chain_template_id": chain_id,
+        "variant_id": variant_label or "",
+        "final_artifacts": _final_artifacts_from_step_results(step_results),
+        "duration_seconds": _duration_seconds(started_at, ended),
     }
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return path

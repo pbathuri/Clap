@@ -5,7 +5,7 @@
 | File | Changes |
 |------|--------|
 | `src/workflow_dataset/templates/registry.py` | Defaults for `version`, `deprecated`, `compatibility_note`, `migration_hints` on load; list_templates includes these keys. |
-| `src/workflow_dataset/cli.py` | `templates list` has `--show-status`; `templates show` prints version/deprecated/compatibility_note/migration_hints; added `templates validate --id` and `templates report --id`. |
+| `src/workflow_dataset/cli.py` | `templates list` has `--show-status` (shows valid/valid_with_warning/deprecated/invalid per template); `templates show` prints version/deprecated/compatibility_note/migration_hints; `templates validate --id` and `templates report --id`; `templates report` has `--output`/`-o` to write report to file. |
 | `src/workflow_dataset/templates/__init__.py` | Exported `validate_template`, `template_validation_report`, `get_template_status`. |
 | `data/local/templates/ops_reporting_core.yaml` | Added `version: "1.0"`. |
 | `data/local/templates/weekly_plus_stakeholder.yaml` | Added `version: "1.0"`. |
@@ -113,13 +113,14 @@ Invalid workflow_id or artifact:
 ## 7. Tests run
 
 ```bash
-cd workflow-llm-dataset && python3 -m pytest tests/test_templates.py -v
+cd workflow-llm-dataset && PYTHONPATH=src python3 -m pytest tests/test_templates.py -v
 ```
 
+**Result (typical):**
 - **9 passed**: validate_template (valid dict, invalid workflow, invalid artifact, deprecated), get_template_status, template_validation_report (string + not found), validate real template if present, load_template versioning defaults.
 - **3 skipped** (when `pyyaml` not installed): CLI help tests for `templates validate`, `templates report`, `templates list --show-status`.
 
-With `pyyaml` installed, all 12 pass.
+With full project deps (typer, pyyaml, etc.) and `PYTHONPATH=src`, all 12 can pass; CLI commands require the full environment.
 
 ## 8. Remaining weaknesses (this pane only)
 

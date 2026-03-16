@@ -177,6 +177,29 @@ def test_compare_runs_missing() -> None:
     assert out.get("error")
 
 
+def test_compare_runs_resolve_latest_previous(tmp_path: Path) -> None:
+    """compare-runs with --run previous --run latest resolves aliases via list_runs (latest=first, previous=second)."""
+    from workflow_dataset.eval.board import compare_runs, resolve_run_id
+    from workflow_dataset.eval.config import get_runs_dir
+    from workflow_dataset.eval.scoring import score_run
+    get_runs_dir(tmp_path).mkdir(parents=True, exist_ok=True)
+    for rid, ts in [("r_old", "2026-01-14T10:00:00Z"), ("r_new", "2026-01-15T10:00:00Z")]:
+        run_path = tmp_path / "runs" / rid
+        run_path.mkdir(parents=True)
+        (run_path / "c1").mkdir()
+        (run_path / "c1" / "weekly_status.md").write_text("**Summary** Ok. **Blockers** X.", encoding="utf-8")
+        manifest = {"run_id": rid, "suite": "test", "timestamp": ts, "cases": [{"case_id": "c1", "workflow": "weekly_status", "output_dir": str(run_path / "c1")}], "run_path": str(run_path)}
+        (run_path / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+        score_run(run_path)
+    latest = resolve_run_id("latest", tmp_path)
+    previous = resolve_run_id("previous", tmp_path)
+    assert latest == "r_new"
+    assert previous == "r_old"
+    out = compare_runs(previous, latest, root=tmp_path)
+    assert out["run_a"] == "r_old" and out["run_b"] == "r_new"
+    assert "recommendation" in out
+
+
 def test_compare_runs_two_fake_runs(tmp_path: Path) -> None:
     from workflow_dataset.eval.board import compare_runs
     from workflow_dataset.eval.config import get_eval_root
@@ -269,7 +292,8 @@ def test_save_operator_rating_and_score_run_case(tmp_path: Path) -> None:
     assert (case_dir / "operator_rating.json").exists()
     case_spec = {"case_id": "c1", "workflow": "weekly_status"}
     out = score_run_case(case_dir, case_spec)
-    assert "artifacts" in out and "weekly_status" in out["artifacts"]
+    assert "artifacts" in out and "operator_rating" in out
+    assert any(k.endswith(".md") for k in out["artifacts"])
     assert out.get("operator_rating") == {"overall": 4, "notes": "good"}
 
 
