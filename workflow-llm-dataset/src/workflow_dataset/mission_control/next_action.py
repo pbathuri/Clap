@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any
 
-ACTIONS = ("build", "benchmark", "cohort_test", "promote", "hold", "rollback")
+ACTIONS = ("build", "benchmark", "cohort_test", "promote", "hold", "rollback", "replay_task")
 
 
 def recommend_next_action(state: dict[str, Any]) -> dict[str, Any]:
@@ -73,6 +73,16 @@ def recommend_next_action(state: dict[str, Any]) -> dict[str, Any]:
             "action": "build",
             "rationale": "Workspaces need review and package.",
             "detail": f"Unreviewed: {unreviewed}",
+        }
+
+    # Desktop bridge: task demos available (M23H)
+    cg = state.get("coordination_graph_summary") or {}
+    tasks_count = cg.get("tasks_count", 0)
+    if tasks_count > 0:
+        return {
+            "action": "replay_task",
+            "rationale": "Task demos available; run replay (simulate) or add approvals for gated real execution.",
+            "detail": "adapters replay <task_id> (simulate); adapters run with approvals in data/local/capability_discovery/approvals.yaml",
         }
 
     # Default: hold and review

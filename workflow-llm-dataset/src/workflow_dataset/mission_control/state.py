@@ -115,4 +115,147 @@ def get_mission_control_state(repo_root: Path | str | None = None) -> dict[str, 
     except Exception as e:
         out["incubator_state"]["error"] = str(e)
 
+    # 5. Coordination graph (advisory; M23F-F1) — task demos → graph summary
+    try:
+        from workflow_dataset.task_demos.store import list_tasks, get_task
+        from workflow_dataset.coordination_graph.build import task_definition_to_graph
+        ids = list_tasks(root)
+        total_nodes = total_edges = 0
+        for tid in ids:
+            task = get_task(tid, root)
+            if task:
+                g = task_definition_to_graph(task)
+                total_nodes += len(g.nodes)
+                total_edges += len(g.edges)
+        out["coordination_graph_summary"] = {
+            "tasks_count": len(ids),
+            "total_nodes": total_nodes,
+            "total_edges": total_edges,
+        }
+        out["local_sources"]["task_demonstrations"] = str((root / "data/local/task_demonstrations").resolve())
+    except Exception as e:
+        out["coordination_graph_summary"] = {"error": str(e)}
+
+    # 6. Desktop bridge (M23H) — adapters, approvals, task demos, coordination
+    try:
+        from workflow_dataset.desktop_adapters.registry import list_adapters
+        from workflow_dataset.capability_discovery.approval_registry import get_registry_path, load_approval_registry
+        adapters = list_adapters()
+        adapter_ids = [a.adapter_id for a in adapters]
+        reg_path = get_registry_path(root)
+        registry = load_approval_registry(root) if reg_path.exists() and reg_path.is_file() else None
+        cg = out.get("coordination_graph_summary") or {}
+        out["desktop_bridge"] = {
+            "adapters_count": len(adapter_ids),
+            "adapter_ids": adapter_ids,
+            "approvals_path": str(reg_path),
+            "approvals_file_exists": reg_path.exists() and reg_path.is_file(),
+            "approved_paths_count": len(registry.approved_paths) if registry else 0,
+            "approved_action_scopes_count": len(registry.approved_action_scopes) if registry else 0,
+            "tasks_count": cg.get("tasks_count", 0),
+            "coordination_nodes": cg.get("total_nodes", 0),
+            "coordination_edges": cg.get("total_edges", 0),
+        }
+        out["local_sources"]["approval_registry"] = str(reg_path)
+    except Exception as e:
+        out["desktop_bridge"] = {"error": str(e)}
+
+    # 7. Job packs (M23J) — personal reusable jobs
+    try:
+        from workflow_dataset.job_packs import list_job_packs, job_packs_report
+        ids = list_job_packs(root)
+        report = job_packs_report(root)
+        out["job_packs"] = {
+            "total": len(ids),
+            "job_pack_ids": ids,
+            "simulate_only_count": len(report.get("simulate_only_jobs", [])),
+            "trusted_for_real_count": len(report.get("trusted_for_real_jobs", [])),
+            "approval_blocked_count": len(report.get("approval_blocked_jobs", [])),
+            "recent_successful_count": len(report.get("recent_successful", [])),
+        }
+        out["local_sources"]["job_packs"] = str((root / "data/local/job_packs").resolve())
+    except Exception as e:
+        out["job_packs"] = {"error": str(e)}
+
+    # 8. Copilot (M23K) — recommended jobs, routines, reminders, recent plan runs
+    try:
+        from workflow_dataset.copilot.recommendations import recommend_jobs
+        from workflow_dataset.copilot.routines import list_routines
+        from workflow_dataset.copilot.run import list_plan_runs
+        from workflow_dataset.copilot.reminders import list_reminders
+        recs = recommend_jobs(root, limit=15)
+        routines = list_routines(root)
+        runs = list_plan_runs(limit=5, repo_root=root)
+        reminders = list_reminders(root)
+        blocked = [r["job_pack_id"] for r in recs if r.get("blocking_issues")]
+        out["copilot"] = {
+            "recommended_jobs_count": len(recs),
+            "recommended_job_ids": [r["job_pack_id"] for r in recs][:10],
+            "blocked_jobs_count": len(blocked),
+            "routines_count": len(routines),
+            "routine_ids": routines[:10],
+            "recent_plan_runs_count": len(runs),
+            "reminders_count": len(reminders),
+            "upcoming_reminders": reminders[:5],
+            "next_copilot_action": "run copilot recommend" if recs else "run jobs seed then copilot recommend",
+        }
+        out["local_sources"]["copilot"] = str((root / "data/local/copilot").resolve())
+    except Exception as e:
+        out["copilot"] = {"error": str(e)}
+
+    # 9. Work context (M23L) — context snapshot, context-aware recommendations, drift
+    try:
+        from workflow_dataset.context.snapshot import load_snapshot
+        from workflow_dataset.context.work_state import build_work_state
+        from workflow_dataset.copilot.recommendations import recommend_jobs
+        from workflow_dataset.context.drift import load_latest_and_previous, compare_snapshots
+        latest_ws = load_snapshot("latest", root)
+        if latest_ws is None:
+            latest_ws = build_work_state(root)
+        recs_ctx = recommend_jobs(root, limit=15, context_snapshot=latest_ws)
+        blocked_ctx = [r["job_pack_id"] for r in recs_ctx if r.get("blocking_issues")]
+        latest_id = getattr(latest_ws, "snapshot_id", "") or ""
+        drift_summary: list[str] = []
+        newly_recommendable: list[str] = []
+        prev_ws = load_snapshot("previous", root)
+        if prev_ws and latest_ws:
+            drift = compare_snapshots(prev_ws, latest_ws)
+            drift_summary = drift.summary[:5]
+            newly_recommendable = drift.newly_recommendable_jobs[:10]
+        out["work_context"] = {
+            "latest_snapshot_id": latest_id,
+            "context_recommendations_count": len(recs_ctx),
+            "context_blocked_count": len(blocked_ctx),
+            "newly_recommendable_jobs": newly_recommendable,
+            "reminders_due_count": len(latest_ws.reminders_due_sample) if latest_ws else 0,
+            "recent_state_changes": drift_summary,
+            "next_recommended_action": "copilot recommend --context latest" if recs_ctx else "context refresh then copilot recommend",
+        }
+        out["local_sources"]["context"] = str((root / "data/local/context").resolve())
+    except Exception as e:
+        out["work_context"] = {"error": str(e)}
+
+    # 10. Corrections (M23M) — operator correction loop, proposed/applied/reverted, advisory review
+    try:
+        from workflow_dataset.corrections.store import list_corrections
+        from workflow_dataset.corrections.propose import propose_updates
+        from workflow_dataset.corrections.history import list_applied_updates, list_reverted_updates
+        from workflow_dataset.corrections.eval_bridge import advisory_review_for_corrections
+        corrections = list_corrections(root, limit=20)
+        proposed = propose_updates(root)
+        applied = list_applied_updates(limit=10, repo_root=root)
+        reverted = list_reverted_updates(limit=5, repo_root=root)
+        advisories = advisory_review_for_corrections(root, limit=50, min_count=2)
+        out["corrections"] = {
+            "recent_corrections_count": len(corrections),
+            "proposed_updates_count": len(proposed),
+            "applied_updates_count": len(applied),
+            "reverted_updates_count": len(reverted),
+            "review_recommended": [a.get("job_or_routine_id") for a in advisories[:5]],
+            "next_corrections_action": "corrections propose-updates" if proposed else ("corrections report" if corrections else ""),
+        }
+        out["local_sources"]["corrections"] = str((root / "data/local/corrections").resolve())
+    except Exception as e:
+        out["corrections"] = {"error": str(e)}
+
     return out

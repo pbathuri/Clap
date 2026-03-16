@@ -190,3 +190,36 @@ After the narrow pilot has graduated, you can run a **broader controlled pilot c
 - **Outcome rubric:** continue_within_scope | expand_adjacent | hold_refine | rollback (see cohort report and **docs/BROADER_PILOT_RUNBOOK.md**).
 
 Full runbook: **docs/BROADER_PILOT_RUNBOOK.md** (preflight, session flow, feedback and artifact expectations, evaluation cadence).
+
+---
+
+## 10. Desktop bridge (M23H)
+
+The desktop bridge exposes **adapters** (file_ops, notes_document, browser_open, app_launch), **capability discovery**, **approvals**, **task demos**, and **coordination graph** in a local-first, simulate-first, approval-gated way.
+
+### Verifying the desktop bridge
+
+Run these from the project root (or with `--repo-root <path>` where needed):
+
+- **Adapters:** `workflow-dataset adapters list` — lists adapters with simulate/real_execution flags.
+- **Capabilities:** `workflow-dataset capabilities scan` — adapter count, approved_paths/apps/scopes (from registry if present).
+- **Approvals:** `workflow-dataset approvals list` — path to `data/local/capability_discovery/approvals.yaml` and current approved_paths / approved_action_scopes.
+- **Tasks:** `workflow-dataset tasks list` — task demo IDs; `workflow-dataset tasks show <id>` for detail.
+- **Graph:** `workflow-dataset graph summary` — coordination graph summary (tasks, nodes, edges).
+- **Mission control:** `workflow-dataset mission-control` (or dashboard) — includes **[Desktop bridge]** (adapters, approvals present/missing, task demos, graph) and may recommend **replay_task** when task demos exist.
+
+### What is simulate-only vs real execution
+
+- **Simulate-only (no real execution):** `browser_open`, `app_launch`; task replay (`tasks replay`) uses simulate only. Safe to run without approvals.
+- **Real execution (gated):** `file_ops` (inspect_path, list_directory, snapshot_to_sandbox) and `notes_document` (read_text, summarize_text_for_workflow, propose_status_from_notes). These are read-only or copy-to-sandbox only. They are **gated** when an approval registry exists.
+
+### Enabling safe approved real execution
+
+1. **No registry:** If `data/local/capability_discovery/approvals.yaml` does not exist, all real-execution actions above are allowed (backward compatible).
+2. **With registry:** Create or edit `data/local/capability_discovery/approvals.yaml`:
+   - **approved_paths:** List path prefixes allowed for path-using actions (e.g. `/tmp/safe`, `data/local`). Empty = no path restriction.
+   - **approved_action_scopes:** List `{adapter_id, action_id, executable: true}` for actions you allow. If this list is non-empty, only listed actions can run; others are refused with a clear message.
+3. **Run real actions:** `workflow-dataset adapters run --id file_ops --action inspect_path --param path=/allowed/path [--repo-root .]`. If approval is missing, the CLI prints a refusal message (e.g. "Path not in approved_paths" or "Action not in approved_action_scopes").
+4. **Sandbox:** `snapshot_to_sandbox` always writes under the sandbox root (default `data/local/desktop_adapters/sandbox`); it does not mutate the source path.
+
+See **docs/M23H_DESKTOP_BRIDGE_OPERATOR.md** for the full operator smoke and approval reference.
