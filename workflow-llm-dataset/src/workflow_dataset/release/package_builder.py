@@ -94,6 +94,11 @@ def build_package(
         "approved_artifacts": approved,
         "artifact_count": len(copied),
     }
+    if inv and inv.get("manifest"):
+        if inv["manifest"].get("template_id") is not None:
+            package_manifest["template_id"] = inv["manifest"]["template_id"]
+        if inv["manifest"].get("template_version") is not None:
+            package_manifest["template_version"] = inv["manifest"]["template_version"]
     if workspace_lane:
         package_manifest["lane"] = workspace_lane
     if profile and profile_dict:

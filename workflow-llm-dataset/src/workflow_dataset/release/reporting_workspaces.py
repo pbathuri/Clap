@@ -67,6 +67,8 @@ def get_workspace_inventory(workspace_path: str | Path) -> dict[str, Any] | None
         workflow = ws.parent.name
     artifacts = _artifact_list_from_manifest(manifest, ws)
     mtime = ws.stat().st_mtime if ws.exists() else 0
+    template_id = manifest.get("template_id") if manifest else None
+    template_version = manifest.get("template_version") if manifest else None
     return {
         "workspace_path": str(ws),
         "run_id": ws.name,
@@ -76,6 +78,8 @@ def get_workspace_inventory(workspace_path: str | Path) -> dict[str, Any] | None
         "grounding": grounding,
         "manifest": manifest,
         "mtime": mtime,
+        "template_id": template_id,
+        "template_version": template_version,
     }
 
 

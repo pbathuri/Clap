@@ -25,3 +25,34 @@
 - No assumption that the device has continuous internet access.
 - Inference and learning run on-device; optional sync is explicit and bounded.
 - All default configurations must keep user data on-device.
+
+---
+
+## M23B-F2: Edge tiers, support matrix, and compare
+
+Local deployment profiles (not hardware products): **dev_full**, **local_standard**, **constrained_edge**, **minimal_eval**.
+
+### Commands
+
+- `workflow-dataset edge profile --tier local_standard` — Profile summary for a tier (runtime, paths, workflow availability).
+- `workflow-dataset edge matrix` — Workflow support matrix (all tiers or `--tier X`); includes required/optional dependencies and degraded section.
+- `workflow-dataset edge compare --tier local_standard --tier-b constrained_edge` — Compare two tiers: workflow status diff, degraded workflows, path/dependency differences.
+- `workflow-dataset edge degraded-report [--tier X]` — Report why workflows are partially supported, what is missing, and what fallback is available.
+- `workflow-dataset edge package-report [--tier X]` — Packaging/readiness metadata for a tier (required/optional components, supported/degraded workflows, path and config assumptions). For operator handoff to deployment or appliance.
+- `workflow-dataset edge smoke-check --tier X [--workflow W]` — Lightweight smoke check: readiness plus optional workflow demo runs. Reports pass/fail/skipped and degraded or missing-dependency reasons. Use `--no-demo` for readiness-only.
+
+### Workflow support by tier
+
+| Tier               | Workflows       | LLM    |
+|--------------------|-----------------|--------|
+| dev_full           | All supported   | Required |
+| local_standard     | All supported   | Required |
+| constrained_edge   | Degraded        | Optional |
+| minimal_eval       | Unavailable     | None   |
+
+Degraded workflows: reason, missing functionality, and fallback are in the matrix and in `edge degraded-report`. All outputs are written under `data/local/edge/` (local and inspectable).
+
+### Operator guide and sample profiles
+
+- **[EDGE_OPERATOR_GUIDE.md](EDGE_OPERATOR_GUIDE.md)** — How to run each command, read degraded output, and interpret missing dependencies.
+- **[docs/edge/sample_profiles](edge/sample_profiles)** — Sample profile documents per tier (dev_full, local_standard, constrained_edge, minimal_eval) with example commands and outcomes.

@@ -128,6 +128,7 @@ Manifest score separation (per case in `run_manifest.json` after `score-run` and
 ```bash
 # Compare two runs (baseline vs newer): deltas, regressions, improvements, thresholds, recommendation
 workflow-dataset eval compare-runs <run_a_id> <run_b_id>
+workflow-dataset eval compare-runs --run previous --run latest
 workflow-dataset eval compare-runs <run_a_id> <run_b_id> --eval-root data/local/eval
 
 # E2: Compare latest run vs previous best (by total score); regressions and wins clearly shown

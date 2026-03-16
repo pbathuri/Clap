@@ -22,9 +22,11 @@ def resolve_run_id(run_id: str, repo_root: Path | str | None = None) -> str | No
 def failure_report_section(
     manifest: dict[str, Any],
     chain_definition: dict[str, Any] | None = None,
+    run_id: str | None = None,
 ) -> list[str]:
     """
-    Build failure report section: failing step, artifacts already produced, whether resume is possible.
+    Build failure report section: failing step, artifacts already produced, whether resume is possible,
+    and recommended next operator command(s).
     Returns list of lines (no trailing newline per line).
     """
     lines: list[str] = []
@@ -64,6 +66,12 @@ def failure_report_section(
     resumable = step_def.get("resumable", True)
     lines.append(f"- **Resume possible:** {'Yes' if resumable else 'No (step not resumable)'}")
     lines.append("")
+    # Recommended next operator command(s)
+    if run_id:
+        lines.append("- **Recommended next command(s):**")
+        lines.append(f"  - Retry failing step: `workflow-dataset chain retry-step --run {run_id} --step {step_id}`")
+        lines.append(f"  - Resume from next step: `workflow-dataset chain resume --run {run_id} --from-step {failing_index}`")
+        lines.append("")
     return lines
 
 
@@ -104,7 +112,7 @@ def chain_run_report(
         lines.append(f"**Failure summary:** {manifest['failure_summary']}")
         lines.append("")
     if include_failure_section and manifest.get("status") == "failed":
-        lines.extend(failure_report_section(manifest, chain_definition))
+        lines.extend(failure_report_section(manifest, chain_definition, run_id=resolved))
     steps = manifest.get("step_results") or []
     steps_def = (chain_definition or {}).get("steps") or []
     lines.append("## Steps")

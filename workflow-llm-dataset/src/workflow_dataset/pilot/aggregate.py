@@ -64,6 +64,7 @@ def aggregate_sessions(
             "blocking_count": len(s.blocking_issues),
             "warnings_count": len(s.warnings),
             "disposition": s.disposition,
+            "template_id": s.extra.get("template_id") if isinstance(s.extra, dict) else None,
         })
         fb = load_feedback(s.session_id, pilot_dir)
         if fb:

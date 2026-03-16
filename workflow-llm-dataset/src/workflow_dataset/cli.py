@@ -3254,26 +3254,136 @@ def edge_compare(
             console.print(f"  {w.get('workflow')}: {ta}={w.get(ta)} → {tb}={w.get(tb)}")
 
 
+@edge_group.command("smoke-check")
+def edge_smoke_check(
+    tier: str = typer.Option("local_standard", "--tier", "-t", help="Tier to smoke-check"),
+    workflow: list[str] = typer.Option([], "--workflow", "-w", help="Workflow(s) to test (default: weekly_status, status_action_bundle)"),
+    config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
+    output: str = typer.Option("", "--output", "-o", help="Report path (default: data/local/edge/smoke_check_report.md)"),
+    no_demo: bool = typer.Option(False, "--no-demo", help="Only run readiness checks, skip workflow demo runs"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Run lightweight smoke check for a tier: readiness + optional workflow demo runs. Reports pass/fail/skipped."""
+    from workflow_dataset.edge.smoke import run_smoke_check
+    from workflow_dataset.edge.report import generate_smoke_check_report
+    root = Path(repo_root) if repo_root else None
+    out_path = Path(output) if output else None
+    workflows = [w.strip() for w in workflow if w.strip()] or None
+    result = run_smoke_check(
+        tier=tier.strip(),
+        workflows=workflows,
+        repo_root=root,
+        config_path=config,
+        run_demo=not no_demo,
+    )
+    if result.get("error"):
+        console.print(f"[red]{result['error']}[/red]")
+        raise typer.Exit(1)
+    path = generate_smoke_check_report(smoke_result=result, output_path=out_path, repo_root=root)
+    console.print(f"[green]Smoke check report: {path}[/green]")
+    console.print(f"  Overall: {'PASS' if result.get('overall_pass') else 'FAIL'}  passed={result.get('passed')}  failed={result.get('failed')}  skipped={result.get('skipped')}")
+    for r in result.get("workflow_results") or []:
+        st = r.get("status", "?")
+        color = "green" if st == "pass" else "red" if st == "fail" else "dim"
+        console.print(f"  [bold]{r.get('workflow')}[/bold]: [{color}]{st}[/{color}] — {r.get('message', '')[:50]}")
+
+
+@edge_group.command("degraded-report")
+def edge_degraded_report(
+    tier: str = typer.Option("", "--tier", "-t", help="Tier (omit for all tiers with degraded workflows)"),
+    output: str = typer.Option("", "--output", "-o", help="Output path (default: data/local/edge/degraded_workflows_report.md)"),
+    format: str = typer.Option("markdown", "--format", "-f", help="markdown | json"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Report degraded workflows by tier: why partial, what is missing, what fallback is available."""
+    from workflow_dataset.edge.report import generate_degraded_report
+    root = Path(repo_root) if repo_root else None
+    out_path = Path(output) if output else None
+    tier_opt = tier.strip() or None
+    path = generate_degraded_report(output_path=out_path, repo_root=root, tier=tier_opt, format=format)
+    console.print(f"[green]Degraded report: {path}[/green]")
+
+
 @edge_group.command("package-report")
 def edge_package_report(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    output: str = typer.Option("", "--output", "-o", help="Output path (default: data/local/edge/edge_package_report.md)"),
+    tier: str = typer.Option("", "--tier", "-t", help="Tier for tier-scoped packaging metadata (e.g. local_standard)"),
+    output: str = typer.Option("", "--output", "-o", help="Output path (default: data/local/edge/edge_package_report.md or _<tier>.md)"),
+    format: str = typer.Option("markdown", "--format", "-f", help="markdown | json"),
     repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
 ) -> None:
-    """Generate edge packaging metadata (config, workflow availability, local model/runtime deps)."""
+    """Generate edge packaging/readiness metadata for deployment or appliance. Use --tier for tier-scoped report."""
     from workflow_dataset.edge.report import generate_package_report
     root = Path(repo_root) if repo_root else None
     out_path = Path(output) if output else None
-    path = generate_package_report(output_path=out_path, repo_root=root, config_path=config)
+    tier_opt = tier.strip() or None
+    path = generate_package_report(output_path=out_path, repo_root=root, config_path=config, tier=tier_opt, format=format)
     console.print(f"[green]Edge package report: {path}[/green]")
+
+
+@edge_group.command("check-now")
+def edge_check_now(
+    config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Run readiness checks, record a snapshot to history, and optionally suggest drift-report. Operator-started; no daemon."""
+    from workflow_dataset.edge.history import record_readiness_snapshot
+    root = Path(repo_root) if repo_root else None
+    snapshot = record_readiness_snapshot(repo_root=root, config_path=config)
+    path = snapshot.get("_path") or snapshot.get("_latest_path", "")
+    console.print(f"[green]Snapshot recorded: {path}[/green]")
+    console.print(f"  ready: {snapshot.get('ready')}  passed: {snapshot.get('summary', {}).get('passed')}  failed_required: {snapshot.get('summary', {}).get('failed_required')}")
+    console.print("  Next: run [bold]workflow-dataset edge drift-report[/bold] to compare with previous run.")
+
+
+@edge_group.command("drift-report")
+def edge_drift_report(
+    config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
+    output: str = typer.Option("", "--output", "-o", help="Output path (default: data/local/edge/readiness_drift_report.md)"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Compare current readiness to last recorded snapshot; write drift report (what got worse, improved, next command)."""
+    from workflow_dataset.edge.drift import generate_drift_report
+    root = Path(repo_root) if repo_root else None
+    out_path = Path(output) if output else None
+    path = generate_drift_report(output_path=out_path, repo_root=root, config_path=config)
+    console.print(f"[green]Drift report: {path}[/green]")
+
+
+@edge_group.command("schedule-checks")
+def edge_schedule_checks(
+    interval_hours: float = typer.Option(24.0, "--interval-hours", help="Suggested interval in hours (e.g. 24); no daemon — use cron to run check-now"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Write a schedule marker (data/local/edge/schedule.json) with interval and instructions. No daemon; use cron to run 'workflow-dataset edge check-now'."""
+    import json
+    root = Path(repo_root) if repo_root else None
+    if root is None:
+        try:
+            from workflow_dataset.path_utils import get_repo_root
+            root = Path(get_repo_root())
+        except Exception:
+            root = Path.cwd()
+    out_dir = root / "data" / "local" / "edge"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    schedule_path = out_dir / "schedule.json"
+    payload = {
+        "interval_hours": interval_hours,
+        "note": "Operator-controlled. No daemon. Run: workflow-dataset edge check-now (e.g. via cron).",
+    }
+    schedule_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    console.print(f"[green]Schedule marker: {schedule_path}[/green]")
+    console.print(f"  interval_hours: {interval_hours}  — run [bold]workflow-dataset edge check-now[/bold] from cron at this interval.")
 
 
 @templates_group.command("list")
 def templates_list(
     repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+    show_status: bool = typer.Option(False, "--show-status", help="Show validation status per template (valid / valid_with_warning / deprecated / invalid)"),
 ) -> None:
-    """List workflow templates (id, name, workflow_id, artifacts)."""
+    """List workflow templates (id, name, workflow_id, artifacts). Use --show-status to include validation status."""
     from workflow_dataset.templates.registry import list_templates
+    from workflow_dataset.templates.validation import get_template_status, STATUS_VALID, STATUS_VALID_WITH_WARNING, STATUS_DEPRECATED, STATUS_INVALID
     root = Path(repo_root) if repo_root else None
     items = list_templates(repo_root=root)
     if not items:
@@ -3283,6 +3393,16 @@ def templates_list(
     for t in items:
         name = t.get("name") or t.get("id")
         console.print(f"  [bold]{t.get('id')}[/bold]  {name}")
+        if show_status:
+            status = get_template_status(t, repo_root=root)
+            if status == STATUS_VALID:
+                console.print(f"    [green]{status}[/green]")
+            elif status == STATUS_VALID_WITH_WARNING:
+                console.print(f"    [yellow]{status}[/yellow]")
+            elif status == STATUS_DEPRECATED:
+                console.print(f"    [yellow]{status}[/yellow]")
+            else:
+                console.print(f"    [red]{status}[/red]")
         console.print(f"    workflow={t.get('workflow_id')}  artifacts={t.get('artifacts', [])}")
         if t.get("description"):
             console.print(f"    [dim]{t['description']}[/dim]")
@@ -3352,12 +3472,106 @@ def templates_validate(
 def templates_report(
     id: str = typer.Option(..., "--id", "-i", help="Template id"),
     repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+    output: str = typer.Option("", "--output", "-o", help="Write report to file (default: stdout)"),
 ) -> None:
     """Generate template validation report (checks, status, migration hints)."""
     from workflow_dataset.templates.validation import template_validation_report
     root = Path(repo_root) if repo_root else None
     report = template_validation_report(id.strip(), repo_root=root)
-    console.print(report)
+    if output:
+        Path(output).write_text(report, encoding="utf-8")
+        console.print(f"[green]Report written: {output}[/green]")
+    else:
+        console.print(report)
+
+
+@templates_group.command("export")
+def templates_export(
+    id: str = typer.Option(..., "--id", "-i", help="Template id to export"),
+    out: str = typer.Option(..., "--out", "-o", help="Output path (.tmpl.json or .tmpl.yaml)"),
+    format: str = typer.Option("json", "--format", "-f", help="json | yaml"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Export a registered template to a portable file (.tmpl.json or .tmpl.yaml)."""
+    from workflow_dataset.templates.export_import import export_template
+    root = Path(repo_root) if repo_root else None
+    path = export_template(id.strip(), out, repo_root=root, format=format)
+    console.print(f"[green]Exported: {path}[/green]")
+
+
+@templates_group.command("import")
+def templates_import(
+    file: str = typer.Option(..., "--file", "-f", help="Path to .tmpl.json or .tmpl.yaml (or .json/.yaml)"),
+    id: str = typer.Option("", "--id", "-i", help="Override template id (default: use id from file)"),
+    overwrite: bool = typer.Option(False, "--overwrite", help="Replace existing template with same id"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Import a template from file. Validates before registration; use --overwrite to replace existing."""
+    from workflow_dataset.templates.export_import import import_template
+    root = Path(repo_root) if repo_root else None
+    try:
+        summary = import_template(file, repo_root=root, template_id=id.strip() or None, overwrite=overwrite)
+        console.print(f"[green]Imported: {summary.get('id')}[/green]  {summary.get('path')}")
+    except FileExistsError as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(1)
+    except ValueError as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(1)
+    except FileNotFoundError as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(1)
+
+
+@templates_group.command("usage")
+def templates_usage(
+    workspaces_root: str = typer.Option("data/local/workspaces", "--workspaces", "-w", help="Workspaces root to scan"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+    limit: int = typer.Option(100, "--limit", "-n", help="Max workspaces to scan"),
+) -> None:
+    """Show template usage: most-used templates and recent template-driven runs (from workspace manifests)."""
+    from workflow_dataset.templates.usage import template_usage_summary
+    root = Path(repo_root) if repo_root else None
+    data = template_usage_summary(workspaces_root=workspaces_root, repo_root=root, limit=limit)
+    counts = data.get("counts_by_template") or {}
+    recent = data.get("recent_runs") or []
+    console.print("[bold]Template usage[/bold]")
+    console.print(f"  Total runs scanned: {data.get('total_runs', 0)}")
+    console.print(f"  Template-driven runs: {data.get('total_template_runs', 0)}")
+    if counts:
+        console.print("\n[bold]Most-used templates[/bold]")
+        for tid, count in list(counts.items())[:15]:
+            console.print(f"  {tid}: {count} run(s)")
+    if recent:
+        console.print("\n[bold]Recent template-driven runs[/bold] (up to 10)")
+        for r in recent[:10]:
+            console.print(f"  [dim]{r.get('timestamp') or '—'}[/dim]  {r.get('template_id')}  {r.get('run_id')}  {r.get('workspace_path', '')}")
+    if not counts and not recent:
+        console.print("[dim]No template-driven workspaces found. Use release demo --template <id> --save-artifact to create runs.[/dim]")
+
+
+@templates_group.command("test")
+def templates_test(
+    id: str = typer.Option(..., "--id", "-i", help="Template id to run harness for"),
+    workspace: str = typer.Option("", "--workspace", "-w", help="Path to workspace dir to validate (optional)"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Run template harness: validate expected artifact inventory/order and manifest. Use --workspace to validate a dir."""
+    from workflow_dataset.templates.harness import run_template_harness
+    root = Path(repo_root) if repo_root else None
+    ws = workspace.strip() or None
+    result = run_template_harness(id.strip(), workspace_path=ws, repo_root=root)
+    if result.passed:
+        console.print(f"[green]PASS[/green]  {result.template_id}")
+        console.print(f"  Expected artifacts: {result.expected_artifacts}")
+        raise typer.Exit(0)
+    console.print(f"[red]FAIL[/red]  {result.template_id}")
+    for e in result.errors:
+        console.print(f"  [red]{e}[/red]")
+    for e in result.manifest_errors:
+        console.print(f"  [yellow]{e}[/yellow]")
+    console.print(result.to_message())
+    raise typer.Exit(1)
 
 
 @intake_group.command("add")
@@ -3725,6 +3939,12 @@ def release_demo(
         "-t",
         help="Template id (e.g. ops_reporting_core). Overrides --workflow and controls artifact set/order when saving.",
     ),
+    param: list[str] = typer.Option(
+        [],
+        "--param",
+        "-p",
+        help="Template parameter key=value (e.g. --param owner=Alex --param label=sprint_12). Only when template defines parameters.",
+    ),
 ) -> None:
     """Ops reporting suite: run demo with release preset. --workflow: weekly_status (default), status_action_bundle, stakeholder_update_bundle, meeting_brief_bundle, or ops_reporting_workspace (multi-artifact workspace). Use --retrieval and --context-file/--context-text for grounding; --save-artifact to write to sandbox. See docs/FOUNDER_DEMO_FLOW.md."""
     from workflow_dataset.feedback.trial_events import record_trial_event
@@ -3770,13 +3990,23 @@ def release_demo(
         save_artifact = True
         console.print(f"[dim]Rerun from existing workspace (unchanged): {ws_path}[/dim]")
     template_def: dict[str, Any] | None = None
+    template_params: dict[str, Any] = {}
     if template and template.strip():
         try:
             from workflow_dataset.templates.registry import load_template
             template_def = load_template(template.strip(), _repo_root())
             workflow = template_def.get("workflow_id") or workflow
+            if param:
+                from workflow_dataset.templates.validation import resolve_template_params
+                template_params = resolve_template_params(template_def, param)
         except FileNotFoundError:
             console.print(f"[yellow]Template not found: {template}, using --workflow[/yellow]")
+        except ValueError as e:
+            console.print(f"[red]{e}[/red]")
+            raise typer.Exit(1)
+    elif param:
+        console.print("[red]--param requires --template[/red]")
+        raise typer.Exit(1)
     task_context = _load_task_context(
         context_file.strip() or None, context_text.strip() or None, _resolve_path
     )
@@ -4270,6 +4500,8 @@ def release_demo(
                 "intake_used": bool(intake and intake.strip()),
                 "intake_name": intake.strip() if (intake and intake.strip()) else None,
                 "template_id": template_def.get("id") if template_def else None,
+                "template_version": template_def.get("version") if template_def else None,
+                "template_params": template_params if template_params else None,
                 "retrieval_relevance": run_relevance,
                 "retrieval_relevance_weak_or_mixed": retrieval_relevance_weak_or_mixed,
                 "schema_validation": {k: {"valid": v["valid"], "missing_required": v.get("missing_required", [])} for k, v in schema_validation.items()},
@@ -4737,6 +4969,42 @@ chain_group = typer.Typer(
 app.add_typer(chain_group, name="chain")
 
 
+chain_examples_group = typer.Typer(help="Bundled example chains: list and install into chains dir.")
+chain_group.add_typer(chain_examples_group, name="examples")
+
+
+@chain_examples_group.command("list")
+def chain_examples_list() -> None:
+    """List bundled example chain definitions (id, description, step count)."""
+    from workflow_dataset.chain_lab.examples import list_example_chains
+    examples = list_example_chains()
+    if not examples:
+        console.print("[dim]No bundled examples found.[/dim]")
+        raise typer.Exit(0)
+    for ex in examples:
+        console.print(f"  [bold]{ex.get('id', '')}[/bold]  steps={ex.get('step_count', 0)}")
+        if ex.get("description"):
+            console.print(f"    [dim]{ex['description'][:120]}[/dim]")
+    console.print("[dim]Install: workflow-dataset chain examples install <id>[/dim]")
+
+
+@chain_examples_group.command("install")
+def chain_examples_install(
+    id: str = typer.Argument(..., help="Example chain id to install"),
+    repo_root: str = typer.Option("", "--repo-root"),
+) -> None:
+    """Install a bundled example chain into data/local/chain_lab/chains/ (overwrites if present)."""
+    from workflow_dataset.chain_lab.examples import install_example
+    root = Path(repo_root) if repo_root else None
+    try:
+        path = install_example(id.strip(), repo_root=root)
+        console.print(f"[green]Installed: {path}[/green]")
+        console.print(f"[dim]Run: workflow-dataset chain run {id.strip()}[/dim]")
+    except FileNotFoundError as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(1)
+
+
 @chain_group.command("list")
 def chain_list(
     repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
@@ -4746,7 +5014,7 @@ def chain_list(
     root = Path(repo_root) if repo_root else None
     chains = list_chains(repo_root=root)
     if not chains:
-        console.print("[dim]No chain definitions. Add one with: chain define --id <id> --file <path>[/dim]")
+        console.print("[dim]No chain definitions. Add one with: chain define --id <id> --file <path> or chain examples install <id>[/dim]")
         raise typer.Exit(0)
     for c in chains:
         console.print(f"  [bold]{c.get('id', '')}[/bold]  steps={c.get('step_count', 0)}  variant={c.get('variant_label', '') or '(none)'}")
@@ -4875,8 +5143,9 @@ def chain_compare(
     repo_root: str = typer.Option("", "--repo-root"),
     json_out: bool = typer.Option(False, "--json", help="Output as JSON"),
     artifact_diff: bool = typer.Option(False, "--artifact-diff", help="Include output path diff (only_in_a, only_in_b)"),
+    benchmark_view: bool = typer.Option(False, "--benchmark-view", help="Add benchmark-style summary (status, duration, artifact counts)"),
 ) -> None:
-    """Compare two chain runs. Use: compare <id_a> <id_b> or compare --run-a A --run-b B."""
+    """Compare two chain runs. Use: compare <id_a> <id_b> or compare --run-a A --run-b B. Use --benchmark-view for eval/review summary."""
     from workflow_dataset.chain_lab.compare import compare_chain_runs
     root = Path(repo_root) if repo_root else None
     a = (run_a or run_id_a or "").strip()
@@ -4884,12 +5153,30 @@ def chain_compare(
     if not a or not b:
         console.print("[red]Provide two runs: compare <id_a> <id_b> or --run-a A --run-b B[/red]")
         raise typer.Exit(1)
-    diff = compare_chain_runs(a, b, repo_root=root, include_artifact_diff=artifact_diff)
+    diff = compare_chain_runs(a, b, repo_root=root, include_artifact_diff=artifact_diff, benchmark_view=benchmark_view)
     if json_out:
         console.print(json.dumps(diff, indent=2))
         return
-    console.print(f"[bold]Run A:[/bold] {diff.get('run_id_a')}  {diff.get('run_a')}")
-    console.print(f"[bold]Run B:[/bold] {diff.get('run_id_b')}  {diff.get('run_b')}")
+    if benchmark_view and diff.get("benchmark_summary"):
+        from workflow_dataset.chain_lab.compare import benchmark_summary_text
+        text = benchmark_summary_text(diff)
+        if text:
+            console.print("[bold]Benchmark summary[/bold]")
+            for line in text.strip().split("\n"):
+                console.print(f"  {line}")
+            console.print("")
+        else:
+            bs = diff["benchmark_summary"]
+            console.print("[bold]Benchmark summary[/bold]")
+            console.print(f"  {bs.get('summary_line', '')}")
+            console.print("")
+    ra, rb = diff.get("run_a"), diff.get("run_b")
+    console.print(f"[bold]Run A:[/bold] {diff.get('run_id_a')}  {ra}")
+    if isinstance(ra, dict) and (ra.get("started_at") or ra.get("ended_at")):
+        console.print(f"  [dim]started: {ra.get('started_at') or '—'}  ended: {ra.get('ended_at') or '—'}[/dim]")
+    console.print(f"[bold]Run B:[/bold] {diff.get('run_id_b')}  {rb}")
+    if isinstance(rb, dict) and (rb.get("started_at") or rb.get("ended_at")):
+        console.print(f"  [dim]started: {rb.get('started_at') or '—'}  ended: {rb.get('ended_at') or '—'}[/dim]")
     if diff.get("status_diff"):
         console.print(f"  Status diff: {diff['status_diff']}")
     if diff.get("step_count_diff") is not None:
@@ -4910,15 +5197,19 @@ def chain_list_runs(
     limit: int = typer.Option(20, "--limit", "-n"),
     repo_root: str = typer.Option("", "--repo-root"),
 ) -> None:
-    """List recent chain run ids (newest first)."""
-    from workflow_dataset.chain_lab.manifest import list_run_ids
+    """List recent chain runs (run_id, chain, status, started). Newest first."""
+    from workflow_dataset.chain_lab.cleanup import list_runs_with_meta
     root = Path(repo_root) if repo_root else None
-    ids = list_run_ids(repo_root=root, limit=limit)
-    if not ids:
+    runs = list_runs_with_meta(repo_root=root, limit=limit)
+    if not runs:
         console.print("[dim]No chain runs yet. Run: workflow-dataset chain run <chain_id>[/dim]")
         raise typer.Exit(0)
-    for rid in ids:
-        console.print(f"  {rid}")
+    for r in runs:
+        rid = r.get("run_id", "")
+        chain_id = r.get("chain_id", "") or "—"
+        status = r.get("status", "") or "—"
+        started = r.get("started_at", "") or "—"
+        console.print(f"  [bold]{rid}[/bold]  chain={chain_id}  status={status}  started={started}")
 
 
 @chain_group.command("artifact-tree")
@@ -4942,15 +5233,83 @@ def chain_artifact_tree_cmd(
             console.print(f"    — {p}")
 
 
+chain_runs_group = typer.Typer(help="Run listing and archive.")
+chain_group.add_typer(chain_runs_group, name="runs")
+
+
+@chain_runs_group.command("archive")
+def chain_runs_archive(
+    run: str = typer.Option(..., "--run", "-r", help="Run id to archive"),
+    repo_root: str = typer.Option("", "--repo-root"),
+) -> None:
+    """Move a chain run to runs/archive/<run_id>. Safe local maintenance."""
+    from workflow_dataset.chain_lab.cleanup import archive_run
+    from workflow_dataset.chain_lab.report import resolve_run_id
+    root = Path(repo_root) if repo_root else None
+    rid = resolve_run_id(run.strip(), root) if run.strip().lower() != "latest" else run.strip()
+    if not rid:
+        rid = run.strip()
+    try:
+        path = archive_run(rid, repo_root=root)
+        console.print(f"[green]Archived: {rid} → {path}[/green]")
+    except FileNotFoundError as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(1)
+
+
+@chain_group.command("cleanup")
+def chain_cleanup(
+    older_than: str = typer.Option("30d", "--older-than", help="Consider runs older than this (e.g. 30d, 7d)"),
+    dry_run: bool = typer.Option(True, "--dry-run/--no-dry-run", help="Only list runs (default); with --no-dry-run and --archive, archive them"),
+    archive: bool = typer.Option(False, "--archive", help="Archive (move to runs/archive/) runs older than threshold"),
+    repo_root: str = typer.Option("", "--repo-root"),
+) -> None:
+    """List or archive chain runs older than a given age. Default: dry-run, list only."""
+    from workflow_dataset.chain_lab.cleanup import cleanup_older_runs
+    root = Path(repo_root) if repo_root else None
+    s = (older_than or "30d").strip().lower()
+    days = 30.0
+    if s.endswith("d"):
+        try:
+            days = float(s[:-1])
+        except ValueError:
+            days = 30.0
+    else:
+        try:
+            days = float(s)
+        except ValueError:
+            days = 30.0
+    result = cleanup_older_runs(repo_root=root, older_than_days=days, dry_run=dry_run, archive=archive)
+    run_ids = result.get("run_ids") or []
+    archived = result.get("archived") or []
+    console.print(f"[bold]Runs older than {days} days:[/bold] {len(run_ids)}")
+    if run_ids:
+        for rid in run_ids[:30]:
+            console.print(f"  {rid}")
+        if len(run_ids) > 30:
+            console.print(f"  ... and {len(run_ids) - 30} more")
+    if result.get("dry_run"):
+        console.print("[dim]Dry run. Use --no-dry-run --archive to archive these runs.[/dim]")
+    elif archived:
+        console.print(f"[green]Archived: {archived}[/green]")
+
+
 def _review_workspaces_root() -> Path:
     from workflow_dataset.path_utils import get_repo_root
     return get_repo_root() / "data/local/workspaces"
 
 
 def _resolve_workspace_arg(workspace: str) -> Path | None:
-    """Resolve --workspace: path, or workflow/run_id under data/local/workspaces."""
+    """Resolve --workspace: path, workflow/run_id, or 'latest' (most recent) under data/local/workspaces."""
     from workflow_dataset.path_utils import get_repo_root
+    from workflow_dataset.release.reporting_workspaces import list_reporting_workspaces
     root = _review_workspaces_root()
+    if workspace.strip().lower() == "latest":
+        items = list_reporting_workspaces(root, limit=1)
+        if not items:
+            return None
+        path_str = items[0].get("workspace_path")
+        return Path(path_str).resolve() if path_str else None
     p = Path(workspace)
     if p.exists() and p.is_dir():
         return p.resolve()
@@ -5393,9 +5752,15 @@ def review_list_lane(
 
 
 def _resolve_package_arg(package: str) -> Path | None:
-    """Resolve --package: path or packages/<run_id> under data/local/packages."""
+    """Resolve package: path, packages/<run_id>, or 'latest' (newest dir under data/local/packages)."""
     from workflow_dataset.path_utils import get_repo_root
-    root = get_repo_root() / "data/local/packages"
+    root = Path(get_repo_root()) / "data/local/packages"
+    if not root.exists():
+        return None
+    pkg_arg = (package or "").strip()
+    if pkg_arg.lower() == "latest":
+        dirs = sorted([d for d in root.iterdir() if d.is_dir()], key=lambda d: d.stat().st_mtime, reverse=True)
+        return dirs[0].resolve() if dirs else None
     p = Path(package)
     if p.exists() and p.is_dir():
         return p.resolve()
@@ -5403,7 +5768,7 @@ def _resolve_package_arg(package: str) -> Path | None:
     if candidate.exists() and candidate.is_dir():
         return candidate.resolve()
     if not p.is_absolute():
-        for d in root.iterdir() if root.exists() else []:
+        for d in root.iterdir():
             if d.is_dir() and d.name == package:
                 return d.resolve()
     return None
@@ -5447,7 +5812,7 @@ def review_queue_status() -> None:
 
 @review_group.command("stage-package")
 def review_stage_package(
-    package: str = typer.Argument(..., help="Package path or id (e.g. data/local/packages/2025-03-15_1500_abc)"),
+    package: str = typer.Argument(..., help="Package path, id, or 'latest' (e.g. latest or data/local/packages/2025-03-15_1500_abc)"),
 ) -> None:
     """Add a built package to the staging board. No apply."""
     from workflow_dataset.release.staging_board import add_staged_package
@@ -5549,17 +5914,118 @@ def review_build_apply_plan(
 
 @review_group.command("apply-plan-status")
 def review_apply_plan_status() -> None:
-    """Show last apply-plan preview path and staging board state."""
+    """Show staging board state, last apply-plan preview, and next command to proceed."""
     from workflow_dataset.release.staging_board import load_staging_board
     board = load_staging_board()
     items = board.get("items") or []
     console.print(f"[bold]Staged items:[/bold] {len(items)}")
+    if items:
+        latest = items[-1]
+        console.print(f"[bold]Latest staged:[/bold] {latest.get('staged_id', '')}  {latest.get('source_type', '')}  {Path(latest.get('source_path', '')).name}")
     path = board.get("last_apply_plan_preview_path")
     if path:
         console.print(f"[bold]Last apply-plan preview:[/bold] {path}")
-        console.print("[dim]View with: cat <path>[/dim]")
+        console.print("[dim]View: cat " + path + "[/dim]")
     else:
-        console.print("[dim]No apply-plan preview yet. Run: review build-apply-plan <target>[/dim]")
+        console.print("[dim]Last apply-plan preview: none[/dim]")
+    console.print("[bold]Next:[/bold] ", end="")
+    if not items:
+        console.print("[dim]review stage-package <path|latest> or review stage-artifact <workspace> --artifact <name>[/dim]")
+    elif not path:
+        console.print("[dim]review build-apply-plan <target_path>[/dim]")
+    else:
+        console.print("[dim]review build-apply-plan <target_path> to refresh, or assist apply <source> <target> --confirm to apply[/dim]")
+
+
+# ----- M21T-F2 Revision loop + package compare -----
+@review_group.command("package-compare")
+def review_package_compare(
+    package_a: str = typer.Option(..., "--package-a", "-a", help="First package (path, id, or 'latest')"),
+    package_b: str = typer.Option(..., "--package-b", "-b", help="Second package (path, id, or 'latest')"),
+    no_diffs: bool = typer.Option(False, "--no-diffs", help="Skip artifact content diffs; show only inventory and manifest"),
+) -> None:
+    """Compare two packages: artifact inventory, manifest, revision state, and optional content deltas."""
+    from workflow_dataset.release.package_compare import compare_packages, format_package_compare_for_console
+    pa = _resolve_package_arg(package_a)
+    pb = _resolve_package_arg(package_b)
+    if not pa:
+        console.print(f"[red]Package not found: {package_a}[/red]")
+        raise typer.Exit(1)
+    if not pb:
+        console.print(f"[red]Package not found: {package_b}[/red]")
+        raise typer.Exit(1)
+    result = compare_packages(pa, pb, include_content_diff=not no_diffs)
+    console.print(format_package_compare_for_console(result))
+
+
+@review_group.command("mark-superseded")
+def review_mark_superseded(
+    package: str = typer.Option(..., "--package", "-p", help="Package that supersedes (B)"),
+    supersedes: str = typer.Option(..., "--supersedes", "-s", help="Package that is superseded (A)"),
+    reason: str = typer.Option("", "--reason", "-r", help="Revision reason"),
+    note: str = typer.Option("", "--note", "-n", help="Operator note"),
+) -> None:
+    """Mark package B as superseding package A. Updates revision_meta in both; A status becomes superseded."""
+    from workflow_dataset.release.package_revision import set_supersedes
+    pkg_b = _resolve_package_arg(package)
+    pkg_a = _resolve_package_arg(supersedes)
+    if not pkg_b:
+        console.print(f"[red]Package not found: {package}[/red]")
+        raise typer.Exit(1)
+    if not pkg_a:
+        console.print(f"[red]Package not found: {supersedes}[/red]")
+        raise typer.Exit(1)
+    set_supersedes(pkg_b, pkg_a, reason=reason, note=note)
+    console.print(f"[green]{pkg_b.name} supersedes {pkg_a.name}[/green]")
+    if reason:
+        console.print(f"  [dim]Reason: {reason}[/dim]")
+    if note:
+        console.print(f"  [dim]Note: {note}[/dim]")
+
+
+@review_group.command("package-lineage")
+def review_package_lineage(
+    package: str = typer.Argument(..., help="Package path, id, or 'latest'"),
+) -> None:
+    """Show revision lineage for a package: status, supersedes, superseded_by, notes."""
+    from workflow_dataset.release.package_revision import get_lineage
+    pkg = _resolve_package_arg(package)
+    if not pkg:
+        console.print(f"[red]Package not found: {package}[/red]")
+        raise typer.Exit(1)
+    lineage = get_lineage(pkg)
+    console.print(f"[bold]Package:[/bold] {lineage['name']}")
+    console.print(f"  Path: {lineage['path']}")
+    console.print(f"  Status: {lineage['status']}")
+    if lineage.get("supersedes"):
+        console.print(f"  Supersedes: {lineage['supersedes']}")
+    if lineage.get("superseded_by"):
+        console.print(f"  Superseded by: {lineage['superseded_by']}")
+    if lineage.get("revision_reason"):
+        console.print(f"  Reason: {lineage['revision_reason']}")
+    if lineage.get("revision_note"):
+        console.print(f"  Note: {lineage['revision_note']}")
+    if lineage.get("updated_at"):
+        console.print(f"  Updated: {lineage['updated_at']}")
+
+
+@review_group.command("set-package-status")
+def review_set_package_status(
+    package: str = typer.Argument(..., help="Package path, id, or 'latest'"),
+    status: str = typer.Option(..., "--status", "-s", help="approved | needs_revision | superseded | archived"),
+    note: str = typer.Option("", "--note", "-n", help="Optional note"),
+) -> None:
+    """Set package revision status. Use mark-superseded to link B supersedes A."""
+    from workflow_dataset.release.package_revision import set_package_status, PACKAGE_STATUSES
+    if status not in PACKAGE_STATUSES:
+        console.print(f"[red]status must be one of: {PACKAGE_STATUSES}[/red]")
+        raise typer.Exit(1)
+    pkg = _resolve_package_arg(package)
+    if not pkg:
+        console.print(f"[red]Package not found: {package}[/red]")
+        raise typer.Exit(1)
+    set_package_status(pkg, status, note=note)
+    console.print(f"[green]{pkg.name} -> {status}[/green]")
 
 
 # ----- M21 Capability intake -----
@@ -5641,6 +6107,25 @@ def devlab_repo_report(
         raise typer.Exit(1)
 
 
+@devlab_group.command("score-repo")
+def devlab_score_repo(
+    repo: str = typer.Option(..., "--repo", "-r", help="Repo id to score (must be registered)"),
+    devlab_root: str = typer.Option("", "--devlab-root"),
+) -> None:
+    """Score one repo: usefulness, license/risk triage, D2 recommendation. Writes or updates intake report."""
+    from workflow_dataset.devlab.repo_intake import score_repo
+    root = devlab_root or None
+    try:
+        data = score_repo(repo, root=root)
+        console.print(f"[green]{data.get('repo_id')}[/green]  composite={data.get('composite_score', 0):.2f}  {data.get('d2_recommendation')}")
+        console.print(f"  relevance={data.get('usefulness_scores', {}).get('relevance')}  risk={data.get('usefulness_scores', {}).get('risk')}")
+        triage = data.get("license_triage") or {}
+        console.print(f"  license_visible={triage.get('license_visible')}  use_as={triage.get('use_as')}")
+    except Exception as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(1)
+
+
 @devlab_group.command("score-repos")
 def devlab_score_repos(
     devlab_root: str = typer.Option("", "--devlab-root"),
@@ -5659,19 +6144,24 @@ def devlab_score_repos(
 
 @devlab_group.command("generate-proposal")
 def devlab_generate_proposal(
+    repo: str = typer.Option("", "--repo", "-r", help="Focus proposal on this repo id only (optional)"),
     devlab_root: str = typer.Option("", "--devlab-root"),
 ) -> None:
-    """D3: Generate devlab proposal from repo intake reports + model compare. Writes devlab_proposal.md, cursor_prompt.txt, rfc_skeleton.md. Advisory only; no code modification."""
+    """Generate devlab proposal from repo intake + model compare. Writes devlab_proposal.md, cursor_prompt.txt, rfc_skeleton.md. Advisory only."""
     from workflow_dataset.devlab.proposal_generator import generate_proposal
     root = devlab_root or None
-    result = generate_proposal(root)
+    repo_id = repo.strip() or None
+    result = generate_proposal(root, repo_id=repo_id)
     console.print(f"[green]Proposal: {result['proposal_id']}[/green]  path: {result['proposal_path']}")
     console.print(f"  intake reports: {result['intake_count']}  model compare: {result['model_compare_present']}")
+    if result.get("next_patch_ranked"):
+        console.print("  [dim]Ranked next patch: " + ", ".join(f"{x.get('repo_id')}({x.get('d2_recommendation')})" for x in result["next_patch_ranked"][:3]) + "[/dim]")
     console.print(f"  devlab_proposal.md  cursor_prompt.txt  rfc_skeleton.md")
 
 
 @devlab_group.command("shortlist")
 def devlab_shortlist(
+    category: str = typer.Option("", "--category", "-c", help="Filter to one category: UI, eval, packaging, workflow_engine, local_model_tooling, other"),
     output: str = typer.Option("", "--output", "-o", help="Write shortlist to file (json or .md)"),
     devlab_root: str = typer.Option("", "--devlab-root"),
 ) -> None:
@@ -5684,6 +6174,13 @@ def devlab_shortlist(
     registry = load_registry(root)
     reports_dir = get_reports_dir(root)
     shortlist = build_shortlist(reports_dir, registry)
+    cat_filter = (category or "").strip()
+    if cat_filter:
+        cat_normalized = cat_filter.lower().replace(" ", "_")
+        if cat_normalized == "evaluation":
+            cat_normalized = "eval"
+        matched = {k: v for k, v in shortlist.items() if k.lower().replace(" ", "_") == cat_normalized or k == cat_filter}
+        shortlist = matched if matched else {cat_filter: []}
     if output:
         p = Path(output)
         fmt = "md" if p.suffix.lower() == ".md" else "json"
@@ -5941,21 +6438,20 @@ def devlab_proposal_queue(
 
 @devlab_group.command("show-proposal")
 def devlab_show_proposal(
-    proposal_id: str = typer.Argument(..., help="Proposal id"),
+    proposal_id: str = typer.Argument("latest", help="Proposal id or 'latest' (default)"),
     devlab_root: str = typer.Option("", "--devlab-root"),
 ) -> None:
-    """Show proposal manifest and paths to devlab_proposal, experiment_report, patch_proposal, cursor_prompt, rfc_skeleton."""
+    """Show proposal manifest and paths to devlab_proposal, cursor_prompt, rfc_skeleton. Use id or 'latest'."""
     from workflow_dataset.devlab.proposals import get_proposal
     root = devlab_root or None
-    p = get_proposal(proposal_id, root)
+    p = get_proposal(proposal_id or "latest", root)
     if not p:
         console.print(f"[red]Proposal not found: {proposal_id}[/red]")
         raise typer.Exit(1)
     console.print(f"  proposal_id: {p.get('proposal_id')}")
-    console.print(f"  experiment_id: {p.get('experiment_id')}  run_id: {p.get('run_id')}")
     console.print(f"  status: {p.get('status')}  created_at: {p.get('created_at')}")
     console.print(f"  path: {p.get('proposal_path')}")
-    for k in ("experiment_report_md", "patch_proposal_md", "cursor_prompt_txt", "rfc_skeleton_md"):
+    for k in ("devlab_proposal_md", "experiment_report_md", "patch_proposal_md", "cursor_prompt_txt", "rfc_skeleton_md"):
         if p.get(k):
             console.print(f"  {k}: {p[k]}")
 
@@ -6065,13 +6561,24 @@ def eval_run_case(
 
 @eval_group.command("compare-runs")
 def eval_compare_runs(
-    run_a: str = typer.Argument(..., help="First run id (baseline)"),
-    run_b: str = typer.Argument(..., help="Second run id (newer)"),
+    run_a: str | None = typer.Argument(None, help="First run id (baseline); or use --run"),
+    run_b: str | None = typer.Argument(None, help="Second run id (newer); or use --run"),
+    run: list[str] = typer.Option(
+        [], "--run", "-r",
+        help="Resolve by alias: e.g. --run previous --run latest (baseline first, then newer).",
+    ),
     eval_root: str = typer.Option("", "--eval-root"),
 ) -> None:
-    """Compare two eval runs: deltas, regressions, wins, thresholds, recommendation."""
-    from workflow_dataset.eval.board import compare_runs
-    out = compare_runs(run_a, run_b, root=eval_root or None)
+    """Compare two eval runs: deltas, regressions, wins, thresholds, recommendation. Use --run previous --run latest to compare latest vs previous."""
+    from workflow_dataset.eval.board import compare_runs, resolve_run_id
+    root = eval_root or None
+    if len(run) >= 2:
+        run_a = resolve_run_id(run[0], root)
+        run_b = resolve_run_id(run[1], root)
+    if not run_a or not run_b:
+        console.print("[red]Provide both run ids (e.g. run_a run_b) or --run <baseline> --run <newer> e.g. --run previous --run latest.[/red]")
+        raise typer.Exit(1)
+    out = compare_runs(run_a, run_b, root=root)
     if out.get("error"):
         console.print(f"[red]{out['error']}[/red]")
         raise typer.Exit(1)

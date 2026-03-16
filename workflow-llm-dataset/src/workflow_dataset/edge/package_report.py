@@ -169,3 +169,62 @@ def build_workflow_matrix_all_tiers(repo_root: Path | str | None = None) -> dict
     """Build workflow matrix for every tier. Keys: tier id, values: list of workflow rows."""
     from workflow_dataset.edge.tiers import EDGE_TIERS
     return {tier: build_workflow_matrix_by_tier(tier, repo_root=repo_root) for tier in EDGE_TIERS}
+
+
+# ----- M23B-F3: Explicit edge packaging metadata (tier-scoped) -----
+def build_packaging_metadata(
+    tier: str,
+    repo_root: Path | str | None = None,
+    config_path: str = "configs/settings.yaml",
+) -> dict[str, Any]:
+    """
+    Build explicit packaging metadata for a tier: required/optional runtime components,
+    supported/degraded workflows, local path and config assumptions, notes for appliance packaging.
+    For operator handoff to deployment or appliance efforts.
+    """
+    from workflow_dataset.edge.tiers import (
+        EDGE_TIERS,
+        TIER_DESCRIPTIONS,
+        get_tier_definition,
+        get_workflow_status_for_tier,
+        get_required_dependencies_for_tier,
+    )
+    if tier not in EDGE_TIERS:
+        return {"error": f"Unknown tier. Use one of: {list(EDGE_TIERS)}"}
+    root = _get_repo_root(repo_root)
+    profile = build_edge_profile(repo_root=root, config_path=config_path, tier=tier)
+    missing = build_missing_dependency_summary(repo_root=root)
+    defn = get_tier_definition(tier)
+    status_map = get_workflow_status_for_tier(tier)
+    required_deps, optional_deps = get_required_dependencies_for_tier(tier)
+
+    supported = [wf for wf, s in status_map.items() if (s or {}).get("status") == "supported"]
+    degraded = [wf for wf, s in status_map.items() if (s or {}).get("status") == "degraded"]
+    unavailable = [wf for wf, s in status_map.items() if (s or {}).get("status") == "unavailable"]
+
+    return {
+        "tier": tier,
+        "tier_description": TIER_DESCRIPTIONS.get(tier, ""),
+        "required_runtime_components": [{"name": d["name"], "type": d["type"], "note": d.get("note", "")} for d in required_deps],
+        "optional_runtime_components": [{"name": d["name"], "type": d["type"], "note": d.get("note", "")} for d in optional_deps],
+        "supported_workflows": supported,
+        "degraded_workflows": degraded,
+        "unavailable_workflows": unavailable,
+        "workflow_status": {wf: (s or {}).get("status") for wf, s in status_map.items()},
+        "local_path_assumptions": list(defn.get("required_paths") or []),
+        "config_assumptions": {
+            "config_path": config_path,
+            "config_exists": (root / config_path).exists(),
+            "llm_requirement": defn.get("llm_requirement", "required"),
+        },
+        "missing_dependency_summary": {
+            "overall_ok": missing.get("overall_ok"),
+            "missing_required": missing.get("missing_required", []),
+            "warnings": missing.get("warnings", []),
+        },
+        "notes_for_packaging": (
+            "Local-only. No cloud. Use for deployment testing and appliance packaging. "
+            "Run edge smoke-check --tier " + tier + " to validate runtime."
+        ),
+        "profile_version": "1.0",
+    }

@@ -186,3 +186,30 @@ def get_latest_session(pilot_dir: Path | str | None = None) -> PilotSessionRecor
     """Return the most recent session by mtime."""
     sessions = list_sessions(pilot_dir, limit=1)
     return sessions[0] if sessions else None
+
+
+def record_workflow_artifact(
+    workflow_type: str,
+    dir_path: Path | str,
+    pilot_dir: Path | str | None = None,
+    template_id: str | None = None,
+) -> None:
+    """
+    Record a workflow artifact (saved run dir) in the current pilot session.
+    Appends dir path to artifacts_produced; if template_id is set, stores in session extra.
+    No-op if no current session.
+    """
+    sid = get_current_session_id(pilot_dir)
+    if not sid:
+        return
+    record = load_session(sid, pilot_dir)
+    if not record:
+        return
+    path_str = str(Path(dir_path).resolve())
+    if path_str not in record.artifacts_produced:
+        record.artifacts_produced.append(path_str)
+    if template_id and str(template_id).strip():
+        if not isinstance(record.extra, dict):
+            record.extra = {}
+        record.extra["template_id"] = str(template_id).strip()
+    save_session(record, pilot_dir)

@@ -50,6 +50,10 @@ Output of `workflow-dataset chain report <run_id>` when the run failed at step 1
 
 - **Resume possible:** Yes
 
+- **Recommended next command(s):**
+  - Retry failing step: `workflow-dataset chain retry-step --run a1b2c3d4e5f6 --step demo_weekly`
+  - Resume from next step: `workflow-dataset chain resume --run a1b2c3d4e5f6 --from-step 1`
+
 ## Steps
 
 ### Step 0: verify

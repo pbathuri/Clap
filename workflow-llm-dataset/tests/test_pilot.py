@@ -68,6 +68,33 @@ def test_write_pilot_readiness_report(tmp_path: Path) -> None:
     assert "Blocking" in content or "blocking" in content.lower()
 
 
+def test_record_workflow_artifact_stores_template_id(tmp_path: Path) -> None:
+    """M22E-F6: record_workflow_artifact appends artifact path and stores template_id in session extra."""
+    from workflow_dataset.pilot.session_log import (
+        start_session,
+        get_current_session_id,
+        load_session,
+        record_workflow_artifact,
+    )
+    pilot_dir = tmp_path / "pilot"
+    pilot_dir.mkdir()
+    start_session(pilot_dir=pilot_dir)
+    sid = get_current_session_id(pilot_dir)
+    assert sid
+    artifact_dir = tmp_path / "workspace_run"
+    artifact_dir.mkdir()
+    record_workflow_artifact(
+        "ops_reporting_workspace",
+        artifact_dir,
+        pilot_dir=pilot_dir,
+        template_id="ops_reporting_core",
+    )
+    record = load_session(sid, pilot_dir)
+    assert str(artifact_dir.resolve()) in record.artifacts_produced
+    assert isinstance(record.extra, dict)
+    assert record.extra.get("template_id") == "ops_reporting_core"
+
+
 def test_reliability_issues_json_loads() -> None:
     """data/local/pilot/reliability_issues.json is valid JSON and has expected categories."""
     path = Path("data/local/pilot/reliability_issues.json")

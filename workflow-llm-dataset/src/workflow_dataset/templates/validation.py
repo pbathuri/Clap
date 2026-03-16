@@ -143,6 +143,30 @@ def validate_template(
     else:
         checks["export_contract_compatible"] = {"ok": True, "contract_workflow": workflow_id, "no_contract": True}
 
+    # 6) M22E-F3: Optional typed parameters schema
+    param_defs = t.get("parameters")
+    if isinstance(param_defs, list) and len(param_defs) > 0:
+        param_errors: list[str] = []
+        allowed_types = {"string", "integer", "boolean", "choice"}
+        for i, p in enumerate(param_defs):
+            if not isinstance(p, dict):
+                param_errors.append(f"Parameter at index {i} must be an object")
+                continue
+            name = p.get("name")
+            if not name or not str(name).strip():
+                param_errors.append(f"Parameter at index {i} must have 'name'")
+                continue
+            ptype = (p.get("type") or "string").strip().lower()
+            if ptype not in allowed_types:
+                param_errors.append(f"Parameter '{name}': type must be one of {allowed_types}")
+            if ptype == "choice" and not p.get("choices"):
+                param_errors.append(f"Parameter '{name}': type 'choice' requires 'choices' list")
+        checks["parameters_valid"] = {"ok": len(param_errors) == 0, "errors": param_errors}
+        if param_errors:
+            errors.extend(param_errors)
+    else:
+        checks["parameters_valid"] = {"ok": True, "no_parameters": True}
+
     # Status
     deprecated = t.get("deprecated", False)
     if errors:
@@ -216,3 +240,60 @@ def get_template_status(
     """Return compatibility status only: valid | valid_with_warning | deprecated | invalid."""
     r = validate_template(template_id_or_dict, repo_root=repo_root)
     return r.get("status", STATUS_INVALID)
+
+
+# M22E-F3: Typed parameter resolution
+PARAM_TYPES = ("string", "integer", "boolean", "choice")
+
+
+def resolve_template_params(
+    template: dict[str, Any],
+    param_list: list[str],
+) -> dict[str, Any]:
+    """
+    Parse --param k=v list and resolve against template parameters. Validates types and required.
+    Returns dict of name -> value (coerced). Raises ValueError on unknown param or type error.
+    """
+    param_defs = template.get("parameters") or []
+    if not isinstance(param_defs, list):
+        param_defs = []
+    by_name: dict[str, dict[str, Any]] = {str(p.get("name", "")).strip(): p for p in param_defs if isinstance(p, dict) and p.get("name")}
+    if not by_name and param_list:
+        raise ValueError("Template has no parameters; do not pass --param")
+    result: dict[str, Any] = {}
+    for kv in param_list:
+        if "=" not in kv:
+            raise ValueError(f"Invalid --param: expected key=value, got '{kv}'")
+        k, v = kv.split("=", 1)
+        k = k.strip()
+        v = v.strip()
+        if not k:
+            raise ValueError("Invalid --param: empty key")
+        if k not in by_name:
+            raise ValueError(f"Unknown template parameter: '{k}'. Allowed: {list(by_name.keys())}")
+        defn = by_name[k]
+        ptype = (defn.get("type") or "string").strip().lower()
+        if ptype == "integer":
+            try:
+                result[k] = int(v)
+            except ValueError:
+                raise ValueError(f"Parameter '{k}' must be an integer, got '{v}'")
+        elif ptype == "boolean":
+            result[k] = v.lower() in ("true", "1", "yes", "on")
+        elif ptype == "choice":
+            choices = defn.get("choices") or []
+            if v not in choices:
+                raise ValueError(f"Parameter '{k}' must be one of {choices}, got '{v}'")
+            result[k] = v
+        else:
+            result[k] = v
+    # Fill defaults for missing optional params
+    for name, defn in by_name.items():
+        if name in result:
+            continue
+        default = defn.get("default")
+        if default is not None:
+            result[name] = default
+        elif defn.get("required", False):
+            raise ValueError(f"Missing required template parameter: '{name}'")
+    return result

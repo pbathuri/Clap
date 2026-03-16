@@ -68,6 +68,44 @@ TIER_LLM_REQUIREMENT: dict[str, str] = {
     "minimal_eval": "none",
 }
 
+# Required local dependencies per tier (name, type, note). For matrix/report clarity.
+TIER_REQUIRED_DEPS: dict[str, list[dict[str, Any]]] = {
+    "dev_full": [
+        {"name": "config", "type": "config", "note": "configs/settings.yaml"},
+        {"name": "sandbox", "type": "storage", "note": "data/local paths"},
+        {"name": "LLM backend", "type": "runtime", "note": "required; adapter/retrieval optional"},
+    ],
+    "local_standard": [
+        {"name": "config", "type": "config", "note": "configs/settings.yaml"},
+        {"name": "sandbox", "type": "storage", "note": "core data/local paths"},
+        {"name": "LLM backend", "type": "runtime", "note": "required for full workflows"},
+    ],
+    "constrained_edge": [
+        {"name": "config", "type": "config", "note": "configs/settings.yaml"},
+        {"name": "sandbox", "type": "storage", "note": "minimal data/local/workspaces, packages"},
+    ],
+    "minimal_eval": [
+        {"name": "sandbox", "type": "storage", "note": "data/local, data/local/eval"},
+    ],
+}
+
+# Optional dependencies per tier (degraded when missing)
+TIER_OPTIONAL_DEPS: dict[str, list[dict[str, Any]]] = {
+    "dev_full": [
+        {"name": "llm_adapter", "type": "artifact", "note": "fine-tuned adapter"},
+        {"name": "retrieval_corpus", "type": "config", "note": "corpus path"},
+        {"name": "data/local/devlab", "type": "storage", "note": "experiments"},
+    ],
+    "local_standard": [
+        {"name": "llm_adapter", "type": "artifact", "note": "baseline used if missing"},
+        {"name": "retrieval_corpus", "type": "config", "note": "optional retrieval"},
+    ],
+    "constrained_edge": [
+        {"name": "LLM config", "type": "config", "note": "enables baseline runs if present"},
+    ],
+    "minimal_eval": [],
+}
+
 # Per-workflow status per tier: supported | degraded | unavailable
 # reason: short why; missing_functionality: list; fallback: what user can do instead
 def _workflow_status(
@@ -134,7 +172,7 @@ TIER_WORKFLOW_STATUS: dict[str, dict[str, dict[str, Any]]] = {
 
 
 def get_tier_definition(tier: str) -> dict[str, Any] | None:
-    """Return tier definition (required_paths, llm_requirement, workflow_status) or None if unknown."""
+    """Return tier definition (required_paths, llm_requirement, workflow_status, required_deps, optional_deps) or None if unknown."""
     if tier not in EDGE_TIERS:
         return None
     return {
@@ -142,7 +180,19 @@ def get_tier_definition(tier: str) -> dict[str, Any] | None:
         "required_paths": list(TIER_REQUIRED_PATHS.get(tier, ())),
         "llm_requirement": TIER_LLM_REQUIREMENT.get(tier, "required"),
         "workflow_status": dict(TIER_WORKFLOW_STATUS.get(tier, {})),
+        "required_dependencies": list(TIER_REQUIRED_DEPS.get(tier, [])),
+        "optional_dependencies": list(TIER_OPTIONAL_DEPS.get(tier, [])),
     }
+
+
+def get_required_dependencies_for_tier(tier: str) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Return (required_deps, optional_deps) for tier. For matrix and compare reports."""
+    if tier not in EDGE_TIERS:
+        return [], []
+    return (
+        list(TIER_REQUIRED_DEPS.get(tier, [])),
+        list(TIER_OPTIONAL_DEPS.get(tier, [])),
+    )
 
 
 def get_workflow_status_for_tier(tier: str) -> dict[str, dict[str, Any]]:
