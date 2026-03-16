@@ -14,7 +14,7 @@ How to prepare a pilot user, verify readiness, run the narrow pilot flow, diagno
 
 ## 2. Verifying readiness before a session
 
-Run:
+Run from the project root (directory containing `configs/`) or use absolute paths. Relative config paths are resolved against project root:
 
 ```bash
 workflow-dataset pilot verify --config configs/settings.yaml --release-config configs/release_narrow.yaml
@@ -35,6 +35,29 @@ Use this to confirm: ready, safe-to-demo, degraded (no adapter), and path to lat
 
 ## 3. Running the narrow pilot flow
 
+### Grounded pilot session (recommended)
+
+For higher-quality evidence and demo outputs that reflect real workflow context:
+
+- **Before the run:** Execute `setup init` and `setup run` so the graph has projects and style signals. Optionally prepare corpus and use `release demo --retrieval` when corpus exists.
+- **In end-session notes:** Note whether the run was grounded (e.g. "Grounded: setup + demo" or "Ungrounded: no corpus"). Without grounded context, demo outputs may be generic.
+
+### M21 batch execution (session-level evidence)
+
+For structured session and feedback evidence used in aggregate reports and the readiness report:
+
+1. **Verify:** `workflow-dataset pilot verify`
+2. **Start session:** `workflow-dataset pilot start-session --operator <name> --scope ops`
+3. **Run flow:** `workflow-dataset release run` and/or `workflow-dataset release demo` (for demo, if the default LLM config is missing, pass `--llm-config configs/llm_training_full.yaml`). For context-grounded demo outputs, run setup first and use `release demo --retrieval` when corpus exists; without context, outputs may be generic (see docs/FOUNDER_DEMO_FLOW.md).
+4. **Capture feedback:** `workflow-dataset pilot capture-feedback --usefulness 1-5 --trust 1-5 --adoption 1-5` (and optional `--friction`, `--user-quote`, `--notes`, `--next-steps-specific yes|no`, `--report-location-clear yes|no`). **Structured evidence:** Aggregate counts only `--user-quote` and `--friction`; freeform notes are not parsed as quotes/friction. Always add at least one `--user-quote` and one `--friction` for evidence quality. Use `--next-steps-specific` and `--report-location-clear` when relevant.
+5. **End session:** `workflow-dataset pilot end-session --notes "..." --disposition continue|fix|pause`
+6. **Aggregate:** `workflow-dataset pilot aggregate`
+7. **Report:** `workflow-dataset pilot latest-report` to refresh pilot_readiness_report.md (includes M21 session/feedback counts)
+
+See **docs/PILOT_RUNBOOK.md** for the exact command sequence and paths.
+
+### Trial flow (task-level)
+
 1. **Start trial session:** `workflow-dataset trial start --user <alias>`
 2. **Run flow:** Either:
    - `workflow-dataset release run` — runs ops trials (adapter or base model)
@@ -53,7 +76,7 @@ Use this to confirm: ready, safe-to-demo, degraded (no adapter), and path to lat
 | `pilot verify` exit 1 | Graph missing or setup dirs missing | Run `setup init` and `setup run`; re-check config paths. |
 | "LLM adapter: missing" | No successful training run | Use degraded mode (base model) or run LLM train and re-verify. |
 | "Degraded mode: no adapter" during run/demo | Same as above | Expected; continue with base model or train adapter. |
-| Inference error / crash during demo | Backend or model load failure | Check LLM config (base_model, backend); try without adapter. |
+| Inference error / crash during demo | Backend or model load failure | Check LLM config (base_model, backend); try without adapter. Run `pilot record-blocking "description"` then `pilot end-session --disposition fix` so the session reflects the failure. |
 | Empty suggestions in console | Sparse graph or no style signals | Expected in some setups; document in feedback. |
 | Retrieval failed | Corpus missing or path wrong | Demo/run continue without retrieval; optional. |
 
@@ -63,9 +86,13 @@ Use **docs/RELIABILITY_TRIAGE.md** and **data/local/pilot/reliability_issues.jso
 
 ## 5. When to stop the session and log a failure
 
-- **Stop and log:** User cannot complete pilot verify after following setup docs; or repeated inference crash with no workaround; or any uncontrolled write or data loss.
-- **Record feedback** with outcome `failed` and freeform describing the blocker.
-- **Run** `trial summary` and `pilot latest-report` so the next decision has evidence.
+- **Stop and log:** User cannot complete pilot verify after following setup docs; or a command (e.g. `release demo`) crashes during the session; or repeated inference crash with no workaround; or any uncontrolled write or data loss.
+- **Record the failure in the pilot session** so aggregate/reporting is honest:
+  1. Run `workflow-dataset pilot record-blocking "short description"` (e.g. `pilot record-blocking "release demo crashed: UnboundLocalError llm_cfg"`). Uses current session; or pass `--session-id` if needed.
+  2. Optionally run `pilot capture-feedback` with `--blocker` and `--failure-reason "..."` so feedback reflects the failure.
+  3. Run `pilot end-session --disposition fix` or `--disposition pause` so the aggregate and readiness report show the blocking issue and disposition.
+- **Blocking vs friction:** **Blocking** = command crash, flow cannot complete, or critical failure — use `pilot record-blocking` and disposition fix/pause. **Friction** = UX/docs annoyance (e.g. report location unclear) — use `pilot capture-feedback --friction "..."` and disposition can remain continue.
+- **Run** `pilot aggregate` and `pilot latest-report` so the next decision has evidence.
 
 ---
 

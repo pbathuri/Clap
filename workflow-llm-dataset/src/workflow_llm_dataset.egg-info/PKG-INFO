@@ -19,7 +19,3 @@ Provides-Extra: dev
 Requires-Dist: pytest>=8.0; extra == "dev"
 Requires-Dist: mypy>=1.8; extra == "dev"
 Requires-Dist: ruff>=0.5; extra == "dev"
-Provides-Extra: llm
-Requires-Dist: mlx; extra == "llm"
-Requires-Dist: mlx-lm; extra == "llm"
-Requires-Dist: datasets; extra == "llm"

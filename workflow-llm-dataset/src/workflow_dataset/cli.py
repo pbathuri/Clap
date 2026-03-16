@@ -34,6 +34,19 @@ from workflow_dataset.ui import run_console
 app = typer.Typer()
 console = Console()
 
+
+def _resolve_path(path: str) -> Path | None:
+    """Resolve relative path against project root so configs work from any cwd. Returns None if path is empty."""
+    from workflow_dataset.path_utils import resolve_config_path
+    return resolve_config_path(path)
+
+
+def _repo_root() -> Path:
+    """Project root for error messages and docs."""
+    from workflow_dataset.path_utils import get_repo_root
+    return get_repo_root()
+
+
 # ----- M9 Local Operator Console -----
 
 
@@ -2156,7 +2169,8 @@ def llm_train(
     output_dir.mkdir(parents=True, exist_ok=True)
     with open(output_dir / "resolved_llm_config.yaml", "w") as f:
         yaml.dump(llm_cfg, f)
-    llm_config_path = str(Path(llm_config).resolve() if Path(llm_config).exists() else llm_config)
+    llm_config_path = str(Path(llm_config).resolve() if Path(
+        llm_config).exists() else llm_config)
     start_time = datetime.now(timezone.utc).isoformat()
     from workflow_dataset.llm.schemas import TrainingRunConfig
     from workflow_dataset.llm.train_backend import get_backend
@@ -2270,7 +2284,8 @@ def llm_smoke_train(
         max_iters=2,
     )
     start_time = datetime.now(timezone.utc).isoformat()
-    llm_config_path = str(Path(llm_config).resolve() if Path(llm_config).exists() else llm_config)
+    llm_config_path = str(Path(llm_config).resolve() if Path(
+        llm_config).exists() else llm_config)
     try:
         backend = get_backend(backend_name)
         adapter_path = backend.train_lora(
@@ -2290,8 +2305,10 @@ def llm_smoke_train(
             start_time=start_time,
             run_type="smoke",
         )
-        console.print(f"[green]smoke-train complete; adapter -> {adapter_path}[/green]")
-        console.print(f"[dim]adapter artifacts: {'created' if adapter_created else 'missing'}[/dim]")
+        console.print(
+            f"[green]smoke-train complete; adapter -> {adapter_path}[/green]")
+        console.print(
+            f"[dim]adapter artifacts: {'created' if adapter_created else 'missing'}[/dim]")
     except Exception as e:
         write_run_summary(
             output_dir,
@@ -2345,13 +2362,15 @@ def llm_eval(
         if adapter_path_auto:
             use_real = True
             model_path = adapter_path_auto
-            console.print(f"[dim]Using latest successful adapter: {model_path}[/dim]")
+            console.print(
+                f"[dim]Using latest successful adapter: {model_path}[/dim]")
     if use_real and not model_path:
         console.print(
             "[red]Provide --model or --adapter path for real inference[/red]")
         raise typer.Exit(1)
     if retrieval and not use_real:
-        console.print("[yellow]--retrieval has no effect for baseline (no model); ignoring.[/yellow]")
+        console.print(
+            "[yellow]--retrieval has no effect for baseline (no model); ignoring.[/yellow]")
 
     if use_real:
         backend_name = llm_cfg.get("backend", "mlx")
@@ -2361,9 +2380,11 @@ def llm_eval(
         use_adapter = bool(adapter) or (not model)
         base_model = llm_cfg.get("base_model", "")
         if use_adapter and not base_model:
-            console.print("[red]base_model required in config for adapter inference[/red]")
+            console.print(
+                "[red]base_model required in config for adapter inference[/red]")
             raise typer.Exit(1)
-        corpus_path = llm_cfg.get("corpus_path", "data/local/llm/corpus/corpus.jsonl")
+        corpus_path = llm_cfg.get(
+            "corpus_path", "data/local/llm/corpus/corpus.jsonl")
         top_k = retrieval_top_k or int(llm_cfg.get("retrieval_top_k", 5))
 
         def real_predict(ex: dict) -> str:
@@ -2375,7 +2396,8 @@ def llm_eval(
                 docs = retrieve(corpus_path, prompt, top_k=top_k)
                 ctx = format_context_for_prompt(docs, max_chars=2000)
                 if ctx:
-                    prompt = "Context (retrieved):\n" + ctx + "\n\nUser: " + prompt
+                    prompt = "Context (retrieved):\n" + \
+                        ctx + "\n\nUser: " + prompt
             if use_adapter and base_model:
                 return backend.run_inference(base_model, prompt, max_tokens=max_tokens, adapter_path=model_path)
             return backend.run_inference(model_path, prompt, max_tokens=max_tokens)
@@ -2422,7 +2444,8 @@ def llm_compare_runs(
     test_path: str = typer.Option("", "--test-path"),
     output_dir: str = typer.Option("", "--output-dir"),
     retrieval_top_k: int = typer.Option(5, "--retrieval-top-k"),
-    skip_missing: bool = typer.Option(True, "--skip-missing/--no-skip-missing"),
+    skip_missing: bool = typer.Option(
+        True, "--skip-missing/--no-skip-missing"),
 ) -> None:
     """Compare baseline, smoke adapter, and full adapter with retrieval off/on. Writes comparison_latest.json and comparison_latest.md to runs_dir."""
     llm_cfg = _load_llm_config(llm_config)
@@ -2431,7 +2454,8 @@ def llm_compare_runs(
     runs_dir = Path(llm_cfg.get("runs_dir", "data/local/llm/runs"))
     out_dir = Path(output_dir) if output_dir else None
     if not test_file.exists():
-        console.print("[yellow]test.jsonl not found; run 'llm build-sft' first[/yellow]")
+        console.print(
+            "[yellow]test.jsonl not found; run 'llm build-sft' first[/yellow]")
         raise typer.Exit(0)
     from workflow_dataset.llm.compare_runs import run_comparison
     payload = run_comparison(
@@ -2439,20 +2463,23 @@ def llm_compare_runs(
         test_file,
         runs_dir,
         output_dir=out_dir,
-        corpus_path=llm_cfg.get("corpus_path", "data/local/llm/corpus/corpus.jsonl"),
+        corpus_path=llm_cfg.get(
+            "corpus_path", "data/local/llm/corpus/corpus.jsonl"),
         retrieval_top_k=retrieval_top_k,
         skip_missing=skip_missing,
     )
     if payload.get("error"):
         console.print(f"[red]{payload['error']}[/red]")
         raise typer.Exit(1)
-    console.print(f"[green]comparison done -> {payload.get('report_path', '')}[/green]")
+    console.print(
+        f"[green]comparison done -> {payload.get('report_path', '')}[/green]")
     for s in payload.get("slices", []):
         if s.get("skipped"):
             console.print(f"  [dim]{s['slice_id']}: skipped[/dim]")
         else:
             m = s.get("metrics") or {}
-            console.print(f"  {s['slice_id']}: token_overlap={m.get('token_overlap', 0):.4f}")
+            console.print(
+                f"  {s['slice_id']}: token_overlap={m.get('token_overlap', 0):.4f}")
 
 
 def _find_latest_adapter(runs_dir: Path) -> str:
@@ -2495,7 +2522,8 @@ def llm_demo(
                 "[red]No adapter and no base_model. Run 'llm smoke-train' or set base_model in config.[/red]")
             raise typer.Exit(1)
         if mode == "adapter" and not base_model:
-            console.print("[red]base_model required in config for adapter inference.[/red]")
+            console.print(
+                "[red]base_model required in config for adapter inference.[/red]")
             raise typer.Exit(1)
 
         console.print(f"[dim]interpreter: {sys.executable}[/dim]")
@@ -2507,7 +2535,8 @@ def llm_demo(
             from workflow_dataset.llm.train_backend import get_backend
             backend = get_backend(llm_cfg.get("backend", "mlx"))
             if mode == "adapter":
-                out = backend.run_inference(base_model, prompt, max_tokens=150, adapter_path=adapter_path_val)
+                out = backend.run_inference(
+                    base_model, prompt, max_tokens=150, adapter_path=adapter_path_val)
             else:
                 out = backend.run_inference(base_model, prompt, max_tokens=150)
             if out.startswith("[inference error:"):
@@ -2541,15 +2570,19 @@ DEMO_SUITE_PROMPTS = [
 def llm_demo_suite(
     llm_config: str = typer.Option(
         "configs/llm_training.yaml", "--llm-config"),
-    baseline: bool = typer.Option(False, "--baseline", help="Run with base model only (no adapter)"),
-    retrieval: bool = typer.Option(False, "--retrieval", "-r", help="Prepend retrieved context to each prompt"),
+    baseline: bool = typer.Option(
+        False, "--baseline", help="Run with base model only (no adapter)"),
+    retrieval: bool = typer.Option(
+        False, "--retrieval", "-r", help="Prepend retrieved context to each prompt"),
     retrieval_top_k: int = typer.Option(3, "--retrieval-top-k"),
-    adapter: str = typer.Option("", "--adapter", "-a", help="Use this adapter; default: latest successful"),
+    adapter: str = typer.Option(
+        "", "--adapter", "-a", help="Use this adapter; default: latest successful"),
 ) -> None:
     """Run a small set of personalization prompts for qualitative comparison (baseline vs adapter, retrieval on/off)."""
     llm_cfg = _load_llm_config(llm_config)
     runs_dir = Path(llm_cfg.get("runs_dir", "data/local/llm/runs"))
-    corpus_path = llm_cfg.get("corpus_path", "data/local/llm/corpus/corpus.jsonl")
+    corpus_path = llm_cfg.get(
+        "corpus_path", "data/local/llm/corpus/corpus.jsonl")
     base_model = llm_cfg.get("base_model", "")
     if not base_model:
         console.print("[red]base_model required in config[/red]")
@@ -2559,11 +2592,13 @@ def llm_demo_suite(
         from workflow_dataset.llm.run_summary import find_latest_successful_adapter
         adapter_path, _ = find_latest_successful_adapter(runs_dir)
     if not baseline and not adapter_path:
-        console.print("[yellow]No adapter found; run with --baseline or run 'llm smoke-train' first[/yellow]")
+        console.print(
+            "[yellow]No adapter found; run with --baseline or run 'llm smoke-train' first[/yellow]")
     from workflow_dataset.llm.train_backend import get_backend
     backend = get_backend(llm_cfg.get("backend", "mlx"))
     mode = "baseline" if baseline else "adapter"
-    console.print(f"[bold]Demo suite — mode={mode} retrieval={retrieval}[/bold]")
+    console.print(
+        f"[bold]Demo suite — mode={mode} retrieval={retrieval}[/bold]")
     if not baseline:
         console.print(f"[dim]adapter: {adapter_path}[/dim]")
     for i, prompt in enumerate(DEMO_SUITE_PROMPTS, 1):
@@ -2574,16 +2609,20 @@ def llm_demo_suite(
             docs = do_retrieve(corpus_path, prompt, top_k=retrieval_top_k)
             ctx = format_context_for_prompt(docs, max_chars=1500)
             if ctx:
-                user_prompt = "Context (retrieved):\n" + ctx + "\n\nUser: " + prompt
+                user_prompt = "Context (retrieved):\n" + \
+                    ctx + "\n\nUser: " + prompt
         try:
             if baseline:
-                out = backend.run_inference(base_model, user_prompt, max_tokens=200)
+                out = backend.run_inference(
+                    base_model, user_prompt, max_tokens=200)
             else:
-                out = backend.run_inference(base_model, user_prompt, max_tokens=200, adapter_path=adapter_path)
+                out = backend.run_inference(
+                    base_model, user_prompt, max_tokens=200, adapter_path=adapter_path)
             if out and out.startswith("[inference error:"):
                 console.print(f"[red]{out[:200]}[/red]")
             else:
-                console.print(out[:500] + ("..." if len(out or "") > 500 else "") or "[no output]")
+                console.print(
+                    out[:500] + ("..." if len(out or "") > 500 else "") or "[no output]")
         except Exception as e:
             console.print(f"[red]{e}[/red]")
     console.print("\n[dim]Done.[/dim]")
@@ -2600,7 +2639,8 @@ def llm_latest_run(
     runs_dir = Path(llm_cfg.get("runs_dir", "data/local/llm/runs"))
     _, run_dir = find_latest_successful_adapter(runs_dir)
     if not run_dir:
-        console.print("[red]No successful run found. Run 'llm smoke-train' first.[/red]")
+        console.print(
+            "[red]No successful run found. Run 'llm smoke-train' first.[/red]")
         raise typer.Exit(1)
     console.print(run_dir)
 
@@ -2616,7 +2656,8 @@ def llm_latest_adapter(
     runs_dir = Path(llm_cfg.get("runs_dir", "data/local/llm/runs"))
     adapter_path, _ = find_latest_successful_adapter(runs_dir)
     if not adapter_path:
-        console.print("[red]No successful adapter found. Run 'llm smoke-train' first.[/red]")
+        console.print(
+            "[red]No successful adapter found. Run 'llm smoke-train' first.[/red]")
         raise typer.Exit(1)
     console.print(adapter_path)
 
@@ -2633,13 +2674,20 @@ def _trials_build_context(config: str, session_id: str = "", project_id: str = "
     settings = load_settings(config)
     setup = getattr(settings, "setup", None)
     paths = getattr(settings, "paths", None)
-    graph_path = Path(getattr(paths, "graph_store_path", "data/local/work_graph.sqlite"))
-    style_signals_dir = getattr(setup, "style_signals_dir", "data/local/setup/style_signals") if setup else "data/local/setup/style_signals"
-    parsed_dir = getattr(setup, "parsed_artifacts_dir", "data/local/setup/parsed") if setup else "data/local/setup/parsed"
-    style_profiles_dir = getattr(setup, "style_profiles_dir", "data/local/setup/style_profiles") if setup else "data/local/setup/style_profiles"
-    suggestions_dir = getattr(setup, "suggestions_dir", "data/local/suggestions") if setup else "data/local/suggestions"
-    draft_structures_dir = getattr(setup, "draft_structures_dir", "data/local/drafts") if setup else "data/local/drafts"
-    sid = session_id or (setup and getattr(setup, "setup_dir", "") and _resolve_latest_session_id(setup)) or ""
+    graph_path = Path(getattr(paths, "graph_store_path",
+                      "data/local/work_graph.sqlite"))
+    style_signals_dir = getattr(
+        setup, "style_signals_dir", "data/local/setup/style_signals") if setup else "data/local/setup/style_signals"
+    parsed_dir = getattr(setup, "parsed_artifacts_dir",
+                         "data/local/setup/parsed") if setup else "data/local/setup/parsed"
+    style_profiles_dir = getattr(
+        setup, "style_profiles_dir", "data/local/setup/style_profiles") if setup else "data/local/setup/style_profiles"
+    suggestions_dir = getattr(
+        setup, "suggestions_dir", "data/local/suggestions") if setup else "data/local/suggestions"
+    draft_structures_dir = getattr(
+        setup, "draft_structures_dir", "data/local/drafts") if setup else "data/local/drafts"
+    sid = session_id or (setup and getattr(
+        setup, "setup_dir", "") and _resolve_latest_session_id(setup)) or ""
     return build_context_bundle(
         graph_path,
         style_signals_dir,
@@ -2654,22 +2702,27 @@ def _trials_build_context(config: str, session_id: str = "", project_id: str = "
 
 @trials_group.command("list")
 def trials_list(
-    domain: str = typer.Option("", "--domain", help="Filter by domain: ops, spreadsheet, founder, creative"),
+    domain: str = typer.Option(
+        "", "--domain", help="Filter by domain: ops, spreadsheet, founder, creative"),
 ) -> None:
     """List available workflow trials."""
     _trials_ensure_registered()
     from workflow_dataset.trials.trial_registry import list_trials
     trials = list_trials(domain=domain or None)
     for t in trials:
-        console.print(f"  [bold]{t.trial_id}[/bold]  {t.domain}  {t.workflow_type}  — {t.task_goal[:60]}...")
+        console.print(
+            f"  [bold]{t.trial_id}[/bold]  {t.domain}  {t.workflow_type}  — {t.task_goal[:60]}...")
 
 
 @trials_group.command("run")
 def trials_run(
-    trial_id: str = typer.Argument(..., help="Trial id (e.g. ops_summarize_reporting)"),
+    trial_id: str = typer.Argument(...,
+                                   help="Trial id (e.g. ops_summarize_reporting)"),
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    llm_config: str = typer.Option("configs/llm_training.yaml", "--llm-config"),
-    mode: str = typer.Option("adapter", "--mode", "-m", help="baseline | adapter | retrieval_only | adapter_retrieval"),
+    llm_config: str = typer.Option(
+        "configs/llm_training.yaml", "--llm-config"),
+    mode: str = typer.Option("adapter", "--mode", "-m",
+                             help="baseline | adapter | retrieval_only | adapter_retrieval"),
     output_dir: str = typer.Option("data/local/trials", "--output-dir"),
 ) -> None:
     """Run a single workflow trial."""
@@ -2684,16 +2737,20 @@ def trials_run(
     try:
         mode_enum = TrialMode(mode)
     except ValueError:
-        console.print(f"[red]Invalid mode: {mode}. Use baseline, adapter, retrieval_only, adapter_retrieval[/red]")
+        console.print(
+            f"[red]Invalid mode: {mode}. Use baseline, adapter, retrieval_only, adapter_retrieval[/red]")
         raise typer.Exit(1)
     context = _trials_build_context(config)
-    llm_cfg = _load_llm_config(llm_config) if mode_enum != TrialMode.BASELINE else None
+    llm_cfg = _load_llm_config(
+        llm_config) if mode_enum != TrialMode.BASELINE else None
     adapter_path = None
     if mode_enum in (TrialMode.ADAPTER, TrialMode.ADAPTER_RETRIEVAL):
         from workflow_dataset.llm.run_summary import find_latest_successful_adapter
-        runs_dir = Path(llm_cfg.get("runs_dir", "data/local/llm/runs")) if llm_cfg else Path("data/local/llm/runs")
+        runs_dir = Path(llm_cfg.get("runs_dir", "data/local/llm/runs")
+                        ) if llm_cfg else Path("data/local/llm/runs")
         adapter_path, _ = find_latest_successful_adapter(runs_dir)
-    corpus_path = (llm_cfg or {}).get("corpus_path", "data/local/llm/corpus/corpus.jsonl")
+    corpus_path = (llm_cfg or {}).get(
+        "corpus_path", "data/local/llm/corpus/corpus.jsonl")
     result = run_trial(
         t, mode_enum,
         context_bundle=context,
@@ -2702,14 +2759,17 @@ def trials_run(
         corpus_path=corpus_path,
         output_dir=Path(output_dir),
     )
-    console.print(f"[green]Result: {result.result_id}[/green]  completion={result.completion_status}")
-    console.print(f"  task_completion={result.task_completion_score:.2f}  style_match={result.style_match_score:.2f}")
+    console.print(
+        f"[green]Result: {result.result_id}[/green]  completion={result.completion_status}")
+    console.print(
+        f"  task_completion={result.task_completion_score:.2f}  style_match={result.style_match_score:.2f}")
 
 
 @trials_group.command("run-suite")
 def trials_run_suite(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    llm_config: str = typer.Option("configs/llm_training.yaml", "--llm-config"),
+    llm_config: str = typer.Option(
+        "configs/llm_training.yaml", "--llm-config"),
     domain: str = typer.Option("", "--domain"),
     modes: str = typer.Option("baseline,adapter,adapter_retrieval", "--modes"),
     output_dir: str = typer.Option("data/local/trials", "--output-dir"),
@@ -2730,7 +2790,8 @@ def trials_run_suite(
     from workflow_dataset.llm.run_summary import find_latest_successful_adapter
     runs_dir = Path(llm_cfg.get("runs_dir", "data/local/llm/runs"))
     adapter_path, _ = find_latest_successful_adapter(runs_dir)
-    corpus_path = llm_cfg.get("corpus_path", "data/local/llm/corpus/corpus.jsonl")
+    corpus_path = llm_cfg.get(
+        "corpus_path", "data/local/llm/corpus/corpus.jsonl")
     results = run_trial_suite(
         trial_list, mode_list,
         context_bundle=context,
@@ -2739,13 +2800,15 @@ def trials_run_suite(
         corpus_path=corpus_path,
         output_dir=Path(output_dir),
     )
-    console.print(f"[green]Run {len(results)} trial results -> {output_dir}[/green]")
+    console.print(
+        f"[green]Run {len(results)} trial results -> {output_dir}[/green]")
 
 
 @trials_group.command("compare")
 def trials_compare(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    llm_config: str = typer.Option("configs/llm_training.yaml", "--llm-config"),
+    llm_config: str = typer.Option(
+        "configs/llm_training.yaml", "--llm-config"),
     trial_id: str = typer.Option("", "--trial-id"),
     output_dir: str = typer.Option("data/local/trials", "--output-dir"),
 ) -> None:
@@ -2764,8 +2827,10 @@ def trials_compare(
     from workflow_dataset.llm.run_summary import find_latest_successful_adapter
     runs_dir = Path(llm_cfg.get("runs_dir", "data/local/llm/runs"))
     adapter_path, _ = find_latest_successful_adapter(runs_dir)
-    corpus_path = llm_cfg.get("corpus_path", "data/local/llm/corpus/corpus.jsonl")
-    modes = [TrialMode.BASELINE, TrialMode.ADAPTER, TrialMode.RETRIEVAL_ONLY, TrialMode.ADAPTER_RETRIEVAL]
+    corpus_path = llm_cfg.get(
+        "corpus_path", "data/local/llm/corpus/corpus.jsonl")
+    modes = [TrialMode.BASELINE, TrialMode.ADAPTER,
+             TrialMode.RETRIEVAL_ONLY, TrialMode.ADAPTER_RETRIEVAL]
     results = run_trial_suite(
         trials, modes,
         context_bundle=context,
@@ -2780,13 +2845,15 @@ def trials_compare(
 @trials_group.command("report")
 def trials_report(
     output_dir: str = typer.Option("data/local/trials", "--output-dir"),
-    report_path: str = typer.Option("data/local/trials/latest_trial_report.md", "--report-path"),
+    report_path: str = typer.Option(
+        "data/local/trials/latest_trial_report.md", "--report-path"),
 ) -> None:
     """Generate a readable workflow-trial report from persisted results."""
     from workflow_dataset.trials.trial_report import load_trial_results, write_trial_report
     results = load_trial_results(Path(output_dir))
     if not results:
-        console.print("[yellow]No trial results found. Run 'trials run-suite' or 'trials compare' first.[/yellow]")
+        console.print(
+            "[yellow]No trial results found. Run 'trials run-suite' or 'trials compare' first.[/yellow]")
         raise typer.Exit(0)
     path = write_trial_report(results, report_path)
     console.print(f"[green]Report written: {path}[/green]")
@@ -2804,7 +2871,8 @@ def _trial_store() -> Path:
 
 @trial_group.command("start")
 def trial_start(
-    user_alias: str = typer.Option("", "--user", "-u", help="Optional user alias"),
+    user_alias: str = typer.Option(
+        "", "--user", "-u", help="Optional user alias"),
     task_id: str = typer.Option("", "--task", help="Optional first task id"),
     store: str = typer.Option("data/local/trials", "--store"),
 ) -> None:
@@ -2814,38 +2882,46 @@ def trial_start(
     store_path = Path(store)
     store_path.mkdir(parents=True, exist_ok=True)
     sess = set_current_session(user_alias=user_alias, store_path=store_path)
-    record_trial_event("trial_session_started", {"user_alias": user_alias}, store_path=store_path)
-    console.print(f"[green]Trial session started: {sess['session_id']}[/green]")
+    record_trial_event("trial_session_started", {
+                       "user_alias": user_alias}, store_path=store_path)
+    console.print(
+        f"[green]Trial session started: {sess['session_id']}[/green]")
     if user_alias:
         console.print(f"  user_alias: {user_alias}")
     if task_id:
         console.print(f"  suggested first task: {task_id}")
-    console.print("[dim]Run 'workflow-dataset trial tasks' to list tasks.[/dim]")
+    console.print(
+        "[dim]Run 'workflow-dataset trial tasks' to list tasks.[/dim]")
 
 
 @trial_group.command("tasks")
 def trial_tasks(
     store: str = typer.Option("data/local/trials", "--store"),
-    priority: str = typer.Option("", "--priority", help="Filter: must_try | nice_to_try | boundary"),
+    priority: str = typer.Option(
+        "", "--priority", help="Filter: must_try | nice_to_try | boundary"),
 ) -> None:
     """List available friendly trial tasks."""
     from workflow_dataset.feedback.friendly_tasks import load_friendly_trial_tasks
     tasks_path = Path(store) / "friendly_trial_tasks.json"
     tasks = load_friendly_trial_tasks(tasks_path)
     if not tasks:
-        console.print("[yellow]No tasks found. Ensure data/local/trials/friendly_trial_tasks.json exists.[/yellow]")
+        console.print(
+            "[yellow]No tasks found. Ensure data/local/trials/friendly_trial_tasks.json exists.[/yellow]")
         raise typer.Exit(0)
     if priority:
         tasks = [t for t in tasks if t.get("priority") == priority]
     for t in tasks:
         pid = t.get("priority", "")
-        console.print(f"  [bold]{t.get('task_id', '')}[/bold]  [{pid}]  {t.get('short_description', '')[:60]}...")
+        console.print(
+            f"  [bold]{t.get('task_id', '')}[/bold]  [{pid}]  {t.get('short_description', '')[:60]}...")
 
 
 @trial_group.command("record-feedback")
 def trial_record_feedback(
-    task_id: str = typer.Argument(..., help="Task id (e.g. ops_summarize_reporting)"),
-    outcome: str = typer.Option("", "--outcome", help="completed | partial | failed"),
+    task_id: str = typer.Argument(...,
+                                  help="Task id (e.g. ops_summarize_reporting)"),
+    outcome: str = typer.Option(
+        "", "--outcome", help="completed | partial | failed"),
     usefulness: int = typer.Option(0, "--usefulness", "-u", min=0, max=5),
     trust: int = typer.Option(0, "--trust", "-t", min=0, max=5),
     style_match: int = typer.Option(0, "--style", "-s", min=0, max=5),
@@ -2879,7 +2955,8 @@ def trial_record_feedback(
         created_utc=datetime.now(timezone.utc).isoformat(),
     )
     path = save_feedback_entry(entry, store_path)
-    record_trial_event("feedback_recorded", {"task_id": task_id, "outcome": outcome or "partial"}, store_path=store_path)
+    record_trial_event("feedback_recorded", {
+                       "task_id": task_id, "outcome": outcome or "partial"}, store_path=store_path)
     console.print(f"[green]Feedback saved: {path.name}[/green]")
 
 
@@ -2897,10 +2974,13 @@ def trial_summary(
     sess = get_current_session(store_path)
     session_id = sess.get("session_id", "")
     if not session_id:
-        console.print("[yellow]No active session. Run 'workflow-dataset trial start' first.[/yellow]")
+        console.print(
+            "[yellow]No active session. Run 'workflow-dataset trial start' first.[/yellow]")
         raise typer.Exit(1)
-    entries = [e for e in load_feedback_entries(store_path) if e.session_id == session_id]
-    completed = sum(1 for e in entries if (e.outcome_rating or "").lower() == "completed")
+    entries = [e for e in load_feedback_entries(
+        store_path) if e.session_id == session_id]
+    completed = sum(1 for e in entries if (
+        e.outcome_rating or "").lower() == "completed")
     confusion = [e.confusion_points for e in entries if e.confusion_points]
     failure = [e.failure_points for e in entries if e.failure_points]
     freeform = [e.freeform_feedback for e in entries if e.freeform_feedback]
@@ -2916,7 +2996,8 @@ def trial_summary(
     )
     path = save_session_summary(summary, store_path)
     console.print(f"[green]Session summary: {path.name}[/green]")
-    console.print(f"  tasks_attempted={summary.tasks_attempted}  tasks_completed={summary.tasks_completed}")
+    console.print(
+        f"  tasks_attempted={summary.tasks_attempted}  tasks_completed={summary.tasks_completed}")
     if confusion:
         console.print("  confusion (sample):", confusion[0][:100])
 
@@ -2924,12 +3005,14 @@ def trial_summary(
 @trial_group.command("aggregate-feedback")
 def trial_aggregate_feedback(
     store: str = typer.Option("data/local/trials", "--store"),
-    report_path: str = typer.Option("data/local/trials/latest_feedback_report.md", "--report"),
+    report_path: str = typer.Option(
+        "data/local/trials/latest_feedback_report.md", "--report"),
 ) -> None:
     """Summarize feedback across trial sessions and write report."""
     from workflow_dataset.feedback.feedback_summary import write_feedback_report
     store_path = Path(store)
-    path = write_feedback_report(output_path=report_path, store_path=store_path)
+    path = write_feedback_report(
+        output_path=report_path, store_path=store_path)
     console.print(f"[green]Feedback report: {path}[/green]")
 
 
@@ -2952,20 +3035,34 @@ def _load_release_config(release_config_path: str = "configs/release_narrow.yaml
 @release_group.command("verify")
 def release_verify(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    release_config: str = typer.Option("configs/release_narrow.yaml", "--release-config"),
-    llm_config: str = typer.Option("", "--llm-config"),
+    release_config: str = typer.Option(
+        "configs/release_narrow.yaml", "--release-config"),
+    llm_config: str = typer.Option(
+        "", "--llm-config", help="LLM config path (e.g. configs/llm_training_full.yaml); resolved from project root if relative."),
 ) -> None:
     """Verify release readiness: setup, graph, LLM adapter, trials. Uses release preset if present."""
+    r_cfg = _resolve_path(config)
+    r_rel = _resolve_path(release_config)
+    config = str(r_cfg) if r_cfg is not None else config
+    release_config = str(r_rel) if r_rel is not None else release_config
     rel = _load_release_config(release_config)
-    llm_path = llm_config or rel.get("default_llm_config", "configs/llm_training_full.yaml")
+    llm_path = llm_config or rel.get(
+        "default_llm_config", "configs/llm_training_full.yaml")
+    if llm_path:
+        r_llm = _resolve_path(llm_path)
+        if r_llm is not None:
+            llm_path = str(r_llm)
     settings = load_settings(config)
     setup = getattr(settings, "setup", None)
     paths = getattr(settings, "paths", None)
-    graph_path = Path(getattr(paths, "graph_store_path", "data/local/work_graph.sqlite"))
-    console.print(f"[bold]Release scope:[/bold] {rel.get('scope_label', 'Operations reporting assistant')}")
+    graph_path = Path(getattr(paths, "graph_store_path",
+                      "data/local/work_graph.sqlite"))
+    console.print(
+        f"[bold]Release scope:[/bold] {rel.get('scope_label', 'Operations reporting assistant')}")
     ok = True
     if not graph_path.exists():
-        console.print("[yellow]Graph not found (run setup init + setup run).[/yellow]")
+        console.print(
+            "[yellow]Graph not found (run setup init + setup run).[/yellow]")
         ok = False
     else:
         console.print("[green]Graph: OK[/green]")
@@ -2986,7 +3083,8 @@ def release_verify(
         if res.demo_can_load_adapter:
             console.print("[green]LLM adapter: OK[/green]")
         else:
-            console.print("[yellow]LLM adapter: missing (demo will use baseline)[/yellow]")
+            console.print(
+                "[yellow]LLM adapter: missing (demo will use baseline)[/yellow]")
     else:
         console.print("[yellow]LLM config not found.[/yellow]")
     _trials_ensure_registered()
@@ -2995,43 +3093,60 @@ def release_verify(
     console.print(f"  [green]Trials (ops): {len(trials)}[/green]")
     if not ok:
         console.print("[dim]Run setup and LLM train for full demo.[/dim]")
-        console.print("[red]Blocking: release not ready. Fix the issues above and re-run verify.[/red]")
+        console.print(
+            "[red]Blocking: release not ready. Fix the issues above and re-run verify.[/red]")
         raise typer.Exit(1)
 
 
 @release_group.command("run")
 def release_run(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    release_config: str = typer.Option("configs/release_narrow.yaml", "--release-config"),
-    llm_config: str = typer.Option("", "--llm-config"),
-    role: str = typer.Option("", "--role", "-r", help="Role for pack-driven resolution (e.g. ops). Uses active pack role if set."),
+    release_config: str = typer.Option(
+        "configs/release_narrow.yaml", "--release-config"),
+    llm_config: str = typer.Option(
+        "", "--llm-config", help="LLM config path (e.g. configs/llm_training_full.yaml); resolved from project root if relative."),
+    role: str = typer.Option(
+        "", "--role", "-r", help="Role for pack-driven resolution (e.g. ops). Uses active pack role if set."),
     packs_dir: str = typer.Option("data/local/packs", "--packs-dir"),
 ) -> None:
     """Run narrow-release flow: suggest + ops trials in adapter mode. Pack-aware: use --role ops when ops_reporting_pack is installed."""
     from workflow_dataset.feedback.trial_events import record_trial_event
     from workflow_dataset.packs import resolve_active_capabilities
     from workflow_dataset.packs.pack_state import get_active_role
+    r_cfg = _resolve_path(config)
+    r_rel = _resolve_path(release_config)
+    config = str(r_cfg) if r_cfg is not None else config
+    release_config = str(r_rel) if r_rel is not None else release_config
     rel = _load_release_config(release_config)
     store_path = Path(rel.get("trials_output_dir", "data/local/trials"))
-    record_trial_event("release_command_used", {"command": "release run"}, store_path=store_path)
-    llm_path = llm_config or rel.get("default_llm_config", "configs/llm_training_full.yaml")
+    record_trial_event("release_command_used", {
+                       "command": "release run"}, store_path=store_path)
+    llm_path = llm_config or rel.get(
+        "default_llm_config", "configs/llm_training_full.yaml")
+    if llm_path:
+        r_llm = _resolve_path(llm_path)
+        if r_llm is not None:
+            llm_path = str(r_llm)
     _trials_ensure_registered()
     from workflow_dataset.trials.trial_registry import get_trial
     from workflow_dataset.trials.trial_runner import run_trial
     from workflow_dataset.trials.trial_models import TrialMode
     # Pack-driven: resolve by role (CLI or active_role); use pack templates as trial_ids when pack active
     resolved_role = role or get_active_role(packs_dir)
-    trial_ids = rel.get("trial_ids", ["ops_summarize_reporting", "ops_scaffold_status", "ops_next_steps"])
+    trial_ids = rel.get("trial_ids", [
+                        "ops_summarize_reporting", "ops_scaffold_status", "ops_next_steps"])
     retrieval_top_k = 5
     active_pack_ids: list[str] = []
     if resolved_role:
-        cap = resolve_active_capabilities(role=resolved_role, packs_dir=packs_dir)
+        cap = resolve_active_capabilities(
+            role=resolved_role, packs_dir=packs_dir)
         if cap.active_packs and cap.templates:
             trial_ids = cap.templates
             retrieval_top_k = cap.retrieval_profile.get("top_k", 5) or 5
             active_pack_ids = [m.pack_id for m in cap.active_packs]
     if active_pack_ids:
-        console.print(f"[dim]Active pack(s): {', '.join(active_pack_ids)}[/dim]")
+        console.print(
+            f"[dim]Active pack(s): {', '.join(active_pack_ids)}[/dim]")
     context = _trials_build_context(config)
     llm_cfg = _load_llm_config(llm_path) if Path(llm_path).exists() else {}
     adapter_path = None
@@ -3039,49 +3154,89 @@ def release_run(
         from workflow_dataset.llm.run_summary import find_latest_successful_adapter
         runs_dir = Path(llm_cfg.get("runs_dir", "data/local/llm/runs"))
         adapter_path, _ = find_latest_successful_adapter(runs_dir)
-    corpus_path = (llm_cfg or {}).get("corpus_path", "data/local/llm/corpus/corpus.jsonl")
+    corpus_path = (llm_cfg or {}).get(
+        "corpus_path", "data/local/llm/corpus/corpus.jsonl")
     output_dir = Path(rel.get("trials_output_dir", "data/local/trials"))
     mode = TrialMode(rel.get("default_model_mode", "adapter"))
     if not adapter_path and mode != TrialMode.BASELINE:
-        console.print("[yellow]Degraded mode: no adapter found; running with base model. Run LLM train for adapter.[/yellow]")
+        console.print(
+            "[yellow]Degraded mode: no adapter found; running with base model. Run LLM train for adapter.[/yellow]")
     for tid in trial_ids:
-        record_trial_event("task_selected", {"task_id": tid}, store_path=store_path)
+        record_trial_event("task_selected", {
+                           "task_id": tid}, store_path=store_path)
         t = get_trial(tid)
         if not t:
             continue
-        result = run_trial(t, mode, context_bundle=context, llm_config=llm_cfg, adapter_path=adapter_path, corpus_path=corpus_path, retrieval_top_k=retrieval_top_k, output_dir=output_dir)
-        record_trial_event("generation_succeeded" if result.completion_status == "completed" else "generation_partial", {"task_id": tid, "completion_status": result.completion_status}, store_path=store_path)
-        console.print(f"  [green]{tid}[/green] -> {result.completion_status}  task={result.task_completion_score:.2f}")
+        result = run_trial(t, mode, context_bundle=context, llm_config=llm_cfg, adapter_path=adapter_path,
+                           corpus_path=corpus_path, retrieval_top_k=retrieval_top_k, output_dir=output_dir)
+        record_trial_event("generation_succeeded" if result.completion_status == "completed" else "generation_partial", {
+                           "task_id": tid, "completion_status": result.completion_status}, store_path=store_path)
+        console.print(
+            f"  [green]{tid}[/green] -> {result.completion_status}  task={result.task_completion_score:.2f}")
     console.print(f"[green]Release run done. Results in {output_dir}[/green]")
 
 
 @release_group.command("demo")
 def release_demo(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    release_config: str = typer.Option("configs/release_narrow.yaml", "--release-config"),
-    llm_config: str = typer.Option("", "--llm-config"),
+    release_config: str = typer.Option(
+        "configs/release_narrow.yaml", "--release-config"),
+    llm_config: str = typer.Option(
+        "",
+        "--llm-config",
+        help="LLM config path (e.g. configs/llm_training_full.yaml or configs/llm_training.yaml). Required for demo; resolved from project root if relative.",
+    ),
     retrieval: bool = typer.Option(False, "--retrieval"),
 ) -> None:
-    """Founder demo: run demo-suite with release preset. See docs/FOUNDER_DEMO_FLOW.md."""
+    """Founder demo: run demo-suite with release preset. Requires LLM config with base_model. See docs/FOUNDER_DEMO_FLOW.md."""
     from workflow_dataset.feedback.trial_events import record_trial_event
+    r_cfg = _resolve_path(config)
+    r_rel = _resolve_path(release_config)
+    config = str(r_cfg) if r_cfg is not None else config
+    release_config = str(r_rel) if r_rel is not None else release_config
     rel = _load_release_config(release_config)
     store_path = Path(rel.get("trials_output_dir", "data/local/trials"))
-    record_trial_event("release_command_used", {"command": "release demo"}, store_path=store_path)
-    record_trial_event("task_selected", {"task_id": "release_demo"}, store_path=store_path)
-    llm_path = llm_config or rel.get("default_llm_config", "configs/llm_training_full.yaml")
-    use_retrieval = retrieval or rel.get("use_retrieval_by_default", False)
-    console.print("[bold]Founder demo — Operations reporting assistant[/bold]")
-    console.print("[dim]Running demo-suite (first 3 prompts). Use --retrieval for retrieval-grounded.[/dim]")
+    record_trial_event("release_command_used", {
+                       "command": "release demo"}, store_path=store_path)
+    record_trial_event("task_selected", {
+                       "task_id": "release_demo"}, store_path=store_path)
+    llm_path = llm_config or rel.get(
+        "default_llm_config", "configs/llm_training_full.yaml")
+    if llm_path:
+        r_llm = _resolve_path(llm_path)
+        if r_llm is not None:
+            llm_path = str(r_llm)
     from workflow_dataset.llm.train_backend import get_backend
     llm_cfg = _load_llm_config(llm_path) if Path(llm_path).exists() else {}
+    use_retrieval = retrieval or rel.get("use_retrieval_by_default", False)
+    corpus_path = (llm_cfg or {}).get(
+        "corpus_path", "data/local/llm/corpus/corpus.jsonl")
+    corpus_exists = corpus_path and Path(corpus_path).exists()
+    grounded = use_retrieval and corpus_exists
+    console.print("[bold]Founder demo — Operations reporting assistant[/bold]")
+    if grounded:
+        console.print("[green][Grounded: retrieval context used][/green]")
+    else:
+        console.print(
+            "[yellow][Ungrounded: no retrieval context; outputs may be generic][/yellow]")
+        console.print(
+            "[dim]For context-grounded answers: run setup, ensure corpus exists, use --retrieval. See docs/FOUNDER_DEMO_FLOW.md.[/dim]")
+    console.print(
+        "[dim]Running demo-suite (first 3 prompts).[/dim]")
     if not llm_cfg or not llm_cfg.get("base_model"):
-        console.print("[yellow]LLM config missing; run with --llm-config path.[/yellow]")
+        root = _repo_root()
+        console.print(
+            "[yellow]LLM config missing or invalid (no base_model).[/yellow]")
+        console.print(
+            f"[dim]Provide a path, e.g.: --llm-config configs/llm_training_full.yaml[/dim]")
+        console.print(f"[dim]Project root (for relative paths): {root}[/dim]")
         raise typer.Exit(1)
     from workflow_dataset.llm.run_summary import find_latest_successful_adapter
     runs_dir = Path(llm_cfg.get("runs_dir", "data/local/llm/runs"))
     adapter_path, _ = find_latest_successful_adapter(runs_dir)
     if not adapter_path:
-        console.print("[yellow]Degraded mode: no adapter found; using base model. Run LLM train for adapter.[/yellow]")
+        console.print(
+            "[yellow]Degraded mode: no adapter found; using base model. Run LLM train for adapter.[/yellow]")
     backend = get_backend(llm_cfg.get("backend", "mlx"))
     base_model = llm_cfg["base_model"]
     prompts = [
@@ -3092,68 +3247,272 @@ def release_demo(
     for i, prompt in enumerate(prompts[:3], 1):
         console.print(f"\n[bold]{i}. {prompt}[/bold]")
         user_prompt = prompt
-        corpus_path = llm_cfg.get("corpus_path", "data/local/llm/corpus/corpus.jsonl")
         if use_retrieval and corpus_path and Path(corpus_path).exists():
             from workflow_dataset.llm.retrieval_context import retrieve, format_context_for_prompt
             docs = retrieve(corpus_path, prompt, top_k=3)
             ctx = format_context_for_prompt(docs, max_chars=1500)
             if ctx:
-                user_prompt = "Context (retrieved):\n" + ctx + "\n\nUser: " + prompt
+                user_prompt = (
+                    "Context (retrieved):\n" + ctx + "\n\n"
+                    "If the context above does not clearly describe this user's ops/reporting workflow, say so and keep the answer cautious.\n\n"
+                    "User: " + prompt
+                )
         try:
-            out = backend.run_inference(base_model, user_prompt, max_tokens=200, adapter_path=adapter_path) if adapter_path else backend.run_inference(base_model, user_prompt, max_tokens=200)
+            out = backend.run_inference(base_model, user_prompt, max_tokens=200, adapter_path=adapter_path) if adapter_path else backend.run_inference(
+                base_model, user_prompt, max_tokens=200)
             if out and out.startswith("[inference error"):
                 console.print(f"[red]{out[:150]}[/red]")
             else:
-                console.print(out[:400] + ("..." if len(out or "") > 400 else "") or "[no output]")
+                console.print(
+                    out[:400] + ("..." if len(out or "") > 400 else "") or "[no output]")
         except Exception as e:
             console.print(f"[red]{e}[/red]")
-    record_trial_event("generation_succeeded", {"task_id": "release_demo"}, store_path=store_path)
-    console.print("\n[dim]Demo done. See docs/FOUNDER_DEMO_FLOW.md for full flow.[/dim]")
+    record_trial_event("generation_succeeded", {
+                       "task_id": "release_demo"}, store_path=store_path)
+    console.print(
+        "\n[dim]Demo done. See docs/FOUNDER_DEMO_FLOW.md for full flow.[/dim]")
 
 
 @release_group.command("package")
 def release_package(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    release_config: str = typer.Option("configs/release_narrow.yaml", "--release-config"),
+    release_config: str = typer.Option(
+        "configs/release_narrow.yaml", "--release-config"),
 ) -> None:
     """Generate release readiness report. Does not create bundles; use assist bundle-create for that."""
+    r_cfg = _resolve_path(config)
+    r_rel = _resolve_path(release_config)
+    config = str(r_cfg) if r_cfg is not None else config
+    release_config = str(r_rel) if r_rel is not None else release_config
     rel = _load_release_config(release_config)
     report_dir = Path(rel.get("release_report_dir", "data/local/release"))
     report_dir.mkdir(parents=True, exist_ok=True)
     from workflow_dataset.release.report import write_release_readiness_report
-    path = write_release_readiness_report(config_path=config, release_config_path=release_config, output_dir=report_dir)
+    path = write_release_readiness_report(
+        config_path=config, release_config_path=release_config, output_dir=report_dir)
     console.print(f"[green]Release report: {path}[/green]")
 
 
 @release_group.command("report")
 def release_report(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    release_config: str = typer.Option("configs/release_narrow.yaml", "--release-config"),
+    release_config: str = typer.Option(
+        "configs/release_narrow.yaml", "--release-config"),
     output_dir: str = typer.Option("", "--output-dir"),
 ) -> None:
     """Generate release-readiness report to data/local/release/release_readiness_report.md."""
+    r_cfg = _resolve_path(config)
+    r_rel = _resolve_path(release_config)
+    config = str(r_cfg) if r_cfg is not None else config
+    release_config = str(r_rel) if r_rel is not None else release_config
     rel = _load_release_config(release_config)
-    out = Path(output_dir) if output_dir else Path(rel.get("release_report_dir", "data/local/release"))
+    out = Path(output_dir) if output_dir else Path(
+        rel.get("release_report_dir", "data/local/release"))
     out.mkdir(parents=True, exist_ok=True)
     from workflow_dataset.release.report import write_release_readiness_report
-    path = write_release_readiness_report(config_path=config, release_config_path=release_config, output_dir=out)
+    path = write_release_readiness_report(
+        config_path=config, release_config_path=release_config, output_dir=out)
     console.print(f"[green]Report written: {path}[/green]")
 
 
 # ----- M20 Narrow private pilot -----
 pilot_group = typer.Typer(
-    help="Narrow private pilot: verify readiness, status, latest-report.")
+    help="Narrow private pilot: verify, status, sessions, feedback, aggregate.")
 app.add_typer(pilot_group, name="pilot")
+
+
+@pilot_group.command("start-session")
+def pilot_start_session(
+    operator: str = typer.Option("", "--operator", "-o"),
+    scope: str = typer.Option("ops", "--scope", "-s"),
+    task_type: str = typer.Option("", "--task-type"),
+    config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
+    release_config: str = typer.Option(
+        "configs/release_narrow.yaml", "--release-config"),
+    pilot_dir: str = typer.Option("data/local/pilot", "--pilot-dir"),
+) -> None:
+    """Start a new pilot session; records context and mode. Run verify first to capture degraded state."""
+    from workflow_dataset.pilot.session_log import start_session
+    from workflow_dataset.pilot.health import pilot_verify_result
+    r_cfg = _resolve_path(config)
+    r_rel = _resolve_path(release_config)
+    config = str(r_cfg) if r_cfg is not None else config
+    release_config = str(r_rel) if r_rel is not None else release_config
+    result = pilot_verify_result(
+        config_path=config, release_config_path=release_config)
+    degraded = not result.get("details", {}).get(
+        "adapter_ok", False) and result.get("details", {}).get("llm_config_present")
+    record = start_session(
+        operator=operator,
+        pilot_scope=scope,
+        task_type=task_type,
+        config_path=config,
+        release_config_path=release_config,
+        degraded_mode=degraded,
+        pilot_dir=pilot_dir,
+    )
+    console.print(f"[green]Session started: {record.session_id}[/green]")
+    if degraded:
+        console.print(
+            "[yellow]Degraded mode (no adapter) recorded for this session.[/yellow]")
+    console.print(
+        "[dim]Run pilot end-session when done; use pilot capture-feedback to record structured feedback.[/dim]")
+
+
+@pilot_group.command("end-session")
+def pilot_end_session(
+    session_id: str = typer.Option("", "--session-id", "-s"),
+    notes: str = typer.Option("", "--notes", "-n"),
+    disposition: str = typer.Option(
+        "", "--disposition", "-d", help="continue | fix | pause"),
+    pilot_dir: str = typer.Option("data/local/pilot", "--pilot-dir"),
+) -> None:
+    """Finalize the current (or given) pilot session with notes and disposition."""
+    from workflow_dataset.pilot.session_log import end_session, get_current_session_id
+    sid = session_id or get_current_session_id(pilot_dir)
+    if not sid:
+        console.print(
+            "[red]No session to end. Run pilot start-session first, or pass --session-id.[/red]")
+        raise typer.Exit(1)
+    record = end_session(session_id=sid, operator_notes=notes,
+                         disposition=disposition, pilot_dir=pilot_dir)
+    if record:
+        console.print(f"[green]Session ended: {record.session_id}[/green]")
+        if record.disposition:
+            console.print(f"  Disposition: {record.disposition}")
+    else:
+        console.print(f"[red]Session not found: {sid}[/red]")
+        raise typer.Exit(1)
+
+
+@pilot_group.command("capture-feedback")
+def pilot_capture_feedback(
+    usefulness: int = typer.Option(
+        0, "--usefulness", "-u", help="1-5 how useful was the output"),
+    trust: int = typer.Option(
+        0, "--trust", "-t", help="1-5 how much user trusted the system"),
+    clarity: int = typer.Option(
+        0, "--clarity", "-c", help="1-5 clarity of prompts and next steps"),
+    adoption: int = typer.Option(
+        0, "--adoption", "-a", help="1-5 would use again"),
+    blocker: bool = typer.Option(False, "--blocker/--no-blocker"),
+    failure_reason: str = typer.Option("", "--failure-reason", "-f"),
+    friction: str = typer.Option(
+        "",
+        "--friction",
+        help="Operator friction e.g. report location unclear, next steps not specific enough",
+    ),
+    user_quote: str = typer.Option(
+        "",
+        "--user-quote",
+        "-q",
+        help="One verbatim user quote (improves evidence quality for aggregate)",
+    ),
+    notes: str = typer.Option(
+        "",
+        "--notes",
+        "-n",
+        help="Freeform notes (not parsed as structured evidence; use --user-quote and --friction for counts)",
+    ),
+    next_steps_specific: str = typer.Option(
+        "",
+        "--next-steps-specific",
+        help="Were next steps specific enough? yes / no (appended to notes for aggregate)",
+    ),
+    report_location_clear: str = typer.Option(
+        "",
+        "--report-location-clear",
+        help="Was output/report location clear? yes / no (appended to notes for aggregate)",
+    ),
+    session_id: str = typer.Option("", "--session-id", "-s"),
+    pilot_dir: str = typer.Option("data/local/pilot", "--pilot-dir"),
+) -> None:
+    """Capture structured feedback for the current (or given) pilot session. Use --user-quote and --friction for first-class evidence counts."""
+    from workflow_dataset.pilot.feedback_capture import capture_feedback
+    extra_parts: list[str] = []
+    if next_steps_specific and next_steps_specific.strip().lower() in ("yes", "no"):
+        extra_parts.append(f"Next steps specific enough: {next_steps_specific.strip().lower()}.")
+    if report_location_clear and report_location_clear.strip().lower() in ("yes", "no"):
+        extra_parts.append(f"Report location clear: {report_location_clear.strip().lower()}.")
+    combined_notes = " ".join(extra_parts + [notes]).strip() if extra_parts else notes
+    try:
+        path = capture_feedback(
+            session_id=session_id or None,
+            usefulness_score=usefulness,
+            trust_score=trust,
+            clarity_score=clarity,
+            adoption_likelihood=adoption,
+            blocker_encountered=blocker,
+            top_failure_reason=failure_reason,
+            operator_friction_notes=friction,
+            user_quote=user_quote,
+            freeform_notes=combined_notes,
+            pilot_dir=pilot_dir,
+        )
+        console.print(f"[green]Feedback saved: {path}[/green]")
+        if not user_quote or not friction:
+            console.print(
+                "[dim]Structured evidence: use --user-quote and --friction (aggregate counts these only). Optional: --next-steps-specific and --report-location-clear yes/no.[/dim]")
+    except ValueError as e:
+        console.print(f"[red]{e}[/red]")
+        raise typer.Exit(1)
+
+
+@pilot_group.command("aggregate")
+def pilot_aggregate(
+    pilot_dir: str = typer.Option("data/local/pilot", "--pilot-dir"),
+    limit: int = typer.Option(100, "--limit", "-l"),
+) -> None:
+    """Generate aggregate report from all/recent pilot sessions and feedback."""
+    from workflow_dataset.pilot.aggregate import write_aggregate_report
+    json_path, md_path = write_aggregate_report(
+        pilot_dir=pilot_dir, session_limit=limit)
+    console.print(f"[green]Aggregate report (JSON): {json_path}[/green]")
+    console.print(f"[green]Aggregate report (MD):  {md_path}[/green]")
+
+
+@pilot_group.command("latest-summary")
+def pilot_latest_summary(
+    pilot_dir: str = typer.Option("data/local/pilot", "--pilot-dir"),
+) -> None:
+    """Print the latest pilot session summary (id, timestamps, degraded, blocking, disposition)."""
+    from workflow_dataset.pilot.session_log import get_latest_session
+    from workflow_dataset.pilot.feedback_capture import load_feedback
+    record = get_latest_session(pilot_dir)
+    if not record:
+        console.print(
+            "[dim]No pilot sessions found. Run pilot start-session first.[/dim]")
+        return
+    console.print(f"[bold]Latest session[/bold]  {record.session_id}")
+    console.print(f"  Started: {record.timestamp_start}")
+    console.print(f"  Ended:   {record.timestamp_end or '(active)'}")
+    console.print(f"  Degraded: {record.degraded_mode}")
+    console.print(f"  Blocking: {len(record.blocking_issues)}")
+    for b in record.blocking_issues[:5]:
+        console.print(f"    - {b}")
+    console.print(f"  Warnings: {len(record.warnings)}")
+    if record.disposition:
+        console.print(f"  Disposition: {record.disposition}")
+    fb = load_feedback(record.session_id, pilot_dir)
+    if fb:
+        console.print(
+            f"  Feedback: usefulness={fb.usefulness_score} trust={fb.trust_score}")
 
 
 @pilot_group.command("verify")
 def pilot_verify(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    release_config: str = typer.Option("configs/release_narrow.yaml", "--release-config"),
+    release_config: str = typer.Option(
+        "configs/release_narrow.yaml", "--release-config"),
 ) -> None:
     """Verify pilot readiness: config, graph, setup, adapter, trials. Exit 1 if blocking issues."""
     from workflow_dataset.pilot.health import pilot_verify_result
-    result = pilot_verify_result(config_path=config, release_config_path=release_config)
+    r_cfg = _resolve_path(config)
+    r_rel = _resolve_path(release_config)
+    config = str(r_cfg) if r_cfg is not None else config
+    release_config = str(r_rel) if r_rel is not None else release_config
+    result = pilot_verify_result(
+        config_path=config, release_config_path=release_config)
     console.print(f"[bold]Pilot scope:[/bold] Operations reporting assistant")
     console.print(f"[bold]Ready:[/bold] {result['ready']}")
     for b in result.get("blocking", []):
@@ -3164,7 +3523,8 @@ def pilot_verify(
     if details.get("graph_ok"):
         console.print("  [green]Graph: OK[/green]")
     if details.get("adapter_ok"):
-        console.print(f"  [green]Adapter: OK ({details.get('adapter_path', '')})[/green]")
+        console.print(
+            f"  [green]Adapter: OK ({details.get('adapter_path', '')})[/green]")
     if not result["ready"]:
         raise typer.Exit(1)
 
@@ -3172,12 +3532,18 @@ def pilot_verify(
 @pilot_group.command("status")
 def pilot_status(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    release_config: str = typer.Option("configs/release_narrow.yaml", "--release-config"),
+    release_config: str = typer.Option(
+        "configs/release_narrow.yaml", "--release-config"),
     json_output: bool = typer.Option(False, "--json"),
 ) -> None:
     """Show pilot status: ready, degraded, safe-to-demo, latest adapter, feedback report."""
     from workflow_dataset.pilot.health import pilot_status_dict
-    status = pilot_status_dict(config_path=config, release_config_path=release_config)
+    r_cfg = _resolve_path(config)
+    r_rel = _resolve_path(release_config)
+    config = str(r_cfg) if r_cfg is not None else config
+    release_config = str(r_rel) if r_rel is not None else release_config
+    status = pilot_status_dict(
+        config_path=config, release_config_path=release_config)
     if json_output:
         import json
         console.print(json.dumps(status, indent=2))
@@ -3185,7 +3551,12 @@ def pilot_status(
     console.print(f"[bold]Ready:[/bold] {status['ready']}")
     console.print(f"[bold]Safe to demo:[/bold] {status['safe_to_demo']}")
     console.print(f"[bold]Degraded (no adapter):[/bold] {status['degraded']}")
-    console.print(f"  Adapter: {'OK' if status.get('adapter_ok') else 'missing'}")
+    if status.get("adapter_ok"):
+        console.print("  Adapter: OK")
+    elif status.get("degraded"):
+        console.print("  Adapter: missing (degraded; base model only)")
+    else:
+        console.print("  Adapter: missing (LLM config missing or no adapter)")
     if status.get("latest_run_dir"):
         console.print(f"  Latest run: {status['latest_run_dir']}")
     if status.get("latest_feedback_report"):
@@ -3195,13 +3566,19 @@ def pilot_status(
 @pilot_group.command("latest-report")
 def pilot_latest_report(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
-    release_config: str = typer.Option("configs/release_narrow.yaml", "--release-config"),
+    release_config: str = typer.Option(
+        "configs/release_narrow.yaml", "--release-config"),
     output_dir: str = typer.Option("data/local/pilot", "--output-dir"),
 ) -> None:
     """Generate pilot_readiness_report.md with scope, status, evidence, recommendation."""
     from workflow_dataset.pilot.health import write_pilot_readiness_report
+    r_cfg = _resolve_path(config)
+    r_rel = _resolve_path(release_config)
+    config = str(r_cfg) if r_cfg is not None else config
+    release_config = str(r_rel) if r_rel is not None else release_config
     out = Path(output_dir)
-    path = write_pilot_readiness_report(config_path=config, release_config_path=release_config, pilot_dir=out)
+    path = write_pilot_readiness_report(
+        config_path=config, release_config_path=release_config, pilot_dir=out)
     console.print(f"[green]Pilot report: {path}[/green]")
 
 
@@ -3217,20 +3594,26 @@ app.add_typer(packs_group, name="packs")
 
 @sources_group.command("list")
 def sources_list(
-    registry: str = typer.Option("data/local/capability_intake/source_registry.json", "--registry"),
-    adoption: str = typer.Option("", "--adoption", help="Filter by adoption_recommendation"),
+    registry: str = typer.Option(
+        "data/local/capability_intake/source_registry.json", "--registry"),
+    adoption: str = typer.Option(
+        "", "--adoption", help="Filter by adoption_recommendation"),
 ) -> None:
     """List registered capability intake sources."""
     from workflow_dataset.capability_intake.source_registry import list_sources
-    sources = list_sources(registry_path=registry, adoption_filter=adoption or None)
+    sources = list_sources(registry_path=registry,
+                           adoption_filter=adoption or None)
     for s in sources:
-        console.print(f"  [bold]{s.source_id}[/bold]  {s.adoption_recommendation}  {s.recommended_role}  — {s.name}")
+        console.print(
+            f"  [bold]{s.source_id}[/bold]  {s.adoption_recommendation}  {s.recommended_role}  — {s.name}")
 
 
 @sources_group.command("show")
 def sources_show(
-    source_id: str = typer.Argument(..., help="Source id (e.g. openclaw, mirofish)"),
-    registry: str = typer.Option("data/local/capability_intake/source_registry.json", "--registry"),
+    source_id: str = typer.Argument(...,
+                                    help="Source id (e.g. openclaw, mirofish)"),
+    registry: str = typer.Option(
+        "data/local/capability_intake/source_registry.json", "--registry"),
 ) -> None:
     """Show details for one registered source."""
     from workflow_dataset.capability_intake.source_registry import get_source
@@ -3242,7 +3625,8 @@ def sources_show(
     console.print(f"  Type: {s.source_type}  Kind: {s.source_kind}")
     console.print(f"  URL: {s.canonical_url or '(none)'}")
     console.print(f"  Role: {s.recommended_role}  Risk: {s.safety_risk_level}")
-    console.print(f"  Local fit: {s.local_runtime_fit}  Cloud pack fit: {s.cloud_pack_fit}")
+    console.print(
+        f"  Local fit: {s.local_runtime_fit}  Cloud pack fit: {s.cloud_pack_fit}")
     console.print(f"  Adoption: {s.adoption_recommendation}")
     if s.unresolved_reason:
         console.print(f"  [yellow]Unresolved: {s.unresolved_reason}[/yellow]")
@@ -3252,8 +3636,10 @@ def sources_show(
 
 @sources_group.command("report")
 def sources_report(
-    registry: str = typer.Option("data/local/capability_intake/source_registry.json", "--registry"),
-    output: str = typer.Option("data/local/capability_intake/source_report.md", "--output"),
+    registry: str = typer.Option(
+        "data/local/capability_intake/source_registry.json", "--registry"),
+    output: str = typer.Option(
+        "data/local/capability_intake/source_report.md", "--output"),
 ) -> None:
     """Generate capability intake source report (markdown)."""
     from workflow_dataset.capability_intake.source_report import write_source_report
@@ -3263,38 +3649,49 @@ def sources_report(
 
 @sources_group.command("rank")
 def sources_rank(
-    role: str = typer.Option("", "--role", "-r", help="Job role e.g. ops, analyst"),
-    industry: str = typer.Option("", "--industry", "-i", help="Industry vertical"),
-    workflow_type: str = typer.Option("", "--workflow", "-w", help="Workflow type e.g. reporting"),
-    task_type: str = typer.Option("", "--task", "-t", help="Task type e.g. summarize, scaffold"),
-    registry: str = typer.Option("data/local/capability_intake/source_registry.json", "--registry"),
+    role: str = typer.Option(
+        "", "--role", "-r", help="Job role e.g. ops, analyst"),
+    industry: str = typer.Option(
+        "", "--industry", "-i", help="Industry vertical"),
+    workflow_type: str = typer.Option(
+        "", "--workflow", "-w", help="Workflow type e.g. reporting"),
+    task_type: str = typer.Option(
+        "", "--task", "-t", help="Task type e.g. summarize, scaffold"),
+    registry: str = typer.Option(
+        "data/local/capability_intake/source_registry.json", "--registry"),
     top: int = typer.Option(10, "--top", "-n"),
 ) -> None:
     """Rank registered sources by fit to role/industry/workflow/task. Offline; uses registry only."""
     from workflow_dataset.capability_intake.repo_ranker import RepoTaskFitQuery, rank_sources_for_query
-    query = RepoTaskFitQuery(role=role, industry=industry, workflow_type=workflow_type, task_type=task_type)
+    query = RepoTaskFitQuery(role=role, industry=industry,
+                             workflow_type=workflow_type, task_type=task_type)
     results = rank_sources_for_query(query, registry_path=registry, top_k=top)
     for r in results:
-        console.print(f"  [bold]{r.source_id}[/bold]  fit={r.fit_score:.2f}  safety={r.safety_score:.2f}  adoption={r.adoption_recommendation}")
+        console.print(
+            f"  [bold]{r.source_id}[/bold]  fit={r.fit_score:.2f}  safety={r.safety_score:.2f}  adoption={r.adoption_recommendation}")
         if r.rationale:
             console.print(f"    [dim]{r.rationale}[/dim]")
 
 
 @sources_group.command("unresolved")
 def sources_unresolved(
-    registry: str = typer.Option("data/local/capability_intake/source_registry.json", "--registry"),
+    registry: str = typer.Option(
+        "data/local/capability_intake/source_registry.json", "--registry"),
 ) -> None:
     """List sources marked unresolved (no canonical URL or ambiguous identity)."""
     from workflow_dataset.capability_intake.source_registry import list_sources
     sources = list_sources(registry_path=registry, unresolved_only=True)
     for s in sources:
-        console.print(f"  [bold]{s.source_id}[/bold]  — {(s.unresolved_reason or '')[:80]}...")
+        console.print(
+            f"  [bold]{s.source_id}[/bold]  — {(s.unresolved_reason or '')[:80]}...")
 
 
 @sources_group.command("classify")
 def sources_classify(
-    path_or_manifest: str = typer.Argument(..., help="Path to manifest JSON or inline source_id"),
-    registry: str = typer.Option("data/local/capability_intake/source_registry.json", "--registry"),
+    path_or_manifest: str = typer.Argument(
+        ..., help="Path to manifest JSON or inline source_id"),
+    registry: str = typer.Option(
+        "data/local/capability_intake/source_registry.json", "--registry"),
 ) -> None:
     """Classify a manifest file and print role/risk/fit/recommendation."""
     from pathlib import Path
@@ -3308,32 +3705,38 @@ def sources_classify(
             raise typer.Exit(1)
     else:
         from workflow_dataset.capability_intake.source_registry import get_source
-        c = get_source(path_or_manifest, registry_path=registry) if path_or_manifest else None
+        c = get_source(path_or_manifest,
+                       registry_path=registry) if path_or_manifest else None
         if not c:
-            console.print(f"[red]Not a file and not found in registry: {path_or_manifest}[/red]")
+            console.print(
+                f"[red]Not a file and not found in registry: {path_or_manifest}[/red]")
             raise typer.Exit(1)
     console.print(f"  source_id: {c.source_id}")
     console.print(f"  recommended_role: {c.recommended_role}")
     console.print(f"  safety_risk_level: {c.safety_risk_level}")
-    console.print(f"  local_runtime_fit: {c.local_runtime_fit}  cloud_pack_fit: {c.cloud_pack_fit}")
+    console.print(
+        f"  local_runtime_fit: {c.local_runtime_fit}  cloud_pack_fit: {c.cloud_pack_fit}")
     console.print(f"  adoption_recommendation: {c.adoption_recommendation}")
 
 
 @packs_group.command("list")
 def packs_list(
     packs_dir: str = typer.Option("data/local/packs", "--packs-dir"),
-    show_activation: bool = typer.Option(False, "--all", "-a", help="Show activation state (primary, pinned, suspended)"),
+    show_activation: bool = typer.Option(
+        False, "--all", "-a", help="Show activation state (primary, pinned, suspended)"),
 ) -> None:
     """List installed capability packs. Use --all to show primary, pinned, suspended."""
     from workflow_dataset.packs import list_installed_packs
     from workflow_dataset.packs.pack_activation import get_primary_pack_id, get_pinned, get_suspended_pack_ids
     installed = list_installed_packs(packs_dir)
     if not installed:
-        console.print("[dim]No packs installed. Use 'packs install <manifest_path>' to install.[/dim]")
+        console.print(
+            "[dim]No packs installed. Use 'packs install <manifest_path>' to install.[/dim]")
         raise typer.Exit(0)
     primary = get_primary_pack_id(packs_dir) if show_activation else ""
     pinned = get_pinned(packs_dir) if show_activation else {}
-    suspended = set(get_suspended_pack_ids(packs_dir)) if show_activation else set()
+    suspended = set(get_suspended_pack_ids(packs_dir)
+                    ) if show_activation else set()
     for rec in installed:
         pack_id = rec.get("pack_id", "")
         version = rec.get("version", "")
@@ -3374,7 +3777,8 @@ def packs_show(
 
 @packs_group.command("install")
 def packs_install(
-    manifest_path: str = typer.Argument(..., help="Path to pack manifest JSON"),
+    manifest_path: str = typer.Argument(...,
+                                        help="Path to pack manifest JSON"),
     packs_dir: str = typer.Option("data/local/packs", "--packs-dir"),
 ) -> None:
     """Install a capability pack from a manifest file (local-only; declarative recipes only)."""
@@ -3404,7 +3808,8 @@ def packs_uninstall(
 
 @packs_group.command("activate")
 def packs_activate(
-    pack_id: str = typer.Argument(..., help="Pack id to activate (sets as primary pack for release run)"),
+    pack_id: str = typer.Argument(
+        ..., help="Pack id to activate (sets as primary pack for release run)"),
     packs_dir: str = typer.Option("data/local/packs", "--packs-dir"),
 ) -> None:
     """Activate a pack: set as primary so release run uses it when --role is omitted."""
@@ -3413,7 +3818,8 @@ def packs_activate(
     from workflow_dataset.packs.pack_state import set_active_role
     manifest = get_installed_manifest(pack_id, packs_dir)
     if not manifest:
-        console.print(f"[red]Pack not installed: {pack_id}. Install it first.[/red]")
+        console.print(
+            f"[red]Pack not installed: {pack_id}. Install it first.[/red]")
         raise typer.Exit(1)
     role = (manifest.role_tags or [""])[0]
     if not role:
@@ -3421,7 +3827,8 @@ def packs_activate(
         raise typer.Exit(1)
     set_primary_pack(pack_id, packs_dir)
     set_active_role(role, packs_dir)
-    console.print(f"[green]Activated {pack_id} (primary, role={role}).[/green]")
+    console.print(
+        f"[green]Activated {pack_id} (primary, role={role}).[/green]")
 
 
 @packs_group.command("deactivate")
@@ -3433,13 +3840,15 @@ def packs_deactivate(
     from workflow_dataset.packs.pack_state import clear_active_role
     clear_primary_pack(packs_dir)
     clear_active_role(packs_dir)
-    console.print("[green]Deactivated. No primary pack or active role.[/green]")
+    console.print(
+        "[green]Deactivated. No primary pack or active role.[/green]")
 
 
 @packs_group.command("pin")
 def packs_pin(
     pack_id: str = typer.Argument(..., help="Pack id to pin"),
-    scope: str = typer.Option("session", "--scope", "-s", help="Scope: session, project, or task"),
+    scope: str = typer.Option("session", "--scope",
+                              "-s", help="Scope: session, project, or task"),
     packs_dir: str = typer.Option("data/local/packs", "--packs-dir"),
 ) -> None:
     """Pin a pack for the given scope (it wins over primary for that scope)."""
@@ -3450,8 +3859,10 @@ def packs_pin(
 
 @packs_group.command("unpin")
 def packs_unpin(
-    pack_id: str = typer.Argument(None, help="Pack id to unpin (omit to clear by scope only)"),
-    scope: str = typer.Option(None, "--scope", "-s", help="Scope to clear (session, project, task)"),
+    pack_id: str = typer.Argument(
+        None, help="Pack id to unpin (omit to clear by scope only)"),
+    scope: str = typer.Option(None, "--scope", "-s",
+                              help="Scope to clear (session, project, task)"),
     packs_dir: str = typer.Option("data/local/packs", "--packs-dir"),
 ) -> None:
     """Unpin: use --scope to clear that scope, or pack_id to remove all pins for that pack."""
@@ -3476,18 +3887,21 @@ def packs_conflicts(
         m = get_installed_manifest(rec["pack_id"], packs_dir)
         if m:
             manifests.append(m)
-    conflicts = detect_conflicts(manifests, role=role or None, workflow=workflow or None, task=task or None)
+    conflicts = detect_conflicts(
+        manifests, role=role or None, workflow=workflow or None, task=task or None)
     if not conflicts:
         console.print("[dim]No conflicts detected.[/dim]")
         return
     for c in conflicts:
-        console.print(f"  [{c.conflict_class.value}] {c.capability}: {c.description}")
+        console.print(
+            f"  [{c.conflict_class.value}] {c.capability}: {c.description}")
         console.print(f"    packs: {c.pack_ids}  -> {c.resolution}")
 
 
 @packs_group.command("explain")
 def packs_explain(
-    task_or_scope: str = typer.Argument("", help="Optional task or scope to explain"),
+    task_or_scope: str = typer.Argument(
+        "", help="Optional task or scope to explain"),
     packs_dir: str = typer.Option("data/local/packs", "--packs-dir"),
 ) -> None:
     """Explain why current capabilities resolve as they do (primary, pinned, conflicts)."""
@@ -3543,11 +3957,13 @@ def packs_validate(
 @packs_group.command("multi-pack-report")
 def packs_multi_pack_report(
     packs_dir: str = typer.Option("data/local/packs", "--packs-dir"),
-    output: str = typer.Option("", "--output", "-o", help="Output path (default: data/local/packs/multi_pack_status_report.md)"),
+    output: str = typer.Option(
+        "", "--output", "-o", help="Output path (default: data/local/packs/multi_pack_status_report.md)"),
 ) -> None:
     """Write multi-pack status report (installed, primary, pinned, resolution)."""
     from workflow_dataset.packs.pack_reporting import write_multi_pack_status_report
-    path = write_multi_pack_status_report(packs_dir=packs_dir, output_path=output or None)
+    path = write_multi_pack_status_report(
+        packs_dir=packs_dir, output_path=output or None)
     console.print(f"[green]Report written: {path}[/green]")
 
 
@@ -3561,20 +3977,23 @@ def packs_conflict_report(
 ) -> None:
     """Write conflict report for installed packs."""
     from workflow_dataset.packs.pack_reporting import write_conflict_report
-    path = write_conflict_report(packs_dir=packs_dir, role=role or None, workflow=workflow or None, task=task or None, output_path=output or None)
+    path = write_conflict_report(packs_dir=packs_dir, role=role or None,
+                                 workflow=workflow or None, task=task or None, output_path=output or None)
     console.print(f"[green]Report written: {path}[/green]")
 
 
 @packs_group.command("report")
 def packs_report(
-    pack_id: str = typer.Argument(..., help="Pack id to generate evaluation report for"),
+    pack_id: str = typer.Argument(...,
+                                  help="Pack id to generate evaluation report for"),
     packs_dir: str = typer.Option("data/local/packs", "--packs-dir"),
     trials_dir: str = typer.Option("data/local/trials", "--trials-dir"),
 ) -> None:
     """Generate a short evaluation report for an installed pack (data/local/packs/<pack_id>/report.md)."""
     from workflow_dataset.packs.pack_report import write_pack_report
     try:
-        path = write_pack_report(pack_id, packs_dir=packs_dir, trials_dir=trials_dir)
+        path = write_pack_report(
+            pack_id, packs_dir=packs_dir, trials_dir=trials_dir)
         console.print(f"[green]Report written: {path}[/green]")
     except ValueError as e:
         console.print(f"[red]{e}[/red]")
@@ -3583,10 +4002,13 @@ def packs_report(
 
 @packs_group.command("resolve")
 def packs_resolve(
-    role: str = typer.Option("", "--role", "-r", help="Filter by role e.g. ops"),
-    industry: str = typer.Option("", "--industry", "-i", help="Filter by industry"),
+    role: str = typer.Option(
+        "", "--role", "-r", help="Filter by role e.g. ops"),
+    industry: str = typer.Option(
+        "", "--industry", "-i", help="Filter by industry"),
     task: str = typer.Option("", "--task", "-t", help="Filter by task type"),
-    workflow: str = typer.Option("", "--workflow", "-w", help="Filter by workflow type"),
+    workflow: str = typer.Option(
+        "", "--workflow", "-w", help="Filter by workflow type"),
     packs_dir: str = typer.Option("data/local/packs", "--packs-dir"),
 ) -> None:
     """Resolve active packs by role/industry/workflow/task."""
@@ -3639,7 +4061,8 @@ def runtime_status(
     if ctx.get("current_role"):
         console.print(f"[bold]Current role[/bold]  {ctx['current_role']}")
     elif get_active_role(packs_dir):
-        console.print(f"[bold]Active role[/bold]  {get_active_role(packs_dir)}")
+        console.print(
+            f"[bold]Active role[/bold]  {get_active_role(packs_dir)}")
     cap = resolve_active_capabilities(
         role=ctx.get("current_role") or get_active_role(packs_dir) or None,
         workflow_type=ctx.get("current_workflow") or None,
@@ -3648,7 +4071,8 @@ def runtime_status(
     )
     console.print("[bold]Active capabilities[/bold]")
     console.print("  packs:", [m.pack_id for m in cap.active_packs])
-    console.print("  templates:", cap.templates[:10] if len(cap.templates) > 10 else cap.templates)
+    console.print("  templates:", cap.templates[:10] if len(
+        cap.templates) > 10 else cap.templates)
     console.print("  recommended_models:", cap.recommended_models)
     console.print("  output_adapters:", cap.output_adapters)
 
@@ -3699,7 +4123,8 @@ def runtime_explain(
         filters.append(f"task={task}")
     if workflow:
         filters.append(f"workflow={workflow}")
-    console.print("Filters:", filters if filters else "(none — all installed packs active)")
+    console.print(
+        "Filters:", filters if filters else "(none — all installed packs active)")
     installed = list_installed_packs(packs_dir)
     console.print("Installed:", [r.get("pack_id") for r in installed])
     cap = resolve_active_capabilities(
@@ -3709,14 +4134,17 @@ def runtime_explain(
         task_type=task or None,
         packs_dir=packs_dir,
     )
-    console.print("Active after resolution:", [m.pack_id for m in cap.active_packs])
+    console.print("Active after resolution:", [
+                  m.pack_id for m in cap.active_packs])
     for m in cap.active_packs:
-        console.print(f"  {m.pack_id}: role_tags={m.role_tags} industry={m.industry_tags} workflow={m.workflow_tags} task={m.task_tags}")
+        console.print(
+            f"  {m.pack_id}: role_tags={m.role_tags} industry={m.industry_tags} workflow={m.workflow_tags} task={m.task_tags}")
 
 
 @runtime_group.command("switch-role")
 def runtime_switch_role(
-    role_tag: str = typer.Argument(..., help="Role to switch to (e.g. ops, founder)"),
+    role_tag: str = typer.Argument(...,
+                                   help="Role to switch to (e.g. ops, founder)"),
     packs_dir: str = typer.Option("data/local/packs", "--packs-dir"),
 ) -> None:
     """Set current role for resolution (primary pack unchanged; resolution filters by this role)."""
@@ -3738,8 +4166,10 @@ def runtime_switch_context(
     if not workflow and not task:
         console.print("[yellow]Provide --workflow and/or --task[/yellow]")
         raise typer.Exit(1)
-    set_current_context(workflow=workflow or None, task=task or None, packs_dir=packs_dir)
-    console.print(f"[green]Context set: workflow={workflow or '(unchanged)'} task={task or '(unchanged)'}[/green]")
+    set_current_context(workflow=workflow or None,
+                        task=task or None, packs_dir=packs_dir)
+    console.print(
+        f"[green]Context set: workflow={workflow or '(unchanged)'} task={task or '(unchanged)'}[/green]")
 
 
 @runtime_group.command("clear-context")
@@ -3751,4 +4181,5 @@ def runtime_clear_context(
     from workflow_dataset.packs.pack_state import clear_active_role
     clear_context(packs_dir)
     clear_active_role(packs_dir)
-    console.print("[green]Context cleared (role, workflow, task, pins). Primary pack unchanged.[/green]")
+    console.print(
+        "[green]Context cleared (role, workflow, task, pins). Primary pack unchanged.[/green]")

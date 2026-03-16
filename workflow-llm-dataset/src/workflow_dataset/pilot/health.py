@@ -35,9 +35,19 @@ def pilot_verify_result(
     """
     Run checks needed for pilot: config, graph, setup dirs, LLM adapter, trials.
     Returns dict with ready: bool, blocking: list[str], warnings: list[str], details.
+    Relative paths are resolved against project root (directory containing configs/settings.yaml).
     """
+    from workflow_dataset.path_utils import resolve_config_path
+    r_cfg = resolve_config_path(config_path)
+    r_rel = resolve_config_path(release_config_path)
+    config_path = str(r_cfg) if r_cfg is not None else config_path
+    release_config_path = str(r_rel) if r_rel is not None else release_config_path
     rel = _load_release_config(release_config_path)
     llm_path = rel.get("default_llm_config", "configs/llm_training_full.yaml")
+    if llm_path:
+        r_llm = resolve_config_path(llm_path)
+        if r_llm is not None:
+            llm_path = str(r_llm)
     blocking: list[str] = []
     warnings: list[str] = []
     details: dict[str, Any] = {}
@@ -93,6 +103,36 @@ def pilot_verify_result(
 
     ready = len(blocking) == 0
     return {"ready": ready, "blocking": blocking, "warnings": warnings, "details": details}
+
+
+def _pilot_feedback_excerpt(pilot_dir: Path | str, max_chars: int = 600) -> str:
+    """Build a short excerpt from M21 pilot feedback (freeform_notes, user_quote) for the readiness report."""
+    try:
+        from workflow_dataset.pilot.feedback_capture import list_feedback_files, load_feedback
+        from workflow_dataset.pilot.session_log import list_sessions
+        root = Path(pilot_dir) if pilot_dir else Path("data/local/pilot")
+        sessions = list_sessions(root, limit=5)
+        if not sessions:
+            return ""
+        parts: list[str] = []
+        seen = 0
+        for s in sessions:
+            if seen >= 2:
+                break
+            fb = load_feedback(s.session_id, root)
+            if not fb:
+                continue
+            text_parts: list[str] = []
+            if fb.freeform_notes and fb.freeform_notes.strip():
+                text_parts.append(fb.freeform_notes.strip())
+            if fb.user_quote and fb.user_quote.strip():
+                text_parts.append(f'"{fb.user_quote.strip()}"')
+            if text_parts:
+                parts.append("- " + " ".join(text_parts)[:280])
+                seen += 1
+        return "\n".join(parts)[:max_chars] if parts else ""
+    except Exception:
+        return ""
 
 
 def pilot_status_dict(
@@ -157,12 +197,16 @@ def write_pilot_readiness_report(
     status = pilot_status_dict(config_path=config_path, release_config_path=release_config_path, trials_dir=rel.get("trials_output_dir", "data/local/trials"))
     trials_dir = Path(rel.get("trials_output_dir", "data/local/trials"))
     feedback_report = trials_dir / "latest_feedback_report.md"
-    feedback_summary = ""
+    trial_feedback_summary = ""
     if feedback_report.exists():
         try:
-            feedback_summary = feedback_report.read_text(encoding="utf-8")[:1500]
+            raw = feedback_report.read_text(encoding="utf-8")[:1500]
+            if "Feedback entries: 0" not in raw and "No feedback yet" not in raw:
+                trial_feedback_summary = raw
         except Exception:
             pass
+
+    pilot_feedback_excerpt = _pilot_feedback_excerpt(pilot_dir)
 
     active_packs = status.get("active_pack_ids") or []
     lines = [
@@ -172,7 +216,12 @@ def write_pilot_readiness_report(
         f"**Active pack(s):** {', '.join(active_packs) if active_packs else '(none)'}",
         f"**Ready:** {status.get('ready', False)}",
         f"**Safe to demo:** {status.get('safe_to_demo', False)}",
-        f"**Degraded mode:** {status.get('degraded', False)}" + (" (no adapter; base model only)" if status.get('degraded') else " (adapter available)"),
+        f"**Degraded mode:** {status.get('degraded', False)}"
+        + (
+            " (no adapter; base model only)"
+            if status.get("degraded")
+            else " (adapter available)" if status.get("adapter_ok") else " (LLM config missing or no adapter)"
+        ),
         "",
         "## Blocking issues",
         "",
@@ -200,6 +249,22 @@ def write_pilot_readiness_report(
         f"- Adapter: {'OK' if status.get('adapter_ok') else 'missing (degraded)'}",
         f"- Latest run: {status.get('latest_run_dir', '(none)')}",
         "",
+        "## M21 pilot evidence",
+        "",
+    ])
+    try:
+        from workflow_dataset.pilot.session_log import list_sessions
+        from workflow_dataset.pilot.feedback_capture import list_feedback_files
+        sessions = list_sessions(pilot_dir)
+        feedback_paths = list_feedback_files(pilot_dir)
+        lines.append(f"- **Pilot sessions completed:** {len(sessions)}")
+        lines.append(f"- **Structured feedback entries:** {len(feedback_paths)}")
+        if len(sessions) == 0:
+            lines.append("- Run `pilot start-session` → run/demo → `pilot capture-feedback` → `pilot end-session` → `pilot aggregate` to generate evidence.")
+    except Exception:
+        lines.append("- (M21 session/feedback modules not available)")
+    lines.extend([
+        "",
         "## Unresolved risks",
         "",
         "See docs/RELIABILITY_TRIAGE.md. Acceptable-with-warning items (no adapter, retrieval fail) are documented.",
@@ -207,17 +272,34 @@ def write_pilot_readiness_report(
         "## Recommendation",
         "",
     ])
+    pilot_sessions_count = 0
+    try:
+        from workflow_dataset.pilot.session_log import list_sessions
+        pilot_sessions_count = len(list_sessions(pilot_dir))
+    except Exception:
+        pass
     if not status.get("ready"):
         lines.append("- **Not ready.** Fix blocking issues (graph, setup) then re-run pilot verify.")
+    elif pilot_sessions_count >= 3:
+        lines.append("- **Continue narrow pilot expansion / evidence collection** within current scope. Initial 2–3 user threshold exceeded; proceed per docs/PILOT_OPERATOR_GUIDE.md.")
     elif status.get("degraded"):
         lines.append("- **Ready for 2–3 user narrow private pilot** with degraded mode (base model). Recommend training adapter for better outputs.")
     else:
         lines.append("- **Ready for 2–3 user narrow private pilot** with adapter. Proceed per docs/PILOT_OPERATOR_GUIDE.md.")
     lines.append("")
-    if feedback_summary:
-        lines.append("## Latest feedback (excerpt)")
+    if pilot_feedback_excerpt:
+        lines.append("## Latest pilot feedback (excerpt)")
         lines.append("")
-        lines.append(feedback_summary[:800].strip())
+        lines.append("Evidence from M21 pilot session feedback (data/local/pilot/feedback/):")
+        lines.append("")
+        lines.append(pilot_feedback_excerpt)
+        lines.append("")
+    if trial_feedback_summary:
+        lines.append("## Trial feedback (excerpt)")
+        lines.append("")
+        lines.append("From trial tasks (data/local/trials/latest_feedback_report.md):")
+        lines.append("")
+        lines.append(trial_feedback_summary[:800].strip())
         lines.append("")
     out.write_text("\n".join(lines), encoding="utf-8")
     return out

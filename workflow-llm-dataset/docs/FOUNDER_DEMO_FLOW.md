@@ -4,6 +4,15 @@ How to demo the product in a clean, credible way. Pre-demo setup, exact commands
 
 ---
 
+## Grounded vs ungrounded demo
+
+- **Ungrounded (generic):** `release demo` with no retrieval or missing corpus — the model has no workflow context; outputs are generic. The CLI prints `[Ungrounded: no retrieval context; outputs may be generic]`.
+- **Grounded:** Run `setup init` and `setup run` so the graph has projects and style signals; optionally prepare corpus (`llm prepare-corpus`) and use `release demo --retrieval` when `data/local/llm/corpus/corpus.jsonl` exists. The CLI prints `[Grounded: retrieval context used]`. Answers can reference the user's workflow and corpus. When retrieval context is weakly relevant to ops/reporting, the model is instructed to say so and keep the answer cautious.
+
+For pilot evidence quality, prefer a grounded run (setup + optional retrieval) so outputs reflect real context.
+
+---
+
 ## Pre-demo setup requirements
 
 - **Config:** `configs/settings.yaml` (and optionally `configs/release_narrow.yaml` as override) with valid setup paths and graph.
