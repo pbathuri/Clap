@@ -1,0 +1,18 @@
+# M23A: Ops reporting chain v1 — intake then demo (operator-controlled)
+id: ops_reporting_chain_v1
+name: Ops reporting chain v1
+steps:
+  - id: ingest
+    type: intake_add
+    params:
+      path: ./notes
+      label: sprint_notes
+  - id: demo
+    type: release_demo
+    params:
+      intake: sprint_notes
+      template: ops_reporting_core
+      save_artifact: true
+expected_artifacts: []
+stop_conditions:
+  on_step_failure: true

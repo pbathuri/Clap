@@ -1,0 +1,11 @@
+# M22E: Weekly status + stakeholder update (composer example)
+# M22E-F2: versioned template
+id: weekly_plus_stakeholder
+version: "1.0"
+name: Weekly status and stakeholder update
+description: Weekly status plus stakeholder-facing update and decision requests
+workflow_id: ops_reporting_workspace
+artifacts:
+  - weekly_status
+  - stakeholder_update
+  - decision_requests

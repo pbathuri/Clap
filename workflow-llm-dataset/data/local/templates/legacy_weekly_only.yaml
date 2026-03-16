@@ -1,0 +1,13 @@
+# M22E-F2: Example deprecated template (for validation report samples)
+id: legacy_weekly_only
+version: "0.9"
+name: Legacy weekly only
+description: Deprecated; use weekly_plus_stakeholder or ops_reporting_core instead.
+workflow_id: weekly_status
+artifacts:
+  - weekly_status
+deprecated: true
+compatibility_note: Replaced by ops_reporting_core for richer reporting.
+migration_hints:
+  - "Use workflow weekly_status directly: workflow-dataset release demo --workflow weekly_status --save-artifact"
+  - "Or use template ops_reporting_core for status brief + action register + decision requests"

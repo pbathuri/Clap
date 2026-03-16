@@ -1,0 +1,20 @@
+{
+  "id": "sample_weekly_demo",
+  "description": "Single step: release demo weekly_status (help-only for safe sample). Replace with --save-artifact for real run.",
+  "steps": [
+    {
+      "id": "demo_help",
+      "type": "cli",
+      "label": "Release demo help",
+      "params": {
+        "args": ["release", "demo", "--help"]
+      },
+      "workflow_name": "weekly_status"
+    }
+  ],
+  "expected_inputs_per_step": {},
+  "expected_outputs_per_step": {},
+  "stop_conditions": ["stop_on_first_failure"],
+  "workflow_names": ["weekly_status"],
+  "variant_label": "help_only"
+}

@@ -1,0 +1,11 @@
+# M22E: Ops reporting core — status brief + action register + decision requests
+# M22E-F2: versioned template
+id: ops_reporting_core
+version: "1.0"
+name: Ops reporting core
+description: Status brief, action register, and decision requests (subset of ops_reporting_workspace)
+workflow_id: ops_reporting_workspace
+artifacts:
+  - status_brief
+  - action_register
+  - decision_requests

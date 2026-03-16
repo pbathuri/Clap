@@ -1,0 +1,10 @@
+{
+  "id": "simple_command_chain",
+  "name": "Simple command chain (test)",
+  "steps": [
+    { "id": "step1", "type": "command", "cmd": "echo step1" },
+    { "id": "step2", "type": "command", "cmd": "echo step2" }
+  ],
+  "expected_artifacts": [],
+  "stop_conditions": { "on_step_failure": true }
+}

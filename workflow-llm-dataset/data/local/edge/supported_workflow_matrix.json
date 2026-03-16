@@ -1,0 +1,82 @@
+{
+  "generated": "2026-03-16T05:14:00.221557+00:00",
+  "repo_root": "/Users/prady/Desktop/Clap/workflow-llm-dataset",
+  "supported_workflow_matrix": [
+    {
+      "workflow": "weekly_status",
+      "description": "Single weekly status artifact.",
+      "manifest_file": "manifest.json",
+      "required_files": [
+        "manifest.json",
+        "weekly_status.md"
+      ],
+      "optional_files": [],
+      "required_at_least_one_of": []
+    },
+    {
+      "workflow": "status_action_bundle",
+      "description": "Status brief + action register bundle.",
+      "manifest_file": "manifest.json",
+      "required_files": [
+        "manifest.json"
+      ],
+      "optional_files": [
+        "status_brief.md",
+        "action_register.md"
+      ],
+      "required_at_least_one_of": [
+        "status_brief.md",
+        "action_register.md"
+      ]
+    },
+    {
+      "workflow": "stakeholder_update_bundle",
+      "description": "Stakeholder update + decision requests bundle.",
+      "manifest_file": "manifest.json",
+      "required_files": [
+        "manifest.json"
+      ],
+      "optional_files": [
+        "stakeholder_update.md",
+        "decision_requests.md"
+      ],
+      "required_at_least_one_of": [
+        "stakeholder_update.md",
+        "decision_requests.md"
+      ]
+    },
+    {
+      "workflow": "meeting_brief_bundle",
+      "description": "Meeting brief + action items bundle.",
+      "manifest_file": "manifest.json",
+      "required_files": [
+        "manifest.json"
+      ],
+      "optional_files": [
+        "meeting_brief.md",
+        "action_items.md"
+      ],
+      "required_at_least_one_of": [
+        "meeting_brief.md",
+        "action_items.md"
+      ]
+    },
+    {
+      "workflow": "ops_reporting_workspace",
+      "description": "Multi-artifact ops reporting workspace (M21S/A2).",
+      "manifest_file": "workspace_manifest.json",
+      "required_files": [
+        "workspace_manifest.json",
+        "source_snapshot.md"
+      ],
+      "optional_files": [
+        "weekly_status.md",
+        "status_brief.md",
+        "action_register.md",
+        "stakeholder_update.md",
+        "decision_requests.md"
+      ],
+      "required_at_least_one_of": []
+    }
+  ]
+}
