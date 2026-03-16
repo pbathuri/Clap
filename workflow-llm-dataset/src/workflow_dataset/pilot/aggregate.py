@@ -16,6 +16,7 @@ from workflow_dataset.pilot.session_models import PilotSessionRecord, PilotFeedb
 DEFAULT_PILOT_DIR = Path("data/local/pilot")
 AGGREGATE_JSON = "aggregate_report.json"
 AGGREGATE_MD = "aggregate_report.md"
+DEFAULT_RECENT_COHORT_N = 5
 
 
 def _pilot_root(pilot_dir: Path | str | None = None) -> Path:
@@ -25,14 +26,18 @@ def _pilot_root(pilot_dir: Path | str | None = None) -> Path:
 def aggregate_sessions(
     pilot_dir: Path | str | None = None,
     session_limit: int = 100,
+    recent_n: int | None = None,
 ) -> dict[str, Any]:
     """
     Aggregate all or recent sessions and feedback into a structured report.
+    When recent_n is set, only the most recent recent_n sessions are included (rolling window).
     Returns dict: recurring_blockers, warning_counts, degraded_count, sessions_count,
-    operator_friction, user_value_wins, recommendation_summary, sessions[], feedback_by_session.
+    recommendation_summary, evidence_quality, graduation_* (when recent_n set), etc.
     """
     root = _pilot_root(pilot_dir)
     sessions = list_sessions(pilot_dir, limit=session_limit)
+    if recent_n is not None and recent_n > 0:
+        sessions = sessions[:recent_n]
     blocker_counter: Counter[str] = Counter()
     warning_counter: Counter[str] = Counter()
     degraded_count = 0
@@ -134,7 +139,7 @@ def aggregate_sessions(
         "ungrounded_notes_count": ungrounded_notes_count,
     }
 
-    return {
+    out: dict[str, Any] = {
         "sessions_count": len(sessions),
         "recurring_blockers": recurring_blockers,
         "blocker_counts": dict(blocker_counter),
@@ -150,6 +155,80 @@ def aggregate_sessions(
         "feedback_by_session": feedback_by_session,
         "concern_patterns": concern_patterns,
         "evidence_quality": evidence_quality,
+    }
+    if recent_n is not None:
+        out["cohort_label"] = f"recent_{recent_n}"
+        out["recent_n"] = recent_n
+    return out
+
+
+def graduation_evaluate(aggregate_data: dict[str, Any]) -> dict[str, Any]:
+    """
+    Evaluate narrow-pilot graduation readiness from an aggregate result (typically recent cohort).
+    Returns criteria_checks (list of {criterion, passed, detail}), recommendation_grade, summary.
+    """
+    criteria: list[dict[str, Any]] = []
+    n = aggregate_data.get("sessions_count", 0)
+    eq = aggregate_data.get("evidence_quality", {})
+
+    no_blockers = len(aggregate_data.get("recurring_blockers") or []) == 0
+    criteria.append({
+        "criterion": "no_blockers_in_cohort",
+        "passed": no_blockers,
+        "detail": "No recurring blockers" if no_blockers else "One or more recurring blockers",
+    })
+
+    degraded = aggregate_data.get("degraded_count", 0)
+    no_degraded = degraded == 0
+    criteria.append({
+        "criterion": "no_degraded_mode",
+        "passed": no_degraded,
+        "detail": "No degraded-mode sessions" if no_degraded else f"{degraded} degraded session(s)",
+    })
+
+    avg_u = aggregate_data.get("avg_usefulness", 0)
+    usefulness_ok = n == 0 or avg_u >= 3
+    criteria.append({
+        "criterion": "usefulness_positive",
+        "passed": usefulness_ok,
+        "detail": f"Avg usefulness {avg_u} (≥3 or no feedback)" if usefulness_ok else f"Avg usefulness {avg_u}",
+    })
+
+    c_next = eq.get("concern_next_steps_specificity", 0)
+    c_loc = eq.get("concern_report_location_clarity", 0)
+    concerns_low = c_next <= 1 and c_loc <= 1
+    criteria.append({
+        "criterion": "concerns_low",
+        "passed": concerns_low,
+        "detail": "Next-steps/report-location concerns 0–1 each" if concerns_low else f"Next-steps: {c_next}, report-location: {c_loc}",
+    })
+
+    pause_count = (aggregate_data.get("disposition_counts") or {}).get("pause", 0)
+    no_pause = pause_count == 0
+    criteria.append({
+        "criterion": "no_pause_disposition",
+        "passed": no_pause,
+        "detail": "No pause disposition" if no_pause else f"Pause: {pause_count}",
+    })
+
+    passed = sum(1 for c in criteria if c["passed"])
+    total = len(criteria)
+    if passed == total:
+        recommendation_grade = "graduate"
+        summary = "Recent cohort meets graduation criteria; consider graduating to a broader controlled pilot cohort."
+    elif passed >= total - 1 and (not concerns_low or not usefulness_ok):
+        recommendation_grade = "refine_once"
+        summary = "One focused issue in recent cohort; address it and re-run evaluation, then re-check graduation."
+    else:
+        recommendation_grade = "continue"
+        summary = "Continue narrow pilot; run more sessions and re-run aggregate with --recent to re-evaluate."
+
+    return {
+        "criteria_checks": criteria,
+        "recommendation_grade": recommendation_grade,
+        "summary": summary,
+        "passed_count": passed,
+        "total_criteria": total,
     }
 
 
@@ -239,6 +318,16 @@ def write_aggregate_report(
             lines.append(
                 f"- Feedback mentioning report/output location clarity: {concern['report_location_clarity']} session(s)")
         lines.append("")
+    lines.extend([
+        "",
+        "## Output quality (pilot evidence)",
+        "",
+        "Structured friction and user quotes above indicate where outputs need improvement. "
+        "Connect feedback to: **blocker quality** (tight, action-oriented phrasing vs vague filler), **next-step specificity** (operational, concrete actions vs generic 'follow up'), "
+        "**output/report-location clarity** (where the weekly status artifact is and how to use it). "
+        "Next-steps and report-location concern counts often map to these; use friction excerpts to prioritize.",
+        "",
+    ])
     lines.extend([
         "",
         "## Operator friction (excerpts)",

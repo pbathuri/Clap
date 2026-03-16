@@ -44,7 +44,7 @@ For demo outputs that reflect real workflow context (not generic):
 
 1. **Run setup** so the graph has projects and style signals: `workflow-dataset setup init` and `workflow-dataset setup run` (with a scan root that has sample files).
 2. **Optional:** Prepare corpus (`workflow-dataset llm prepare-corpus`) and use `workflow-dataset release demo --retrieval` when `data/local/llm/corpus/corpus.jsonl` exists.
-3. In **end-session notes**, note whether the run was grounded (e.g. "Grounded: setup run + demo" or "Ungrounded: no corpus").
+3. In **end-session notes**, note whether the run was grounded (e.g. "Grounded: setup run + demo" or "Ungrounded: no corpus"). If you used `--retrieval`, the CLI shows **Retrieval relevance: high | mixed | weak** per prompt and writes the run’s relevance to `data/local/pilot/last_retrieval_relevance.txt`; you can note it in session notes (e.g. "retrieval relevance: weak") for evidence quality.
 
 Without grounded context, demo outputs may be generic; the aggregate report can still use the session but will reflect this.
 

@@ -39,8 +39,10 @@ Use this to confirm: ready, safe-to-demo, degraded (no adapter), and path to lat
 
 For higher-quality evidence and demo outputs that reflect real workflow context:
 
-- **Before the run:** Execute `setup init` and `setup run` so the graph has projects and style signals. Optionally prepare corpus and use `release demo --retrieval` when corpus exists.
-- **In end-session notes:** Note whether the run was grounded (e.g. "Grounded: setup + demo" or "Ungrounded: no corpus"). Without grounded context, demo outputs may be generic.
+- **Before the run:** Execute `setup init` and `setup run` so the graph has projects and style signals. For grounded demo: use `release demo --retrieval` when corpus exists, and/or pass task-scoped context with `--context-file path/to/context.txt` or `--context-text "e.g. weekly ops reporting for project delivery"` (local-only; see docs/FOUNDER_DEMO_FLOW.md).
+- **Recognizing weak grounding:** If the CLI shows **Retrieval relevance: weak** or **mixed**, the model is instructed to qualify its answer; do not treat the output as confident. Use explicit task context to anchor the run when retrieval is often weak. After the run, check `data/local/pilot/last_demo_grounding.txt` and `last_retrieval_relevance.txt` for session notes.
+- **Output location:** Use `release demo --save-artifact` to write the weekly status to **data/local/workspaces/weekly_status/** (sandbox); the CLI prints the exact path. Without the flag, output is terminal-only.
+- **In end-session notes:** Note whether the run was grounded (e.g. "Grounded: task context + retrieval" or "Ungrounded") and, if retrieval was used, the relevance (high/mixed/weak). Without grounded context, demo outputs may be generic.
 
 ### M21 batch execution (session-level evidence)
 

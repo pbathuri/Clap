@@ -105,6 +105,7 @@ def test_write_aggregate_report(tmp_path: Path) -> None:
     assert md_path.exists()
     assert "Sessions included" in md_path.read_text()
     assert "Structured evidence summary" in md_path.read_text()
+    assert "Output quality (pilot evidence)" in md_path.read_text()
     data = json.loads(json_path.read_text())
     assert "evidence_quality" in data
     eq = data["evidence_quality"]

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 import typer
 import yaml
@@ -3176,6 +3178,48 @@ def release_run(
     console.print(f"[green]Release run done. Results in {output_dir}[/green]")
 
 
+MAX_TASK_CONTEXT_CHARS = 2000
+
+# Output-shaping for narrow ops/reporting demo: send-ready weekly status, tight blocker/risk phrasing, operational next steps.
+OPS_WEEKLY_STATUS_INSTRUCTIONS = (
+    "Produce a send-ready weekly status artifact (minimal editing to share). Use exactly these sections when evidence supports them: "
+    "**Summary** (one headline sentence), **Wins** (concrete accomplishments), **Blockers**, **Risks**, **Next steps**. "
+    "Add owner or timing only when the context clearly supports it; do not fabricate. "
+    "Blockers: phrase each in operational form—e.g. 'Blocked by X', 'Waiting on Y', 'Needs decision on Z', 'Dependency unresolved: [what]'. Then one short line on what would unblock. No vague filler (avoid 'some blockers', 'a few issues'). "
+    "Risks: phrase as short, concrete operational risks—e.g. schedule risk, dependency risk, approval risk, quality risk, resource risk—with one line each. Avoid generic 'there are risks' or filler. "
+    "Next steps: operational, concrete actions (who does what by when, or next concrete milestone). Avoid generic-only 'continue monitoring' or 'follow up' unless nothing more specific is supported. "
+    "Write so it reads like a real status update someone could send; tighten wording and avoid restating the prompt."
+)
+OPS_WEEKLY_STATUS_WEAK_CONTEXT_INSTRUCTIONS = (
+    "If context is weak or mixed, fill only sections you can support and label clearly: "
+    "'[Well-supported]' vs '[Uncertain—limited context]' or '[Inferred—low confidence]' for blockers/risks. Prefer a tighter partial artifact over a verbose generic one. Do not fabricate wins, blockers, or next steps; if blockers or risks are inferred, say so briefly."
+)
+OPS_CONCRETE_GENERAL_INSTRUCTIONS = (
+    "Be concrete; avoid merely restating the question."
+)
+
+
+def _load_task_context(
+    context_file: str | None,
+    context_text: str | None,
+    resolve_path: Any,
+) -> str:
+    """Load task-scoped context from file and/or inline text. Local-only; capped at MAX_TASK_CONTEXT_CHARS."""
+    parts: list[str] = []
+    if context_file:
+        path = resolve_path(context_file)
+        if path and Path(path).exists():
+            raw = Path(path).read_text(encoding="utf-8", errors="replace").strip()
+            if raw:
+                parts.append(raw)
+    if context_text and context_text.strip():
+        parts.append(context_text.strip())
+    combined = "\n\n".join(parts)
+    if len(combined) > MAX_TASK_CONTEXT_CHARS:
+        combined = combined[:MAX_TASK_CONTEXT_CHARS] + "\n[... truncated]"
+    return combined
+
+
 @release_group.command("demo")
 def release_demo(
     config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
@@ -3187,8 +3231,23 @@ def release_demo(
         help="LLM config path (e.g. configs/llm_training_full.yaml or configs/llm_training.yaml). Required for demo; resolved from project root if relative.",
     ),
     retrieval: bool = typer.Option(False, "--retrieval"),
+    context_file: str = typer.Option(
+        "",
+        "--context-file",
+        help="Path to a local text file with task-scoped context (e.g. ops/reporting focus). Resolved from project root.",
+    ),
+    context_text: str = typer.Option(
+        "",
+        "--context-text",
+        help="Inline task-scoped context (e.g. 'weekly ops reporting for project delivery'). Use with or without --context-file.",
+    ),
+    save_artifact: bool = typer.Option(
+        False,
+        "--save-artifact",
+        help="Save the prompt-3 weekly status output to a sandbox under data/local/workspaces/weekly_status/ (no apply).",
+    ),
 ) -> None:
-    """Founder demo: run demo-suite with release preset. Requires LLM config with base_model. See docs/FOUNDER_DEMO_FLOW.md."""
+    """Founder demo: run demo-suite with release preset. Use --retrieval for corpus grounding; --context-file/--context-text for explicit task context; --save-artifact to write weekly status to sandbox. See docs/FOUNDER_DEMO_FLOW.md."""
     from workflow_dataset.feedback.trial_events import record_trial_event
     r_cfg = _resolve_path(config)
     r_rel = _resolve_path(release_config)
@@ -3212,15 +3271,25 @@ def release_demo(
     corpus_path = (llm_cfg or {}).get(
         "corpus_path", "data/local/llm/corpus/corpus.jsonl")
     corpus_exists = corpus_path and Path(corpus_path).exists()
-    grounded = use_retrieval and corpus_exists
+    task_context = _load_task_context(
+        context_file.strip() or None, context_text.strip() or None, _resolve_path
+    )
+    has_task_context = bool(task_context)
+    grounded_by_retrieval = use_retrieval and corpus_exists
+    grounded = has_task_context or grounded_by_retrieval
     console.print("[bold]Founder demo — Operations reporting assistant[/bold]")
     if grounded:
-        console.print("[green][Grounded: retrieval context used][/green]")
+        if has_task_context and grounded_by_retrieval:
+            console.print("[green][Grounded: task context + retrieval][/green]")
+        elif has_task_context:
+            console.print("[green][Grounded: task context used][/green]")
+        else:
+            console.print("[green][Grounded: retrieval context used][/green]")
     else:
         console.print(
-            "[yellow][Ungrounded: no retrieval context; outputs may be generic][/yellow]")
+            "[yellow][Ungrounded: no retrieval or task context; outputs may be generic][/yellow]")
         console.print(
-            "[dim]For context-grounded answers: run setup, ensure corpus exists, use --retrieval. See docs/FOUNDER_DEMO_FLOW.md.[/dim]")
+            "[dim]Use --retrieval and/or --context-file/--context-text for grounded answers. See docs/FOUNDER_DEMO_FLOW.md.[/dim]")
     console.print(
         "[dim]Running demo-suite (first 3 prompts).[/dim]")
     if not llm_cfg or not llm_cfg.get("base_model"):
@@ -3244,33 +3313,158 @@ def release_demo(
         "What recurring work patterns are visible?",
         "Summarize this user's recurring reporting workflow and suggest a weekly status structure.",
     ]
+    run_relevance: str | None = None
+    relevance_order = ("weak", "mixed", "high")
+    weekly_status_output: str | None = None
+
     for i, prompt in enumerate(prompts[:3], 1):
         console.print(f"\n[bold]{i}. {prompt}[/bold]")
         user_prompt = prompt
+        retrieval_ctx = ""
+        relevance_hint_this = None
         if use_retrieval and corpus_path and Path(corpus_path).exists():
-            from workflow_dataset.llm.retrieval_context import retrieve, format_context_for_prompt
-            docs = retrieve(corpus_path, prompt, top_k=3)
+            from workflow_dataset.llm.retrieval_context import (
+                retrieve_with_scores,
+                relevance_hint_from_scores,
+                format_context_for_prompt,
+                OPS_REPORTING_PREFERRED_SOURCE_TYPES,
+                OPS_REPORTING_QUERY_SUFFIX,
+            )
+            query_for_retrieval = prompt + OPS_REPORTING_QUERY_SUFFIX
+            docs, scores = retrieve_with_scores(
+                corpus_path,
+                query_for_retrieval,
+                top_k=3,
+                prefer_source_types=OPS_REPORTING_PREFERRED_SOURCE_TYPES,
+            )
+            relevance_hint_this = relevance_hint_from_scores(scores)
+            if run_relevance is None or relevance_order.index(relevance_hint_this) < relevance_order.index(run_relevance):
+                run_relevance = relevance_hint_this
+            console.print(f"[dim]Retrieval relevance: {relevance_hint_this}[/dim]")
             ctx = format_context_for_prompt(docs, max_chars=1500)
             if ctx:
-                user_prompt = (
-                    "Context (retrieved):\n" + ctx + "\n\n"
-                    "If the context above does not clearly describe this user's ops/reporting workflow, say so and keep the answer cautious.\n\n"
-                    "User: " + prompt
+                retrieval_ctx = f"Context (retrieved; relevance: {relevance_hint_this}):\n" + ctx
+
+        parts: list[str] = []
+        if task_context:
+            parts.append("Task context (operator-provided):\n" + task_context)
+            if has_task_context and (relevance_hint_this in ("weak", "mixed") or not retrieval_ctx):
+                parts.append(
+                    "Prioritize this task context. Do not make confident role or domain assumptions from weak or mixed retrieval; if retrieval is present but off-topic, say so and base the answer on task context only."
                 )
+        if retrieval_ctx:
+            parts.append(retrieval_ctx)
+            weak_or_mixed = relevance_hint_this in ("weak", "mixed")
+            if not task_context:
+                caveat = (
+                    "The context above has weak or mixed relevance to ops/reporting. Say so clearly and give only a qualified, partial answer; do not overstate."
+                    if weak_or_mixed
+                    else "If the context does not clearly describe this user's ops/reporting workflow, say so and keep the answer cautious."
+                )
+                parts.append(caveat)
+            elif weak_or_mixed:
+                parts.append(
+                    "Retrieval has weak or mixed relevance; prioritize the task context above and do not overstate from retrieved snippets."
+                )
+            else:
+                parts.append(
+                    "If the retrieved context does not clearly support the task context, say so and keep the answer cautious."
+                )
+        if parts:
+            weak_or_mixed = relevance_hint_this in ("weak", "mixed")
+            is_weekly_status_prompt = "weekly status" in prompt.lower()
+            if is_weekly_status_prompt:
+                parts.append(OPS_WEEKLY_STATUS_INSTRUCTIONS)
+                if weak_or_mixed:
+                    parts.append(OPS_WEEKLY_STATUS_WEAK_CONTEXT_INSTRUCTIONS)
+            else:
+                parts.append(OPS_CONCRETE_GENERAL_INSTRUCTIONS)
+            user_prompt = "\n\n".join(parts) + "\n\nUser: " + prompt
+        else:
+            if "weekly status" in prompt.lower():
+                user_prompt = OPS_WEEKLY_STATUS_INSTRUCTIONS + "\n\nUser: " + prompt
+            else:
+                user_prompt = OPS_CONCRETE_GENERAL_INSTRUCTIONS + "\n\nUser: " + prompt
         try:
             out = backend.run_inference(base_model, user_prompt, max_tokens=200, adapter_path=adapter_path) if adapter_path else backend.run_inference(
                 base_model, user_prompt, max_tokens=200)
             if out and out.startswith("[inference error"):
                 console.print(f"[red]{out[:150]}[/red]")
             else:
-                console.print(
-                    out[:400] + ("..." if len(out or "") > 400 else "") or "[no output]")
+                displayed = (out[:400] + ("..." if len(out or "") > 400 else "")) if out else "[no output]"
+                console.print(displayed or "[no output]")
+                if i == 3 and out and not out.startswith("[inference error"):
+                    weekly_status_output = out
         except Exception as e:
             console.print(f"[red]{e}[/red]")
     record_trial_event("generation_succeeded", {
                        "task_id": "release_demo"}, store_path=store_path)
+    try:
+        pilot_dir = Path("data/local/pilot")
+        pilot_dir.mkdir(parents=True, exist_ok=True)
+        if has_task_context and grounded_by_retrieval:
+            grounding_mode = "task_context_and_retrieval"
+        elif has_task_context:
+            grounding_mode = "task_context_only"
+        elif grounded_by_retrieval:
+            grounding_mode = "retrieval_only"
+        else:
+            grounding_mode = "ungrounded"
+        (pilot_dir / "last_demo_grounding.txt").write_text(
+            grounding_mode + "\n" + (f"retrieval_relevance: {run_relevance}" if run_relevance else ""),
+            encoding="utf-8",
+        )
+        if run_relevance is not None:
+            (pilot_dir / "last_retrieval_relevance.txt").write_text(
+                run_relevance, encoding="utf-8"
+            )
+    except Exception:
+        pass
+    saved_artifact_path: Path | None = None
+    if save_artifact and weekly_status_output:
+        try:
+            from workflow_dataset.path_utils import get_repo_root
+            from workflow_dataset.utils.dates import utc_now_iso
+            from workflow_dataset.utils.hashes import stable_id
+            root = get_repo_root() / "data/local/workspaces/weekly_status"
+            root.mkdir(parents=True, exist_ok=True)
+            ts = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M")
+            sid = stable_id("ws", ts, prefix="")[:8]
+            dir_path = root / f"{ts}_{sid}"
+            dir_path.mkdir(parents=True, exist_ok=True)
+            md_path = dir_path / "weekly_status.md"
+            md_path.write_text(weekly_status_output, encoding="utf-8")
+            grounding = (
+                "task_context_and_retrieval" if has_task_context and grounded_by_retrieval
+                else "task_context_only" if has_task_context
+                else "retrieval_only" if grounded_by_retrieval
+                else "ungrounded"
+            )
+            manifest = {
+                "artifact_type": "weekly_status",
+                "grounding": grounding,
+                "task_context_used": has_task_context,
+                "retrieval_used": grounded_by_retrieval,
+                "retrieval_relevance": run_relevance,
+                "timestamp": utc_now_iso(),
+            }
+            (dir_path / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+            saved_artifact_path = md_path
+        except Exception:
+            saved_artifact_path = None
+    if saved_artifact_path:
+        console.print(
+            "\n[bold]Output location:[/bold] [green]Artifact saved to sandbox:[/green]")
+        console.print(f"  [bold]{saved_artifact_path.resolve()}[/bold]")
+        console.print(
+            "[dim]Preview: cat \"{}\"  —  manifest.json in same dir has grounding/relevance. No apply performed; use existing apply flow to copy to project if desired.[/dim]".format(saved_artifact_path.resolve()))
+    else:
+        console.print(
+            "\n[bold]Output location:[/bold] The text above (especially prompt 3) is your weekly status artifact. "
+            "No file written (use [bold]--save-artifact[/bold] to write to data/local/workspaces/weekly_status/). "
+            "Use [dim]pilot capture-feedback --notes[/dim] to record where you saved it or any output-location feedback.")
     console.print(
-        "\n[dim]Demo done. See docs/FOUNDER_DEMO_FLOW.md for full flow.[/dim]")
+        "[dim]Demo done. See docs/FOUNDER_DEMO_FLOW.md for full flow.[/dim]")
 
 
 @release_group.command("package")
