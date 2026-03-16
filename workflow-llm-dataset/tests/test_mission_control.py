@@ -24,6 +24,19 @@ def test_mission_control_state_structure(tmp_path):
     assert state["local_sources"].get("repo_root") == str(tmp_path.resolve())
 
 
+def test_mission_control_state_includes_desktop_bridge(tmp_path):
+    """M23H: get_mission_control_state includes desktop_bridge when available."""
+    state = get_mission_control_state(tmp_path)
+    assert "desktop_bridge" in state
+    db = state["desktop_bridge"]
+    if "error" not in db:
+        assert "adapters_count" in db
+        assert "approvals_path" in db
+        assert "approvals_file_exists" in db
+        assert "tasks_count" in db
+        assert "adapter_ids" in db
+
+
 def test_recommend_next_action_returns_valid_action():
     """recommend_next_action(state) returns action in ACTIONS and a rationale."""
     state = {
@@ -57,6 +70,16 @@ def test_format_report():
         "evaluation_state": {"latest_run_id": None, "recommendation": "hold", "runs_count": 0},
         "development_state": {"experiment_queue": {}, "pending_proposals": 0, "accepted_proposals": 0, "rejected_proposals": 0},
         "incubator_state": {"candidates_by_stage": {}, "promoted_count": 0, "rejected_count": 0, "hold_count": 0},
+        "coordination_graph_summary": {"tasks_count": 0, "total_nodes": 0, "total_edges": 0},
+        "desktop_bridge": {
+            "adapters_count": 4,
+            "adapter_ids": ["file_ops", "notes_document", "browser_open", "app_launch"],
+            "approvals_path": "/some/approvals.yaml",
+            "approvals_file_exists": False,
+            "tasks_count": 0,
+            "coordination_nodes": 0,
+            "coordination_edges": 0,
+        },
         "local_sources": {},
     }
     report = format_mission_control_report(state=state)
@@ -65,5 +88,20 @@ def test_format_report():
     assert "[Evaluation]" in report
     assert "[Development]" in report
     assert "[Incubator]" in report
+    assert "[Desktop bridge]" in report
     assert "Recommended next action" in report
     assert "Operator-controlled" in report
+
+
+def test_recommend_replay_task_when_tasks_available():
+    """M23H: When coordination_graph_summary.tasks_count > 0 and no higher-priority signal, recommend replay_task."""
+    state = {
+        "product_state": {"review_package": {"unreviewed_count": 0}, "cohort_recommendation": ""},
+        "evaluation_state": {"recommendation": "ship", "runs_count": 5},
+        "development_state": {"pending_proposals": 0},
+        "incubator_state": {"candidates_total": 0},
+        "coordination_graph_summary": {"tasks_count": 3, "total_nodes": 5, "total_edges": 2},
+    }
+    rec = recommend_next_action(state)
+    assert rec.get("action") == "replay_task"
+    assert "replay" in rec.get("rationale", "").lower() or "task" in rec.get("rationale", "").lower()
