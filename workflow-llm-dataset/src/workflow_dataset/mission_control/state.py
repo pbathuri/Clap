@@ -241,7 +241,7 @@ def get_mission_control_state(repo_root: Path | str | None = None) -> dict[str, 
         from workflow_dataset.corrections.propose import propose_updates
         from workflow_dataset.corrections.history import list_applied_updates, list_reverted_updates
         from workflow_dataset.corrections.eval_bridge import advisory_review_for_corrections
-        corrections = list_corrections(root, limit=20)
+        corrections = list_corrections(limit=20, repo_root=root)
         proposed = propose_updates(root)
         applied = list_applied_updates(limit=10, repo_root=root)
         reverted = list_reverted_updates(limit=5, repo_root=root)
@@ -257,5 +257,69 @@ def get_mission_control_state(repo_root: Path | str | None = None) -> dict[str, 
         out["local_sources"]["corrections"] = str((root / "data/local/corrections").resolve())
     except Exception as e:
         out["corrections"] = {"error": str(e)}
+
+    # 11. Runtime mesh (M23T) — backends, catalog, recommended model by task, integrations, local vs remote
+    try:
+        from workflow_dataset.runtime_mesh.backend_registry import list_backend_profiles
+        from workflow_dataset.runtime_mesh.policy import recommend_for_task_class
+        from workflow_dataset.runtime_mesh.integration_registry import list_integrations
+        backends = list_backend_profiles(root)
+        available = [b.backend_id for b in backends if b.status in ("available", "configured")]
+        missing = [b.backend_id for b in backends if b.status == "missing"]
+        rec_copilot = recommend_for_task_class("desktop_copilot", root)
+        rec_code = recommend_for_task_class("codebase_task", root)
+        integrations = list_integrations(root)
+        out["runtime_mesh"] = {
+            "available_backends": available,
+            "missing_runtimes": missing,
+            "backend_count": len(backends),
+            "recommended_backend_desktop_copilot": rec_copilot.get("backend_id"),
+            "recommended_model_class_desktop_copilot": rec_copilot.get("model_class"),
+            "recommended_backend_codebase_task": rec_code.get("backend_id"),
+            "recommended_model_class_codebase_task": rec_code.get("model_class"),
+            "integrations_count": len(integrations),
+            "integrations_local_only": all(i.local and not i.optional_remote for i in integrations),
+            "integrations_enabled_count": sum(1 for i in integrations if i.enabled),
+        }
+        out["local_sources"]["runtime_mesh"] = str((root / "data/local/runtime").resolve())
+    except Exception as e:
+        out["runtime_mesh"] = {"error": str(e)}
+
+    # 12. M23V Daily inbox summary (additive)
+    try:
+        from workflow_dataset.daily.inbox import build_daily_digest
+        digest = build_daily_digest(root)
+        out["daily_inbox"] = {
+            "relevant_jobs_count": len(digest.relevant_job_ids),
+            "relevant_routines_count": len(digest.relevant_routine_ids),
+            "blocked_count": len(digest.blocked_items),
+            "reminders_due_count": len(digest.reminders_due),
+            "recommended_next_action": digest.recommended_next_action,
+        }
+    except Exception as e:
+        out["daily_inbox"] = {"error": str(e)}
+
+    # 13. M23V Trust cockpit summary (additive)
+    try:
+        from workflow_dataset.trust.cockpit import build_trust_cockpit
+        cockpit = build_trust_cockpit(root)
+        out["trust_cockpit"] = {
+            "benchmark_trust_status": (cockpit.get("benchmark_trust") or {}).get("latest_trust_status"),
+            "approval_registry_exists": (cockpit.get("approval_readiness") or {}).get("registry_exists"),
+            "release_gate_staged_count": (cockpit.get("release_gate_status") or {}).get("staged_count", 0),
+        }
+    except Exception as e:
+        out["trust_cockpit"] = {"error": str(e)}
+
+    # 14. M23V Package readiness summary (additive)
+    try:
+        from workflow_dataset.package_readiness.summary import build_readiness_summary
+        ready = build_readiness_summary(root)
+        out["package_readiness"] = {
+            "machine_ready": (ready.get("current_machine_readiness") or {}).get("ready"),
+            "ready_for_first_install": ready.get("ready_for_first_real_user_install"),
+        }
+    except Exception as e:
+        out["package_readiness"] = {"error": str(e)}
 
     return out

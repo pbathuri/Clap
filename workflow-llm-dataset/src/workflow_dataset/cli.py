@@ -319,6 +319,83 @@ setup_group = typer.Typer(
     help="Initial setup analyzer: long-running local onboarding.")
 app.add_typer(setup_group, name="setup")
 
+# ----- M23U User work profile and bootstrap -----
+profile_group = typer.Typer(
+    help="User work profile: bootstrap, show, operator-summary. Local-only; explicit and editable.")
+app.add_typer(profile_group, name="profile")
+
+
+@profile_group.command("bootstrap")
+def profile_bootstrap(
+    repo_root: str = typer.Option("", "--repo-root"),
+    field: str = typer.Option("", "--field", "-f", help="e.g. operations, founder_ops"),
+    job_family: str = typer.Option("", "--job-family", "-j", help="e.g. office_admin, analyst"),
+) -> None:
+    """Create or update user work profile (field, job family, etc.). Saves to data/local/onboarding/user_work_profile.yaml."""
+    from workflow_dataset.onboarding.user_work_profile import bootstrap_user_work_profile
+    root = Path(repo_root).resolve() if repo_root else None
+    profile = bootstrap_user_work_profile(repo_root=root, field=field, job_family=job_family)
+    console.print("[green]User work profile saved.[/green]")
+    console.print(f"  field: {profile.field or '(not set)'}")
+    console.print(f"  job_family: {profile.job_family or '(not set)'}")
+    console.print(f"  path: data/local/onboarding/user_work_profile.yaml")
+
+
+@profile_group.command("show")
+def profile_show(
+    repo_root: str = typer.Option("", "--repo-root"),
+) -> None:
+    """Show current user work profile and bootstrap profile summary."""
+    from workflow_dataset.onboarding.user_work_profile import load_user_work_profile, get_user_work_profile_path
+    from workflow_dataset.onboarding.bootstrap_profile import load_bootstrap_profile
+    root = Path(repo_root).resolve() if repo_root else None
+    user = load_user_work_profile(root)
+    if not user:
+        console.print("[yellow]No user work profile found. Run 'profile bootstrap' to create.[/yellow]")
+        path = get_user_work_profile_path(root)
+        console.print(f"  path: {path}")
+    else:
+        console.print("[bold]User work profile[/bold]")
+        console.print(f"  field: {user.field or '(not set)'}")
+        console.print(f"  vertical: {user.vertical or '(not set)'}")
+        console.print(f"  job_family: {user.job_family or '(not set)'}")
+        console.print(f"  daily_task_style: {user.daily_task_style or '(not set)'}")
+        console.print(f"  risk_safety_posture: {user.risk_safety_posture}")
+        console.print(f"  preferred_automation_degree: {user.preferred_automation_degree}")
+        console.print(f"  preferred_edge_tier: {user.preferred_edge_tier or '(not set)'}")
+    boot = load_bootstrap_profile(root)
+    if boot:
+        console.print("[bold]Bootstrap profile (machine)[/bold]")
+        console.print(f"  machine_id: {boot.machine_id}")
+        console.print(f"  ready_for_real: {boot.ready_for_real}")
+        console.print(f"  recommended_job_packs: {boot.recommended_job_packs[:5]}..." if len(boot.recommended_job_packs) > 5 else f"  recommended_job_packs: {boot.recommended_job_packs}")
+
+
+@profile_group.command("operator-summary")
+def profile_operator_summary(
+    repo_root: str = typer.Option("", "--repo-root"),
+    output: str = typer.Option("", "--output", "-o", help="Write markdown to file"),
+) -> None:
+    """Generate operator-facing summary: recommended domain pack(s), model/tool classes, specialization route, data usage, simulate-only scope."""
+    from workflow_dataset.onboarding.user_work_profile import load_user_work_profile
+    from workflow_dataset.onboarding.bootstrap_profile import load_bootstrap_profile
+    from workflow_dataset.onboarding.operator_summary import build_operator_summary, format_operator_summary_md
+    root = Path(repo_root).resolve() if repo_root else None
+    user = load_user_work_profile(root)
+    boot = load_bootstrap_profile(root)
+    summary = build_operator_summary(
+        user_profile=user,
+        bootstrap_profile=boot,
+        catalog_entries=None,
+        repo_root=root,
+    )
+    md = format_operator_summary_md(summary)
+    if output:
+        Path(output).write_text(md, encoding="utf-8")
+        console.print(f"[green]Summary written to {output}[/green]")
+    else:
+        console.print(md)
+
 
 @setup_group.command("init")
 def setup_init(config: str = typer.Option("configs/settings.yaml", "--config", "-c")) -> None:
@@ -659,6 +736,82 @@ def build_personal_corpus(
     else:
         console.print(
             "[yellow]no setup session; run 'setup init' and 'setup run' first[/yellow]")
+
+
+# ----- M23N First-run onboarding + capability/approval bootstrap -----
+onboard_group = typer.Typer(
+    help="First-run onboarding: local setup, capability summary, approval bootstrap, product summary. No auto-grant.")
+app.add_typer(onboard_group, name="onboard")
+
+
+@onboard_group.callback(invoke_without_command=True)
+def onboard_cmd(
+    ctx: typer.Context,
+    config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
+) -> None:
+    """First-run onboarding: show status and run guided flow. Use subcommands: status, bootstrap, approve."""
+    if ctx.invoked_subcommand is not None:
+        return
+    from workflow_dataset.onboarding.onboarding_flow import get_onboarding_status, format_onboarding_status
+    status = get_onboarding_status(config_path=config)
+    console.print(Panel(format_onboarding_status(status), title="Onboarding status", border_style="cyan"))
+    console.print("[dim]Commands: workflow-dataset onboard status | onboard bootstrap | onboard approve[/dim]")
+
+
+@onboard_group.command("status")
+def onboard_status(
+    config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
+) -> None:
+    """Show onboarding status: profile, env readiness, capabilities, approvals, blocked, next steps."""
+    from workflow_dataset.onboarding.onboarding_flow import get_onboarding_status, format_onboarding_status
+    status = get_onboarding_status(config_path=config)
+    console.print(format_onboarding_status(status))
+
+
+@onboard_group.command("bootstrap")
+def onboard_bootstrap(
+    config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
+) -> None:
+    """Create or refresh bootstrap profile and first-run summary. Persists to data/local/onboarding/."""
+    from workflow_dataset.onboarding import run_onboarding_flow, build_first_run_summary, format_first_run_summary
+    status = run_onboarding_flow(config_path=config, persist_profile=True)
+    console.print("[green]Bootstrap profile saved.[/green]")
+    summary = build_first_run_summary(config_path=config)
+    console.print(Panel(format_first_run_summary(summary=summary), title="First-run product summary", border_style="green"))
+
+
+@onboard_group.command("approve")
+def onboard_approve(
+    config: str = typer.Option("configs/settings.yaml", "--config", "-c"),
+    paths: str = typer.Option("", "--paths", help="Comma-separated paths to approve (optional)"),
+    refuse_paths: str = typer.Option("", "--refuse-paths", help="Comma-separated paths to refuse (omit from registry)"),
+    approve_all_suggested: bool = typer.Option(False, "--approve-all-suggested", help="Approve all suggested paths and trusted scopes (no apps)"),
+) -> None:
+    """Review and apply approval choices. No auto-grant; only explicitly approved items are added."""
+    from workflow_dataset.onboarding.approval_bootstrap import (
+        collect_approval_requests,
+        format_approval_bootstrap_summary,
+        apply_approval_choices,
+    )
+    requests = collect_approval_requests()
+    console.print(Panel(format_approval_bootstrap_summary(requests), title="Approval bootstrap — review", border_style="yellow"))
+    approve_paths_list = [p.strip() for p in paths.split(",") if p.strip()] if paths else []
+    refuse_paths_list = [p.strip() for p in refuse_paths.split(",") if p.strip()] if refuse_paths else []
+    if approve_all_suggested:
+        approve_paths_list = list(requests.get("suggested_paths", []))
+        approve_scopes = [{"adapter_id": s["adapter_id"], "action_id": s["action_id"]} for s in requests.get("suggested_action_scopes", []) if s.get("executable")]
+    else:
+        approve_scopes = []
+    if approve_paths_list or approve_scopes:
+        path_written = apply_approval_choices(
+            approve_paths=approve_paths_list,
+            refuse_paths=refuse_paths_list,
+            approve_scopes=approve_scopes,
+            merge_with_existing=True,
+        )
+        console.print(f"[green]Approval registry updated: {path_written}[/green]")
+    else:
+        console.print("[dim]No approvals applied. Use --paths or --approve-all-suggested to add approvals.[/dim]")
 
 
 # ----- Assistive loop (M5: style-aware suggestions and draft structures) -----
@@ -7141,6 +7294,80 @@ packs_group = typer.Typer(
     help="Capability packs: list, show, install, uninstall, validate, resolve.")
 app.add_typer(packs_group, name="packs")
 
+# M23U: Domain packs (vertical-specific: founder_ops, office_admin, etc.)
+packs_domain_group = typer.Typer(help="Domain packs: list, recommend by field. M23U.")
+packs_group.add_typer(packs_domain_group, name="domain")
+
+
+@packs_domain_group.command("list")
+def packs_domain_list() -> None:
+    """List built-in domain pack IDs and names."""
+    from workflow_dataset.domain_packs import list_domain_packs, get_domain_pack
+    for did in list_domain_packs():
+        pack = get_domain_pack(did)
+        name = pack.name if pack else ""
+        console.print(f"  [bold]{did}[/bold] — {name}")
+
+
+@packs_domain_group.command("recommend")
+def packs_domain_recommend(
+    field: str = typer.Option("", "--field", "-f", help="User field e.g. operations, founder"),
+    job_family: str = typer.Option("", "--job-family", "-j", help="Job family e.g. office_admin, analyst"),
+) -> None:
+    """Recommend domain packs for a field (and optional job family)."""
+    from workflow_dataset.domain_packs import recommend_domain_packs
+    recs = recommend_domain_packs(field=field, job_family=job_family)
+    if not recs:
+        console.print("[yellow]No domain packs.[/yellow]")
+        return
+    console.print(f"[bold]Recommended domain packs[/bold] (field={field or '(any)'}, job_family={job_family or '(any)'})")
+    for pack, score in recs[:10]:
+        console.print(f"  [bold]{pack.domain_id}[/bold] — {pack.name} (score: {score:.2f})")
+
+# ----- M23U Specialization recipes (generation only; no auto-download/train) -----
+recipe_group = typer.Typer(
+    help="Specialization recipes: build for domain pack, explain by id. Recipe generation only.")
+app.add_typer(recipe_group, name="recipe")
+
+
+@recipe_group.command("build")
+def recipe_build(
+    pack: str = typer.Option(..., "--pack", "-p", help="Domain pack id e.g. founder_ops"),
+    repo_root: str = typer.Option("", "--repo-root"),
+) -> None:
+    """Build specialization recipe for a domain pack. Outputs recipe spec only; no download or training."""
+    from workflow_dataset.specialization import build_recipe_for_domain_pack
+    root = Path(repo_root).resolve() if repo_root else None
+    recipe = build_recipe_for_domain_pack(pack, repo_root=root)
+    if not recipe:
+        console.print(f"[red]No recipe for pack '{pack}' or pack not found.[/red]")
+        raise typer.Exit(1)
+    console.print(f"[bold]{recipe.recipe_id}[/bold] — {recipe.name}")
+    console.print(f"  mode: {recipe.mode}")
+    console.print(f"  auto_download: {recipe.auto_download}  auto_train: {recipe.auto_train}")
+    console.print("  steps_summary:")
+    for s in recipe.steps_summary:
+        console.print(f"    - {s}")
+
+
+@recipe_group.command("explain")
+def recipe_explain(
+    id_arg: str = typer.Argument(..., help="Recipe id e.g. retrieval_only, adapter_finetune"),
+) -> None:
+    """Explain a specialization recipe: mode, data sources, licensing, steps. No side effects."""
+    from workflow_dataset.specialization import explain_recipe
+    out = explain_recipe(id_arg)
+    if not out.get("found"):
+        console.print(f"[red]{out.get('message', 'Recipe not found.')}[/red]")
+        raise typer.Exit(1)
+    console.print(f"[bold]{out['recipe_id']}[/bold] — {out.get('name', '')}")
+    console.print(f"  description: {out.get('description', '')}")
+    console.print(f"  mode: {out.get('mode', '')}")
+    console.print(f"  auto_download: {out.get('auto_download')}  auto_train: {out.get('auto_train')}")
+    console.print("  steps_summary:")
+    for s in out.get("steps_summary", []):
+        console.print(f"    - {s}")
+
 # ----- M21W Development lab -----
 devlab_group = typer.Typer(
     help="Development lab: curated repo intake, model comparison, operator-controlled dev loop.")
@@ -8160,6 +8387,188 @@ def mission_control_cmd(
         console.print(report)
 
 
+# ----- M23V / M23O Daily inbox -----
+inbox_group = typer.Typer(
+    help="Daily work inbox / context digest: what changed, what to do now, what is blocked, why.",
+)
+app.add_typer(inbox_group, name="inbox")
+
+
+@inbox_group.callback(invoke_without_command=True)
+def inbox_cmd(
+    ctx: typer.Context,
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+    output: str = typer.Option("", "--output", "-o", help="Write report to file (default: stdout)"),
+    explain: bool = typer.Option(False, "--explain", "-e", help="Include per-item reason, trust, mode, blockers, outcome"),
+) -> None:
+    """Daily inbox: work state summary, what changed, relevant jobs/routines, blocked, reminders, top next action."""
+    if ctx.invoked_subcommand is not None:
+        return
+    from workflow_dataset.daily.inbox_report import format_inbox_report
+    root = Path(repo_root) if repo_root else None
+    report = format_inbox_report(repo_root=root, include_explain=explain)
+    if output:
+        Path(output).write_text(report, encoding="utf-8")
+        console.print(f"[green]Wrote: {output}[/green]")
+    else:
+        console.print(report)
+
+
+@inbox_group.command("explain")
+def inbox_explain_cmd(
+    repo_root: str = typer.Option("", "--repo-root"),
+) -> None:
+    """Explain why each inbox item is shown now: reason, trust level, mode, blockers, expected outcome."""
+    from workflow_dataset.daily.inbox_report import format_explain_why_now
+    console.print(format_explain_why_now(repo_root=Path(repo_root) if repo_root else None))
+
+
+@inbox_group.command("compare")
+def inbox_compare_cmd(
+    repo_root: str = typer.Option("", "--repo-root"),
+) -> None:
+    """Compare latest vs previous digest snapshot: newly appeared, dropped, escalated."""
+    from workflow_dataset.daily.digest_history import load_digest_snapshot, compare_digests
+    root = Path(repo_root) if repo_root else None
+    latest = load_digest_snapshot("latest", root)
+    previous = load_digest_snapshot("previous", root)
+    if not latest:
+        console.print("[dim]No latest digest. Run 'workflow-dataset inbox snapshot' first.[/dim]")
+        raise typer.Exit(0)
+    if not previous:
+        console.print("[dim]No previous digest. Run 'workflow-dataset inbox' twice (or inbox snapshot) to get a compare.[/dim]")
+        console.print(Panel("\n".join([f"Latest: {latest.get('created_at', '')}", f"Top next: {latest.get('top_next_recommended', {}).get('label', '')}"]), title="Latest digest", border_style="cyan"))
+        raise typer.Exit(0)
+    result = compare_digests(previous, latest)
+    lines = ["# Digest compare (previous → latest)", "", "## Newly appeared", ", ".join(result.newly_appeared) or "—", "", "## Dropped", ", ".join(result.dropped) or "—", "", "## No longer blocked (escalated)", ", ".join(result.escalated) or "—", "", "## Summary"]
+    lines.extend(result.summary)
+    console.print(Panel("\n".join(lines), title="Inbox compare", border_style="green"))
+
+
+@inbox_group.command("snapshot")
+def inbox_snapshot_cmd(
+    repo_root: str = typer.Option("", "--repo-root"),
+) -> None:
+    """Build digest and persist as snapshot (latest + timestamped). Enables compare on next run."""
+    from workflow_dataset.daily.inbox import build_daily_digest
+    from workflow_dataset.daily.digest_history import save_digest_snapshot
+    root = Path(repo_root) if repo_root else None
+    digest = build_daily_digest(root)
+    path = save_digest_snapshot(digest, root)
+    console.print(f"[green]Digest snapshot saved: {path}[/green]")
+    console.print(f"  created_at: {digest.created_at}")
+    console.print(f"  top next: {digest.top_next_recommended.get('label', '')}")
+
+
+# ----- M23V Macros -----
+macro_group = typer.Typer(
+    help="Macro (multi-step) runs: list, preview, run. Uses routines; checkpointed runs under copilot/runs.",
+)
+app.add_typer(macro_group, name="macro")
+
+
+@macro_group.command("list")
+def macro_list_cmd(
+    repo_root: str = typer.Option("", "--repo-root"),
+) -> None:
+    """List available macros (routines)."""
+    from workflow_dataset.macros.runner import list_macros
+    root = Path(repo_root) if repo_root else None
+    macros = list_macros(root)
+    if not macros:
+        console.print("[dim]No macros (routines) defined. Add YAML under data/local/copilot/routines/.[/dim]")
+        return
+    for m in macros:
+        console.print(f"  {m.macro_id}  {m.title or ''}  (mode={m.mode})")
+
+
+@macro_group.command("preview")
+def macro_preview_cmd(
+    id: str = typer.Option(..., "--id", "-i", help="Macro (routine) id"),
+    mode: str = typer.Option("simulate", "--mode", "-m", help="simulate | real"),
+    repo_root: str = typer.Option("", "--repo-root"),
+) -> None:
+    """Preview macro: jobs, order, step types, blocked steps. No execution."""
+    from workflow_dataset.macros.runner import macro_preview
+    from workflow_dataset.macros.report import format_macro_preview
+    root = Path(repo_root) if repo_root else None
+    plan = macro_preview(id, mode=mode, repo_root=root)
+    console.print(format_macro_preview(plan, macro_id=id, mode=mode, repo_root=root))
+
+
+@macro_group.command("run")
+def macro_run_cmd(
+    id: str = typer.Option(..., "--id", "-i", help="Macro (routine) id"),
+    mode: str = typer.Option("simulate", "--mode", "-m", help="simulate | real"),
+    repo_root: str = typer.Option("", "--repo-root"),
+    continue_on_blocked: bool = typer.Option(False, "--continue-on-blocked", help="Continue past blocked steps"),
+) -> None:
+    """Run macro (checkpointed). Use --mode simulate for dry run."""
+    from workflow_dataset.macros.runner import macro_run
+    root = Path(repo_root) if repo_root else None
+    result = macro_run(id, mode=mode, repo_root=root, continue_on_blocked=continue_on_blocked)
+    if result.get("error"):
+        console.print(f"[red]{result['error']}[/red]")
+        raise typer.Exit(1)
+    console.print(f"[green]Run: {result.get('plan_run_id')}  executed={result.get('executed_count')}  blocked={result.get('blocked_count')}[/green]")
+    if result.get("errors"):
+        for e in result["errors"]:
+            console.print(f"[yellow]{e}[/yellow]")
+
+
+# ----- M23V Trust cockpit -----
+trust_group = typer.Typer(
+    help="Trust / evidence cockpit: benchmark trust, coverage, approval readiness, release gates.",
+)
+app.add_typer(trust_group, name="trust")
+
+
+@trust_group.command("cockpit")
+def trust_cockpit_cmd(
+    repo_root: str = typer.Option("", "--repo-root"),
+    output: str = typer.Option("", "--output", "-o", help="Write report to file"),
+) -> None:
+    """Trust and evidence cockpit: benchmark, coverage, approvals, job/macro trust, corrections, release gates."""
+    from workflow_dataset.trust.report import format_trust_cockpit
+    report = format_trust_cockpit(repo_root=Path(repo_root) if repo_root else None)
+    if output:
+        Path(output).write_text(report, encoding="utf-8")
+        console.print(f"[green]Wrote: {output}[/green]")
+    else:
+        console.print(report)
+
+
+@trust_group.command("release-gates")
+def trust_release_gates_cmd(
+    repo_root: str = typer.Option("", "--repo-root"),
+) -> None:
+    """Release gate status: unreviewed, package pending, staged, release report."""
+    from workflow_dataset.trust.report import format_release_gates
+    console.print(format_release_gates(repo_root=Path(repo_root) if repo_root else None))
+
+
+# ----- M23V Package readiness -----
+package_group = typer.Typer(
+    help="Package / install readiness: machine and product readiness, first-install readiness report.",
+)
+app.add_typer(package_group, name="package")
+
+
+@package_group.command("readiness-report")
+def package_readiness_report_cmd(
+    repo_root: str = typer.Option("", "--repo-root"),
+    output: str = typer.Option("", "--output", "-o", help="Write report to file"),
+) -> None:
+    """Package/install readiness: machine readiness, missing prereqs, ready for first real-user install, experimental."""
+    from workflow_dataset.package_readiness.report import format_readiness_report
+    report = format_readiness_report(repo_root=Path(repo_root) if repo_root else None)
+    if output:
+        Path(output).write_text(report, encoding="utf-8")
+        console.print(f"[green]Wrote: {output}[/green]")
+    else:
+        console.print(report)
+
+
 @sources_group.command("list")
 def sources_list(
     registry: str = typer.Option(
@@ -8751,3 +9160,112 @@ def runtime_clear_context(
     clear_active_role(packs_dir)
     console.print(
         "[green]Context cleared (role, workflow, task, pins). Primary pack unchanged.[/green]")
+
+
+# ----- M23T Runtime mesh: backends, catalog, integrations, recommend, profile, compatibility -----
+@runtime_group.command("backends")
+def runtime_backends(
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """List backend/runtime profiles and status (available, configured, missing, unsupported)."""
+    from workflow_dataset.runtime_mesh.backend_registry import list_backend_profiles
+    root = Path(repo_root) if repo_root else None
+    profiles = list_backend_profiles(root)
+    console.print("[bold]Runtime backends[/bold]")
+    for p in profiles:
+        console.print(f"  {p.backend_id}  family={p.backend_family}  status={p.status}  local={p.local}")
+    if not profiles:
+        console.print("  (none)")
+
+
+@runtime_group.command("catalog")
+def runtime_catalog(
+    capability: str = typer.Option("", "--capability", "-c", help="Filter by capability class"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """List model capability catalog (optionally filter by capability class)."""
+    from workflow_dataset.runtime_mesh.model_catalog import load_model_catalog, list_models_by_capability
+    root = Path(repo_root) if repo_root else None
+    if capability:
+        models = list_models_by_capability(capability, root)
+    else:
+        models = load_model_catalog(root)
+    console.print("[bold]Model catalog[/bold]")
+    for m in models:
+        console.print(f"  {m.model_id}  backend={m.backend_family}  capabilities={m.capability_classes}")
+    if not models:
+        console.print("  (none)")
+
+
+@runtime_group.command("integrations")
+def runtime_integrations(
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """List integration manifests (OpenClaw, coding-agent, IDE, etc.) and enable state."""
+    from workflow_dataset.runtime_mesh.integration_registry import list_integrations
+    root = Path(repo_root) if repo_root else None
+    integrations = list_integrations(root)
+    console.print("[bold]Integrations[/bold]")
+    for i in integrations:
+        console.print(f"  {i.integration_id}  local={i.local}  enabled={i.enabled}  install={i.install_status}")
+    if not integrations:
+        console.print("  (none)")
+
+
+@runtime_group.command("recommend")
+def runtime_recommend(
+    task_class: str = typer.Option(..., "--task-class", "-t", help="e.g. desktop_copilot, codebase_task, local_retrieval"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Recommend backend and model class for a task class."""
+    from workflow_dataset.runtime_mesh.policy import recommend_for_task_class
+    root = Path(repo_root) if repo_root else None
+    rec = recommend_for_task_class(task_class, root)
+    console.print(f"[bold]Task class[/bold]  {rec.get('task_class')}")
+    console.print(f"  backend_id: {rec.get('backend_id')}  status: {rec.get('backend_status')}")
+    console.print(f"  model_class: {rec.get('model_class')}")
+    console.print(f"  model_ids: {rec.get('model_ids', [])}")
+    console.print(f"  integrations_available: {rec.get('integrations_available', [])}")
+    if rec.get("missing"):
+        console.print("[yellow]  missing: " + "; ".join(rec["missing"]) + "[/yellow]")
+    console.print(f"  [dim]{rec.get('reason', '')}[/dim]")
+
+
+@runtime_group.command("profile")
+def runtime_profile(
+    backend: str = typer.Option(..., "--backend", "-b", help="Backend id (e.g. ollama, repo_local)"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Show full profile for a backend (capabilities, prerequisites, status)."""
+    from workflow_dataset.runtime_mesh.backend_registry import get_backend_profile
+    root = Path(repo_root) if repo_root else None
+    prof = get_backend_profile(backend, root)
+    if not prof:
+        console.print(f"[red]Backend not found: {backend}[/red]")
+        raise typer.Exit(1)
+    console.print(f"[bold]{prof.backend_id}[/bold]  family={prof.backend_family}  status={prof.status}")
+    console.print("  local=", prof.local, "  optional_remote=", prof.optional_remote)
+    console.print("  tool_calling=", prof.tool_calling, "  thinking=", prof.thinking_reasoning, "  vision=", prof.vision, "  embedding=", prof.embedding, "  ocr=", prof.ocr)
+    console.print("  coding_agent_suitable=", prof.coding_agent_suitable, "  desktop_assistant_suitable=", prof.desktop_assistant_suitable)
+    console.print("  install_prerequisites:", prof.install_prerequisites)
+    if prof.notes:
+        console.print("  notes:", prof.notes)
+    if prof.risk_trust_notes:
+        console.print("  risk_trust:", prof.risk_trust_notes)
+
+
+@runtime_group.command("compatibility")
+def runtime_compatibility(
+    model: str = typer.Option(..., "--model", "-m", help="Model id (e.g. qwen3-coder-next)"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Show compatibility report for a model (catalog, backend status, suitable task classes)."""
+    from workflow_dataset.runtime_mesh.policy import compatibility_for_model
+    root = Path(repo_root) if repo_root else None
+    report = compatibility_for_model(model, root)
+    console.print(f"[bold]Model[/bold]  {report.get('model_id')}  in_catalog={report.get('in_catalog')}")
+    console.print("  backend_family:", report.get("backend_family"), "  backend_status:", report.get("backend_status"))
+    console.print("  capability_classes:", report.get("capability_classes", []))
+    console.print("  recommended_usage:", report.get("recommended_usage", []))
+    console.print("  suitable_task_classes:", report.get("suitable_task_classes", []))
+    console.print("  ", report.get("message", ""), style="dim")

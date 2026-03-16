@@ -47,10 +47,13 @@ def load_approval_registry(repo_root: Path | str | None = None) -> ApprovalRegis
     path = get_registry_path(repo_root)
     if not path.exists() or not path.is_file():
         return ApprovalRegistry()
-    if yaml is None:
-        return ApprovalRegistry()
     try:
-        raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        raw: dict[str, Any]
+        if yaml is not None:
+            raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        else:
+            import json
+            raw = json.loads(path.read_text(encoding="utf-8")) or {}
         return ApprovalRegistry(
             approved_paths=list(raw.get("approved_paths") or []),
             approved_apps=list(raw.get("approved_apps") or []),

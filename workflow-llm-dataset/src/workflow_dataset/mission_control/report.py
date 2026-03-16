@@ -129,6 +129,42 @@ def format_mission_control_report(state: dict[str, Any] | None = None, repo_root
         lines.append("  next: " + str(cor.get("next_corrections_action", "")))
     lines.append("")
 
+    # Runtime mesh (M23T)
+    rm = state.get("runtime_mesh", {})
+    if rm.get("error"):
+        lines.append("[Runtime mesh] error: " + str(rm["error"]))
+    elif rm:
+        lines.append("[Runtime mesh] backends=" + str(rm.get("available_backends", [])) + "  missing=" + str(rm.get("missing_runtimes", [])))
+        lines.append("  desktop_copilot: backend=" + str(rm.get("recommended_backend_desktop_copilot")) + "  model_class=" + str(rm.get("recommended_model_class_desktop_copilot", "")))
+        lines.append("  codebase_task: backend=" + str(rm.get("recommended_backend_codebase_task")) + "  model_class=" + str(rm.get("recommended_model_class_codebase_task", "")))
+        lines.append("  integrations=" + str(rm.get("integrations_count", 0)) + "  local_only=" + str(rm.get("integrations_local_only", True)) + "  enabled=" + str(rm.get("integrations_enabled_count", 0)))
+    lines.append("")
+
+    # M23V Daily inbox
+    di = state.get("daily_inbox", {})
+    if di.get("error"):
+        lines.append("[Inbox] error: " + str(di["error"]))
+    elif di:
+        lines.append("[Inbox] jobs=" + str(di.get("relevant_jobs_count", 0)) + "  routines=" + str(di.get("relevant_routines_count", 0)) + "  blocked=" + str(di.get("blocked_count", 0)) + "  reminders_due=" + str(di.get("reminders_due_count", 0)))
+        lines.append("  next: " + str(di.get("recommended_next_action", "")))
+    lines.append("")
+
+    # M23V Trust cockpit
+    tc = state.get("trust_cockpit", {})
+    if tc.get("error"):
+        lines.append("[Trust cockpit] error: " + str(tc["error"]))
+    elif tc:
+        lines.append("[Trust cockpit] benchmark=" + str(tc.get("benchmark_trust_status", "—")) + "  approvals=" + ("present" if tc.get("approval_registry_exists") else "missing") + "  staged=" + str(tc.get("release_gate_staged_count", 0)))
+    lines.append("")
+
+    # M23V Package readiness
+    pr = state.get("package_readiness", {})
+    if pr.get("error"):
+        lines.append("[Package readiness] error: " + str(pr["error"]))
+    elif pr:
+        lines.append("[Package readiness] machine_ready=" + str(pr.get("machine_ready")) + "  ready_for_first_install=" + str(pr.get("ready_for_first_install")))
+    lines.append("")
+
     # Next action
     lines.append("--- Recommended next action ---")
     lines.append("  action: " + next_rec.get("action", "hold"))
