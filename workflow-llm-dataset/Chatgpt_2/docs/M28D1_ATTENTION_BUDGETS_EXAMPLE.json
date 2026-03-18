@@ -1,0 +1,59 @@
+{
+  "attention_budgets": [
+    {
+      "project_id": "founder_case_alpha",
+      "minutes_per_day": 120,
+      "minutes_per_week": null,
+      "reset_interval": "day",
+      "note": "Cap deep work on founder case to 2h/day"
+    },
+    {
+      "project_id": "analyst_research",
+      "minutes_per_day": null,
+      "minutes_per_week": 300,
+      "reset_interval": "week",
+      "note": "5h/week total"
+    }
+  ],
+  "work_windows": [
+    {
+      "window_id": "pomodoro",
+      "name": "Pomodoro slice",
+      "duration_minutes": 25,
+      "start_time_local": "",
+      "days_of_week": [1, 2, 3, 4, 5],
+      "note": "Default focus block"
+    },
+    {
+      "window_id": "deep_block",
+      "name": "Deep block",
+      "duration_minutes": 90,
+      "start_time_local": "",
+      "days_of_week": [],
+      "note": "Longer slice when in flow"
+    }
+  ],
+  "focus_modes": [
+    {
+      "mode_id": "round_robin",
+      "name": "Round robin",
+      "description": "Suggest switch after each work window",
+      "default_project_id": "",
+      "project_ids": [],
+      "switch_rules": ["on_window_end", "when_higher_priority_ready"],
+      "active": true
+    },
+    {
+      "mode_id": "single_focus",
+      "name": "Single project focus",
+      "description": "Stay on one project; switch only when higher priority ready",
+      "default_project_id": "founder_case_alpha",
+      "project_ids": ["founder_case_alpha"],
+      "switch_rules": ["when_higher_priority_ready"],
+      "active": true
+    }
+  ],
+  "active_focus_mode_id": "round_robin",
+  "current_window_started_at_iso": "",
+  "updated_at": ""
+}

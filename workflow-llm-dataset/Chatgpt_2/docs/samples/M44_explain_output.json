@@ -1,0 +1,29 @@
+{
+  "recommendation_id": "rec_abc123",
+  "found": true,
+  "kind": "next_step",
+  "title": "Memory-backed suggestion",
+  "description": "Last session you were iterating on founder_case_alpha onboarding flow; next step was to run the demo script and capture outcomes.",
+  "memory_influence": {
+    "prior_cases": [
+      {
+        "unit_id": "unit_1",
+        "snippet": "Founder case alpha: completed onboarding flow draft; next run demo and log outcomes.",
+        "source": "session",
+        "session_id": "sess_xyz",
+        "relevance_summary": "Founder case alpha: completed onboarding flow draft; next run demo and log outcomes.",
+        "confidence": 0.92
+      }
+    ],
+    "rationale_recall": [
+      {
+        "rationale_id": "r_abc",
+        "summary": "Retrieved prior context used to ground this recommendation.",
+        "source_unit_ids": ["unit_1"],
+        "influence_strength": "medium"
+      }
+    ],
+    "weak_cautions": []
+  },
+  "action_linkages": []
+}

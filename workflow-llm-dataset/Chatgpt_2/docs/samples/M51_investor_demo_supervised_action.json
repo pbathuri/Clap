@@ -1,0 +1,14 @@
+{
+  "card_id": "investor_demo_supervised_prefill_mc",
+  "title": "Review mission control (demo)",
+  "description": "Investor-safe: prefills a read-only command to show product state.",
+  "preview": {
+    "what_would_happen": "Would prefill or run: workflow-dataset mission-control. Params: read-only aggregate; no writes.",
+    "trust_note": "Simulate-only; no real execution. Safe to run.",
+    "command_hint": "workflow-dataset mission-control",
+    "approval_required": false,
+    "simulate_first": true
+  },
+  "what_happens_on_approval": "If this were an execution path: operator would approve in review-studio or agent-loop. This demo only prefills `workflow-dataset mission-control` — still read-only.",
+  "trust_posture": "simulate_only"
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "rhythm": "twice_daily",
+    "job_ids": ["queue_calmness_review"],
+    "label": "Twice daily",
+    "description": "Queue and calmness checks; run every 12h."
+  },
+  {
+    "rhythm": "daily",
+    "job_ids": [
+      "reliability_refresh",
+      "issue_cluster_review",
+      "production_cut_regression",
+      "vertical_value_review",
+      "operator_audit_review"
+    ],
+    "label": "Daily",
+    "description": "Reliability, triage, production-cut, vertical value, operator audit."
+  },
+  {
+    "rhythm": "weekly",
+    "job_ids": ["supportability_refresh", "adaptation_audit"],
+    "label": "Weekly",
+    "description": "Adaptation audit, supportability and release readiness."
+  }
+]

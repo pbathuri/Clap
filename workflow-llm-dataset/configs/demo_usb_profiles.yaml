@@ -1,0 +1,95 @@
+# M51D.1 — Demo bundle profiles + playbook ids (USB investor demo). Local-first; bounded.
+# Do not use these to broaden product scope.
+
+profiles:
+  full_demo:
+    label: "Full demo"
+    summary: "Best laptop: writable bundle copy, Python 3.10+, optional LLM config, comfortable RAM."
+    when_to_use: "Conference room machine or prepared Mac/Windows laptop with venv already tested."
+    capability_hint: "full"
+    skip_model_paths: false
+    command_hints:
+      - "demo bootstrap"
+      - "demo onboarding start"
+      - "demo onboarding role --id founder_operator_demo"
+      - "demo onboarding bootstrap-memory"
+      - "demo onboarding ready-state"
+    avoid:
+      - "Large model downloads on venue Wi‑Fi"
+      - "Running on read-only USB without copying to disk first"
+
+  lightweight_demo:
+    label: "Lightweight demo"
+    summary: "CLI-first path: readiness, onboarding sequence, operator quickstart — minimal memory/model."
+    when_to_use: "Spare laptop without GPU or without llm_training_full.yaml."
+    capability_hint: "degraded"
+    skip_model_paths: true
+    command_hints:
+      - "demo readiness"
+      - "demo playbook --id usb_lightweight"
+      - "package first-run --skip-onboarding"
+      - "demo onboarding sequence"
+    avoid:
+      - "Promising full RAG or local LLM unless env-report shows config present"
+
+  degraded_laptop_demo:
+    label: "Degraded laptop demo"
+    summary: "Honest thin path: env-report, degraded-report, static walkthrough of commands only."
+    when_to_use: "Low RAM (<4GB free headroom), crowded disk, or blocked readiness."
+    capability_hint: "degraded"
+    skip_model_paths: true
+    command_hints:
+      - "demo env-report"
+      - "demo degraded-report"
+      - "demo playbook --id usb_degraded_honest"
+    avoid:
+      - "Any action that writes outside the demo bundle or ~/.workflow-demo-host"
+
+playbooks:
+  usb_fresh_laptop:
+    title: "USB on an unfamiliar laptop (safe path)"
+    audience: "operator"
+    preamble: |
+      You are on someone else's machine. Stay local, bounded, and inspectable.
+      Do not request admin rights unless the host offers. Do not enable cloud sync for demo data.
+    steps:
+      - action: "Copy bundle if USB is read-only"
+        detail: "If demo readiness shows BLOCKED (read-only), copy the product folder to Desktop and cd there."
+      - action: "Create an isolated venv (recommended)"
+        detail: "python3 -m venv .venv && source .venv/bin/activate  (Windows: .venv\\Scripts\\activate)"
+      - action: "Install minimal CLI deps"
+        detail: "pip install -e .  OR  pip install pyyaml typer rich  and export PYTHONPATH=src"
+      - action: "Verify environment"
+        detail: "workflow-dataset demo env-report"
+      - action: "Bootstrap + readiness"
+        detail: "workflow-dataset demo bootstrap  then  workflow-dataset demo readiness"
+      - action: "Pick profile"
+        detail: "workflow-dataset demo profiles --list  then  demo playbook --profile <id>"
+      - action: "Onboarding handoff"
+        detail: "workflow-dataset demo onboarding start  →  role  →  bootstrap-memory  →  ready-state"
+
+  usb_lightweight:
+    title: "Lightweight USB demo (no local model)"
+    audience: "operator"
+    preamble: "Assume degraded capability: no LLM yaml or low resources. Lead with trust and workflows, not model inference."
+    steps:
+      - action: "Confirm degraded mode"
+        detail: "workflow-dataset demo degraded-report"
+      - action: "Show inspectable state"
+        detail: "workflow-dataset package install-check"
+      - action: "Run bounded onboarding"
+        detail: "demo onboarding start && demo onboarding role && demo onboarding bootstrap-memory"
+      - action: "First value without model"
+        detail: "demo onboarding ready-state — use recommended_first_value_action"
+
+  usb_degraded_honest:
+    title: "Degraded / blocked laptop — honest investor narrative"
+    audience: "operator"
+    preamble: "If readiness is blocked, do not force full demo. Explain local-first guarantees and show reports only."
+    steps:
+      - action: "Show blockage clearly"
+        detail: "workflow-dataset demo readiness  (exit code documents blocked state)"
+      - action: "Offer remediation in one sentence"
+        detail: "Copy to disk / install Python 3.10+ / free 512MB+ disk — as readiness text states."
+      - action: "Optional: env report as artifact"
+        detail: "workflow-dataset demo env-report --json > demo_env_snapshot.json"

@@ -1,0 +1,12 @@
+{
+  "work_mode": "focused",
+  "profile_id": "focus",
+  "label": "Focus",
+  "max_visible": 10,
+  "max_suggestions_per_hour": 4,
+  "noise_ceiling": 0.3,
+  "interrupt_threshold": 0.3,
+  "description": "Minimal interruptions; only high-signal items.",
+  "noise_ceiling_for_mode": 0.3,
+  "max_visible_for_mode": 10
+}

@@ -1,0 +1,209 @@
+{
+  "pack_id": "founder_operator_core",
+  "name": "Founder / Operator (core)",
+  "description": "Curated pack for founders and small-team operators: morning ops, weekly status, portfolio-first workday, supervised operator trust.",
+  "value_pack_id": "founder_ops_plus",
+  "workday_preset_id": "founder_operator",
+  "default_experience_profile_id": "founder_calm",
+  "trust_review_posture": {
+    "trust_preset_id": "supervised_operator",
+    "review_gates_default": [
+      "before_real"
+    ],
+    "audit_posture": "before_real",
+    "description": "Human-in-the-loop; real run only after approval."
+  },
+  "recommended_workday": {
+    "workday_preset_id": "founder_operator",
+    "default_day_states": [
+      "startup",
+      "review_and_approvals",
+      "focus_work",
+      "operator_mode",
+      "wrap_up",
+      "shutdown"
+    ],
+    "default_transition_after_startup": "review_and_approvals",
+    "queue_review_emphasis": "high",
+    "operator_mode_usage": "preferred",
+    "role_operating_hint": "Portfolio and approvals first; operator mode for delegated runs."
+  },
+  "recommended_queue": {
+    "queue_section_order": [
+      "approval_queue",
+      "focus_ready",
+      "review_ready",
+      "operator_ready",
+      "wrap_up"
+    ],
+    "calmness_default": "calm",
+    "max_visible_sections": 6,
+    "emphasis": "high"
+  },
+  "core_workflow_path": {
+    "path_id": "founder_ops_core_workflow",
+    "label": "Founder ops core workflow",
+    "workflow_ids": [
+      "morning_ops",
+      "weekly_status_from_notes",
+      "weekly_status",
+      "morning_reporting"
+    ],
+    "description": "Morning ops and weekly status from notes; then reporting routines."
+  },
+  "first_value_path": {
+    "path_id": "founder_ops_plus_first_value",
+    "pack_id": "founder_ops_plus",
+    "label": "Founder/operator golden first-value",
+    "entry_point": "workflow-dataset package first-run",
+    "required_surface_ids": [
+      "workspace_home",
+      "queue_summary",
+      "approvals_urgent",
+      "continuity_carry_forward"
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "title": "Install / bootstrap",
+        "command": "workflow-dataset package first-run",
+        "what_user_sees": "Dirs and install-check.",
+        "what_to_do_next": "Run profile bootstrap if prompted.",
+        "run_read_only": true,
+        "milestone_id": "first_run_completed"
+      },
+      {
+        "step_number": 2,
+        "title": "Check runtime",
+        "command": "workflow-dataset runtime backends",
+        "what_user_sees": "Backend list and status.",
+        "what_to_do_next": "Optional: runtime recommend --task-class desktop_copilot",
+        "run_read_only": true,
+        "milestone_id": "runtime_check_done"
+      },
+      {
+        "step_number": 3,
+        "title": "Onboard approvals",
+        "command": "workflow-dataset onboard status",
+        "what_user_sees": "Approval and bootstrap state.",
+        "what_to_do_next": "onboard approve when ready for real.",
+        "run_read_only": true,
+        "milestone_id": "onboard_approvals_done"
+      },
+      {
+        "step_number": 4,
+        "title": "First simulate run",
+        "command": "workflow-dataset macro run --id morning_ops --mode simulate",
+        "what_user_sees": "Simulated run; no writes.",
+        "what_to_do_next": "Then try first trusted-real run.",
+        "run_read_only": false,
+        "milestone_id": "first_simulate_done"
+      },
+      {
+        "step_number": 5,
+        "title": "First trusted-real candidate",
+        "command": "workflow-dataset jobs run --id weekly_status_from_notes --mode real",
+        "what_user_sees": "Real run after approvals.",
+        "what_to_do_next": "Check trust cockpit.",
+        "run_read_only": false,
+        "milestone_id": "first_real_done"
+      }
+    ],
+    "milestones": [
+      {
+        "milestone_id": "first_run_completed",
+        "label": "First run",
+        "description": "Install/bootstrap completed",
+        "step_index": 1,
+        "command_hint": "workflow-dataset package first-run",
+        "reached_when": "first_run_completed"
+      },
+      {
+        "milestone_id": "runtime_check_done",
+        "label": "Runtime check",
+        "description": "Backends listed",
+        "step_index": 2,
+        "command_hint": "workflow-dataset runtime backends",
+        "reached_when": "runtime_check_done"
+      },
+      {
+        "milestone_id": "onboard_approvals_done",
+        "label": "Onboard approvals",
+        "description": "Approval status checked",
+        "step_index": 3,
+        "command_hint": "workflow-dataset onboard status",
+        "reached_when": "onboard_approvals_done"
+      },
+      {
+        "milestone_id": "first_simulate_done",
+        "label": "First simulate",
+        "description": "First simulate run completed",
+        "step_index": 4,
+        "command_hint": "macro run --mode simulate",
+        "reached_when": "first_simulate_done"
+      },
+      {
+        "milestone_id": "first_real_done",
+        "label": "First real run",
+        "description": "First trusted-real run after approvals",
+        "step_index": 5,
+        "command_hint": "jobs run --mode real",
+        "reached_when": "first_real_done"
+      }
+    ],
+    "suggested_next_actions": [
+      "workflow-dataset workspace home --profile calm_default",
+      "workflow-dataset value-packs first-run --id founder_ops_plus",
+      "workflow-dataset day status",
+      "workflow-dataset trust cockpit"
+    ],
+    "first_value_milestone_id": "first_simulate_done",
+    "common_failure_points": [
+      {
+        "step_index": 1,
+        "symptom": "Install fails or dirs missing",
+        "remediation_hint": "Run from repo root; check data/local exists",
+        "escalation_command": "workflow-dataset package first-run"
+      },
+      {
+        "step_index": 3,
+        "symptom": "No approval scope; real run blocked",
+        "remediation_hint": "Add path_workspace or path_repo via onboard approve",
+        "escalation_command": "workflow-dataset onboard status"
+      },
+      {
+        "step_index": 4,
+        "symptom": "Simulate times out or errors",
+        "remediation_hint": "Check runtime backends; try workflow-dataset runtime recommend",
+        "escalation_command": "workflow-dataset runtime backends"
+      },
+      {
+        "step_index": 5,
+        "symptom": "Real run rejected",
+        "remediation_hint": "Ensure approvals granted; check trust cockpit",
+        "escalation_command": "workflow-dataset trust cockpit"
+      }
+    ]
+  },
+  "required_surfaces": {
+    "required_surface_ids": [
+      "workspace_home",
+      "day_status",
+      "queue_summary",
+      "approvals_urgent",
+      "continuity_carry_forward"
+    ],
+    "optional_surface_ids": [
+      "mission_control",
+      "review_studio",
+      "automation_inbox",
+      "trust_cockpit"
+    ],
+    "hidden_for_vertical": []
+  },
+  "recommended_operator_bundle_id": "founder_morning_ops",
+  "recommended_automation_settings": {
+    "allow_morning_continuity": true,
+    "allow_resume_continuity": true
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "demo_verify",
+  "description": "Minimal chain: release verify only. Use to confirm environment before heavier chains.",
+  "steps": [
+    {
+      "id": "verify",
+      "type": "cli",
+      "label": "Release verify",
+      "params": {
+        "args": ["release", "verify"],
+        "timeout": 60
+      },
+      "expected_inputs": [],
+      "expected_outputs": ["stdout", "stderr"],
+      "resumable": true
+    }
+  ],
+  "variant_label": "default",
+  "stop_conditions": [],
+  "workflow_names": []
+}

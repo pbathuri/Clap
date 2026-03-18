@@ -1,0 +1,62 @@
+# M33L.1 — Sample review bundles (reusable checklist + summary template + decision points)
+# Copy or merge into data/local/in_flow/bundles.json, or leave here for list_bundles_with_config to load.
+
+bundles:
+  - bundle_id: pre_approval_review
+    name: Pre-approval review
+    description: Checklist and summary before sending to approval queue
+    checklist_items:
+      - "Confirm scope and risk level"
+      - "Attach or link supporting artifacts"
+      - "Note any blockers or dependencies"
+      - "Set expected outcome"
+    summary_template: |
+      # Pre-approval summary
+      **Scope:** (describe)
+      **Risk level:** low | medium | high
+      **Blockers:** (none or list)
+      **Expected outcome:** (what approval enables)
+    decision_questions:
+      - "Ready to send to approval queue?"
+    draft_types:
+      - review_checklist
+      - status_summary
+
+  - bundle_id: end_of_session_handoff
+    name: End of session handoff
+    description: Summary and next steps for session handoff
+    checklist_items:
+      - "Capture what was done"
+      - "List open items"
+      - "Set next session priorities"
+      - "Note blocked items if any"
+    summary_template: |
+      # Session handoff
+      **Done this session:** (bullets)
+      **Open items:** (bullets)
+      **Next session:** (priorities)
+      **Blocked:** (if any)
+    decision_questions: []
+    draft_types:
+      - status_summary
+      - review_checklist
+
+  - bundle_id: blocked_escalation
+    name: Blocked item escalation
+    description: Checklist for escalating a blocked step
+    checklist_items:
+      - "Describe blocker and impact"
+      - "List attempted resolutions"
+      - "Requested action (unblock / defer / reassign)"
+      - "Attach run/step ref"
+    summary_template: |
+      # Blocked escalation
+      **Step/Run:** (ref)
+      **Blocker:** (description)
+      **Impact:** (what is blocked)
+      **Requested action:** (unblock | defer | reassign)
+    decision_questions:
+      - "Ready to send to approval or executor?"
+    draft_types:
+      - blocked_item_escalation_note
+      - review_checklist

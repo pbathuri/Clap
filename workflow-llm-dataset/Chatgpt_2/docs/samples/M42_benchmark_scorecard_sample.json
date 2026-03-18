@@ -1,0 +1,34 @@
+{
+  "scorecard_id": "sc_a1b2c3d4e5",
+  "baseline_id": "previous",
+  "candidate_id": "latest",
+  "slice_ids": ["ops_reporting"],
+  "dimensions": [
+    {
+      "dimension_id": "task_success",
+      "score": 0.65,
+      "pass_threshold": true,
+      "detail": "baseline vs candidate score delta",
+      "baseline_value": 0.45,
+      "candidate_value": 0.62
+    },
+    {
+      "dimension_id": "safety_trust",
+      "score": 0.5,
+      "pass_threshold": true,
+      "detail": "Not yet measured in this comparison"
+    }
+  ],
+  "disagreement_notes": [],
+  "promotion_recommendation": {
+    "recommend": true,
+    "scope": "production_safe",
+    "reason": "Comparison passed thresholds; no regressions."
+  },
+  "rollback_recommendation": null,
+  "recommendation": "promote",
+  "thresholds_passed": true,
+  "regressions": [],
+  "improvements": ["overall_score"],
+  "at_iso": "2025-03-15T14:00:00Z"
+}

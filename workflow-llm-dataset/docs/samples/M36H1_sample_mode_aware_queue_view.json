@@ -1,0 +1,26 @@
+{
+  "mode": "focus",
+  "label": "Focus mode",
+  "description": "Items suited for current project / focus.",
+  "item_ids": ["uq_rs_a1", "uq_rs_a2", "uq_auto_b1"],
+  "sections": [
+    {
+      "section_id": "project_founder_case_alpha",
+      "label": "founder_case_alpha",
+      "project_id": "founder_case_alpha",
+      "episode_id": "",
+      "item_ids": ["uq_rs_a1", "uq_rs_a2"],
+      "count": 2
+    },
+    {
+      "section_id": "project_",
+      "label": "No project",
+      "project_id": "",
+      "episode_id": "",
+      "item_ids": ["uq_auto_b1"],
+      "count": 1
+    }
+  ],
+  "total_count": 3,
+  "generated_at_utc": "2025-03-16T12:00:00.000000+00:00"
+}

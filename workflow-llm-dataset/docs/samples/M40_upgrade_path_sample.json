@@ -1,0 +1,23 @@
+{
+  "bundle_id": "founder_operator_prod",
+  "supported_upgrade_path": {
+    "from_version_min": "0.1.0",
+    "to_version_max": "1.x",
+    "channel_ids": [
+      "stable",
+      "preview"
+    ],
+    "reversible": true,
+    "migration_hints": [
+      "Run workflow-dataset package install-check before and after upgrade.",
+      "Create rollback checkpoint before upgrade."
+    ]
+  },
+  "current_version": "0.1.0",
+  "target_version": "0.1.0",
+  "can_proceed": false,
+  "warnings": [],
+  "blocked_reasons": [
+    "Current version equals target; no upgrade needed."
+  ]
+}

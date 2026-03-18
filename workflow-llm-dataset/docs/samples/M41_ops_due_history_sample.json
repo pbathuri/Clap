@@ -1,0 +1,43 @@
+{
+  "due_list": [
+    {
+      "job_id": "reliability_refresh",
+      "next_due_utc": "2025-03-15T12:00:00Z",
+      "name": "Reliability sweep"
+    },
+    {
+      "job_id": "queue_calmness_review",
+      "next_due_utc": "2025-03-15T06:00:00Z",
+      "name": "Queue calmness review"
+    }
+  ],
+  "history_for_job": "reliability_refresh",
+  "run_history": [
+    {
+      "run_id": "run_20250314_120001",
+      "job_id": "reliability_refresh",
+      "outcome": "pass",
+      "summary": "golden_first_run completed; 3/3 steps passed",
+      "started_utc": "2025-03-14T12:00:01Z",
+      "finished_utc": "2025-03-14T12:02:15Z",
+      "duration_seconds": 134.0,
+      "output_refs": {},
+      "linked_surfaces": ["reliability"],
+      "blocked_reason": "",
+      "error_message": ""
+    },
+    {
+      "run_id": "run_20250313_120002",
+      "job_id": "reliability_refresh",
+      "outcome": "pass",
+      "summary": "golden_first_run completed",
+      "started_utc": "2025-03-13T12:00:02Z",
+      "finished_utc": "2025-03-13T12:01:58Z",
+      "duration_seconds": 116.0,
+      "output_refs": {},
+      "linked_surfaces": ["reliability"],
+      "blocked_reason": "",
+      "error_message": ""
+    }
+  ]
+}

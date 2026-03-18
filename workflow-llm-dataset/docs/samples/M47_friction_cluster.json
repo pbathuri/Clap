@@ -1,0 +1,20 @@
+{
+  "cluster_id": "queue_to_action_handoff",
+  "kind": "handoff_overhead",
+  "label": "Queue to action handoff",
+  "description": "Multiple steps from queue item to execution: queue view → select item → card/handoff → run.",
+  "repeated_handoffs": [
+    {
+      "handoff_id": "queue_to_card",
+      "from_surface": "queue view",
+      "to_surface": "action card / handoff",
+      "description": "Queue item to card accept then handoff target.",
+      "occurrence_count_estimate": 10,
+      "suggested_single_step": "workflow-dataset vertical-speed action-route --item <item_id>"
+    }
+  ],
+  "slow_transitions": [],
+  "unnecessary_branches": [],
+  "impact_summary": "4 steps typical; can reduce to 2 with route-to-action.",
+  "suggested_action": "Use vertical-speed action-route for top queue item to get single command."
+}

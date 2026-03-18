@@ -1,0 +1,19 @@
+{
+  "shadow_run_id": "shadow_abc123",
+  "eligible_for_bounded_real": false,
+  "reason_shadow_only": [
+    "Loop confidence 0.72 is below policy minimum 0.75 for bounded real."
+  ],
+  "reason_eligible": [
+    "All step confidences meet policy requirement.",
+    "No high risk; within policy risk limit."
+  ],
+  "applied_policy_id": "default_job",
+  "applied_policy_label": "Default confidence policy for job",
+  "operator_summary": "Loop type 'job' remains shadow-only: confidence or risk does not meet policy for bounded real execution. Review gate-report and confidence; fix issues or accept shadow-only.",
+  "details": {
+    "loop_confidence": 0.72,
+    "min_step_confidence": 0.68,
+    "has_high_risk": false
+  }
+}

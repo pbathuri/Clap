@@ -1,0 +1,38 @@
+{
+  "evidence": {
+    "v1_contract_summary": "Scope frozen for vertical founder_operator_prod. Release readiness: ready.",
+    "production_cut_frozen": true,
+    "production_cut_vertical_id": "founder_operator_prod",
+    "release_readiness_status": "ready",
+    "launch_recommended_decision": "launch",
+    "stability_recommended_decision": "continue",
+    "v1_ops_posture_summary": "support_level=sustained rollback_ready=true",
+    "migration_continuity_readiness": "Device class: Full local workstation. Recommended preset: Full operation.",
+    "deploy_health_summary": "validation_passed=True upgrade_readiness=True",
+    "sustained_health_summary": "No major health signals in window.",
+    "vertical_value_retention": "Ongoing summary: value retained.",
+    "drift_repair_summary": "No drift/repair summary in window.",
+    "raw_snapshot": {}
+  },
+  "gate": {
+    "passed": true,
+    "blockers": [],
+    "warnings": [],
+    "summary": "Stable v1 gate passed; no blockers."
+  },
+  "decision": {
+    "recommendation": "stable_v1_approved",
+    "recommendation_label": "Stable v1 approved",
+    "confidence_summary": {
+      "confidence": "high",
+      "rationale": "All gate checks passed; no blockers or warnings. Product state meets v1 contract.",
+      "evidence_refs": ["production_cut", "release_readiness", "launch_decision_pack", "stability_decision_pack", "v1_ops", "continuity_confidence", "deploy_health", "vertical_value"],
+      "strongest_evidence_for": "Gate passed; production cut frozen; launch and stability decisions support go.",
+      "strongest_evidence_against": "None."
+    },
+    "narrow_condition": "",
+    "next_required_action": "Proceed with stable v1 release per runbook; run workflow-dataset v1-ops maintenance-pack for ongoing discipline.",
+    "generated_at_iso": "2025-03-17T12:00:00Z"
+  },
+  "explain": "Stable v1 recommendation: Stable v1 approved (stable_v1_approved)\nConfidence: high\nRationale: All gate checks passed; no blockers or warnings. Product state meets v1 contract.\nGate passed: True\nBlockers: 0\nWarnings: 0\nNext required action: Proceed with stable v1 release per runbook; run workflow-dataset v1-ops maintenance-pack for ongoing discipline."
+}

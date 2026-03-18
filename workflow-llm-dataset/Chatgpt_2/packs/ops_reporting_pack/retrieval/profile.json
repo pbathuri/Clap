@@ -1,0 +1,5 @@
+{
+  "top_k": 5,
+  "corpus_filter": "personal",
+  "description": "Ops pack retrieval: top 5 docs from personal corpus for adapter_retrieval mode."
+}

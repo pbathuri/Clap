@@ -1,0 +1,67 @@
+# M33L.1 — Sample handoff kits for common workflow types
+# Improves linking into approvals, planner, executor, workspace.
+
+kits:
+  - kit_id: end_of_session
+    name: End of session handoff
+    workflow_type: end_of_session
+    title_template: "Session handoff — {{workflow}}"
+    default_target: artifact
+    default_next_steps:
+      - "Review handoff summary"
+      - "Resume in next session"
+    nav_links:
+      - label: Open timeline
+        view: timeline
+        command: workflow-dataset workspace timeline
+      - label: Open inbox
+        view: inbox
+        command: workflow-dataset review-studio inbox
+
+  - kit_id: approval_request
+    name: Approval request handoff
+    workflow_type: approval_request
+    title_template: "Approval request — {{workflow}}"
+    default_target: approval_studio
+    default_next_steps:
+      - "Review in approval queue"
+      - "Approve or reject"
+    nav_links:
+      - label: Open approval queue
+        view: approval_studio
+        command: workflow-dataset review-studio inbox
+      - label: Open policy
+        view: policy
+        command: workflow-dataset human-policy status
+
+  - kit_id: blocked_escalation
+    name: Blocked escalation handoff
+    workflow_type: blocked_escalation
+    title_template: "Blocked escalation — {{workflow}}"
+    default_target: approval_studio
+    default_next_steps:
+      - "Review blocked run"
+      - "Unblock or defer"
+    nav_links:
+      - label: Open executor runs
+        view: executor
+        command: workflow-dataset executor runs
+      - label: Open review studio
+        view: inbox
+        command: workflow-dataset review-studio inbox
+
+  - kit_id: next_phase_planner
+    name: Hand off to planner
+    workflow_type: next_phase
+    title_template: "Next phase — {{workflow}}"
+    default_target: planner
+    default_next_steps:
+      - "Compile plan from goal"
+      - "Run or simulate"
+    nav_links:
+      - label: Open planner
+        view: planner
+        command: workflow-dataset planner compile
+      - label: Open executor
+        view: executor
+        command: workflow-dataset executor runs

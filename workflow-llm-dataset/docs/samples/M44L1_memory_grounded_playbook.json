@@ -1,0 +1,31 @@
+{
+  "playbook_id": "mgp_founder_operator_core_20250316",
+  "curated_pack_id": "founder_operator_core",
+  "label": "Founder/operator vertical playbook (memory-grounded)",
+  "description": "Common failure points and recovery paths for founder/operator first-value path. Enriched with prior successful cases.",
+  "base_playbook_id": "founder_operator_playbook",
+  "prior_successful_cases": [
+    {
+      "unit_id": "unit_abc",
+      "snippet": "After install failure, re-ran package first-run from repo root then vertical-packs first-value; first_value reached.",
+      "source": "session",
+      "session_id": "sess_1",
+      "relevance_summary": "Recovery after install: first-run then first-value path succeeded.",
+      "confidence": 0.88
+    }
+  ],
+  "this_worked_before": [
+    {
+      "guidance_id": "twb_1",
+      "situation_summary": "Prior case from session",
+      "what_worked": "Recovery after install: first-run then first-value path succeeded.",
+      "prior_case_unit_id": "unit_abc",
+      "prior_case_snippet": "After install failure, re-ran package first-run from repo root then vertical-packs first-value; first_value reached.",
+      "confidence": 0.88,
+      "reviewable": true
+    }
+  ],
+  "operator_guidance_from_memory": "This worked before in similar situations: Recovery after install: first-run then first-value path succeeded.",
+  "reviewable": true,
+  "created_at_utc": "2025-03-16T15:00:00.000000+00:00"
+}

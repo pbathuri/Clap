@@ -1,0 +1,1 @@
+**Status brief** (golden fixture)

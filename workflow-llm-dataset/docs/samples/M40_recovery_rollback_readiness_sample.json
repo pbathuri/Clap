@@ -1,0 +1,103 @@
+{
+  "recovery_report": {
+    "bundle_id": "founder_operator_prod",
+    "recovery_posture": {
+      "applicable_recovery_case_ids": [
+        "failed_upgrade",
+        "blocked_approval_policy",
+        "stuck_project_session_agent",
+        "invalid_workspace_state",
+        "broken_pack_state"
+      ],
+      "vertical_playbook_id": "founder_operator_playbook",
+      "degraded_startup_guidance": "If startup fails: run workflow-dataset package install-check; run workflow-dataset vertical-packs progress; run workflow-dataset recovery suggest.",
+      "recovery_doc_refs": [
+        "docs/rollout/RECOVERY_ESCALATION.md",
+        "workflow-dataset vertical-packs playbook --id founder_operator_core"
+      ]
+    },
+    "applicable_recovery_cases": [
+      {
+        "case_id": "broken_pack_state",
+        "name": "Broken or incompatible pack",
+        "when_to_use": "Pack fails to load, behavior resolution errors, or pack is marked incompatible.",
+        "steps_count": 5
+      },
+      {
+        "case_id": "failed_upgrade",
+        "name": "Failed upgrade or migration",
+        "when_to_use": "Install check fails after upgrade, or migration reports errors.",
+        "steps_count": 5
+      },
+      {
+        "case_id": "blocked_approval_policy",
+        "name": "Blocked approval or policy mode",
+        "when_to_use": "Approval registry missing or policy blocks execution; operator cannot proceed.",
+        "steps_count": 4
+      },
+      {
+        "case_id": "stuck_project_session_agent",
+        "name": "Stuck project/session/agent loop",
+        "when_to_use": "Project is stalled, replan needed, or agent loop not advancing.",
+        "steps_count": 4
+      },
+      {
+        "case_id": "invalid_workspace_state",
+        "name": "Invalid active workspace state",
+        "when_to_use": "Workspace context fails to build, or active work context is invalid.",
+        "steps_count": 4
+      }
+    ],
+    "vertical_playbook_recovery_ref": "workflow-dataset vertical-packs playbook --id founder_operator_core",
+    "degraded_startup_guidance": "If startup fails: run workflow-dataset package install-check; run workflow-dataset vertical-packs progress; run workflow-dataset recovery suggest.",
+    "recovery_doc_refs": [
+      "docs/rollout/RECOVERY_ESCALATION.md",
+      "workflow-dataset vertical-packs playbook --id founder_operator_core"
+    ]
+  },
+  "rollback_readiness": {
+    "bundle_id": "founder_operator_prod",
+    "supported_rollback_path": {
+      "supported": true,
+      "checkpoint_required_before_upgrade": true,
+      "rollback_hints": [
+        "Use workflow-dataset upgrade rollback --checkpoint <id> if upgrade fails.",
+        "Checkpoint is created automatically before apply_upgrade."
+      ]
+    },
+    "ready": true,
+    "checkpoint_required": true,
+    "latest_checkpoint_id": "",
+    "rollback_hints": [
+      "Use workflow-dataset upgrade rollback --checkpoint <id> if upgrade fails.",
+      "Checkpoint is created automatically before apply_upgrade."
+    ]
+  },
+  "deployment_health": {
+    "bundle_id": "founder_operator_prod",
+    "validation_passed": false,
+    "validation_errors": [
+      "Install check failed: unknown",
+      "Readiness blocker: One or more required machine checks failed.",
+      "Readiness blocker: Missing: data/local/workspaces missing",
+      "Readiness blocker: Missing: data/local/review missing",
+      "Readiness blocker: Release readiness report missing (run: workflow-dataset release report).",
+      "Readiness blocker: Environment: required_ok false"
+    ],
+    "validation_warnings": [],
+    "upgrade_readiness": false,
+    "upgrade_readiness_reason": "Current version equals target; no upgrade needed.",
+    "rollback_readiness": true,
+    "rollback_readiness_reason": "No checkpoint",
+    "recovery_posture_summary": "If startup fails: run workflow-dataset package install-check; run workflow-dataset vertical-packs pr...",
+    "blocked_deployment_risks": [
+      "Install check failed: unknown",
+      "Readiness blocker: One or more required machine checks failed.",
+      "Readiness blocker: Missing: data/local/workspaces missing",
+      "Readiness blocker: Missing: data/local/review missing",
+      "Readiness blocker: Release readiness report missing (run: workflow-dataset release report).",
+      "Current version equals target; no upgrade needed."
+    ],
+    "active_bundle_id": ""
+  }
+}

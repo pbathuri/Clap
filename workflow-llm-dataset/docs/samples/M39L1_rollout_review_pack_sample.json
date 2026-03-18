@@ -1,0 +1,37 @@
+{
+  "vertical_id": "founder_operator_core",
+  "launch_kit_id": "founder_operator_core_launch",
+  "curated_pack_id": "founder_operator_core",
+  "label": "Founder / Operator (core) launch",
+  "evidence_summary": "Proofs met: 2, pending: 7, failed: 0. First-value reached: true. Blocked step: none. Previous decisions: 1.",
+  "what_is_working": [
+    "2 success proof(s) met",
+    "First-value milestone reached",
+    "Milestones reached: first_run_completed, first_simulate_done",
+    "Launch active (started 2025-03-16)",
+    "No blocked step"
+  ],
+  "what_is_not_working": [
+    "7 proof(s) still pending",
+    "—"
+  ],
+  "recommended_decision": "continue",
+  "recommended_rationale": "First-value reached; continue current scope and collect more proof signals.",
+  "operator_summary": "Vertical: Founder / Operator (core) launch. Proofs met: 2, pending: 7, failed: 0. First-value reached: true. Blocked step: none. Working: 2 success proof(s) met; First-value milestone reached; Milestones reached: first_run_completed, first_simulate_done. Not working: 7 proof(s) still pending.",
+  "proof_met_count": 2,
+  "proof_pending_count": 7,
+  "first_value_reached": true,
+  "blocked_step_index": 0,
+  "previous_decisions": [
+    {
+      "decision_id": "rollout_abc123",
+      "vertical_id": "founder_operator_core",
+      "launch_kit_id": "founder_operator_core_launch",
+      "decision": "continue",
+      "rationale": "On track; first-value reached.",
+      "recorded_at_utc": "2025-03-15T12:00:00.000000+00:00",
+      "recorded_by": "cli"
+    }
+  ],
+  "generated_at_utc": "2025-03-16T15:00:00.000000+00:00"
+}

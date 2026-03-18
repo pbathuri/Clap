@@ -1,0 +1,64 @@
+{
+  "bundle_ref": "latest",
+  "target_device_profile": {
+    "profile_id": "device_current_2025-03-16",
+    "device_id": "current",
+    "runtime_id": "local",
+    "edge_tier": "local_standard",
+    "product_version": "0.1.0",
+    "capability_class": "unknown",
+    "allowed_backends": ["ollama"],
+    "has_llm_backend": true,
+    "notes": "Built from current environment.",
+    "created_utc": ""
+  },
+  "continuity_confidence": {
+    "score": 0.85,
+    "classification": "narrowed_production_cut",
+    "label": "Restore succeeded but production cut should be narrowed.",
+    "reasons": ["Restore succeeded but production cut should be narrowed."],
+    "generated_at_utc": "2025-03-16T12:00:00.000000+00:00"
+  },
+  "downgraded_capabilities": [
+    {
+      "note_id": "downgrade_version_mismatch",
+      "subsystem_or_feature": "restore",
+      "description": "Version mismatch between bundle and target.",
+      "recommendation": "Narrow production cut until warnings are resolved.",
+      "created_utc": ""
+    }
+  ],
+  "promoted_capabilities": [],
+  "post_restore_runtime_profile": {
+    "profile_id": "post_restore_device_current_2025-03-16",
+    "target_device_profile_id": "device_current_2025-03-16",
+    "recommended_routing_policy_id": "conservative",
+    "recommended_vertical_id": "default",
+    "production_cut_narrowed": true,
+    "production_cut_scope_note": "Narrow production cut until post-restore review.",
+    "allow_degraded_fallback": true,
+    "operator_mode_ready": false,
+    "operator_mode_scope_note": "Review before enabling operator mode.",
+    "created_utc": ""
+  },
+  "model_route_adjustments": [],
+  "operator_mode_adjustments": [
+    {
+      "adjustment_id": "op_suspend_or_review",
+      "scope_or_domain": "operator_routine",
+      "recommended_action": "allow_after_review",
+      "reason": "Post-restore: operator mode not trusted until review.",
+      "created_utc": ""
+    }
+  ],
+  "recommended_operating_posture": {
+    "posture_id": "narrowed_production_cut",
+    "label": "Narrow production cut",
+    "description": "Restore ok; narrow production cut and review before full production use.",
+    "production_cut_narrowed": true,
+    "operator_mode_trusted": false,
+    "require_review_before_production": true,
+    "next_review_action": "workflow-dataset continuity-confidence report",
+    "created_utc": ""
+  }
+}

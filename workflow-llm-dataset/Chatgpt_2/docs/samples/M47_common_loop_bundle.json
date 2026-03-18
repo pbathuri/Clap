@@ -1,0 +1,9 @@
+{
+  "bundle_id": "morning_loop",
+  "label": "Morning loop",
+  "description": "Day start → continuity morning → first action; repeat daily.",
+  "workflow_ids": ["morning_entry_first_action", "continuity_resume_to_context"],
+  "step_ids": ["day_start", "continuity_morning", "first_action"],
+  "single_entry_command": "continuity morning (or vertical-speed repeat-value morning prefill)",
+  "fast_path_ids": ["morning_entry_fast", "continuity_resume_fast"]
+}

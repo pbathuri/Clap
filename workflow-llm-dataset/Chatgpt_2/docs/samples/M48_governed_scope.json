@@ -1,0 +1,15 @@
+{
+  "scope_id": "operator_morning_scope",
+  "label": "Operator morning scope",
+  "review_domain_id": "operator_routine",
+  "role_id": "operator",
+  "routine_ids": ["morning_digest", "approval_sweep"],
+  "responsibility_ids": [],
+  "authority_tier_id": "bounded_trusted_real",
+  "trust_preset_id": "supervised_operator",
+  "allowed_action_classes": ["observe", "suggest", "draft", "sandbox_write", "execute_simulate", "queued_execute", "execute_trusted_real"],
+  "forbidden_action_classes": ["commit_or_send"],
+  "status": "active",
+  "created_utc": "",
+  "updated_utc": ""
+}

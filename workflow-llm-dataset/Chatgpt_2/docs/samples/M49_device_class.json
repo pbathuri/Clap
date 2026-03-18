@@ -1,0 +1,10 @@
+{
+  "class_id": "full_local_workstation",
+  "label": "Full local workstation",
+  "description": "Full-capability local machine: typical dev_full or local_standard tier, LLM backends available.",
+  "edge_tiers": ["dev_full", "local_standard"],
+  "requires_llm_backend": false,
+  "typical_backends": ["ollama", "repo_local", "llama_cpp", "openai"],
+  "safe_for_operator_mode_default": true,
+  "when_to_use": "Use when the target device has full local runtime, multiple backends, and is your primary workstation."
+}

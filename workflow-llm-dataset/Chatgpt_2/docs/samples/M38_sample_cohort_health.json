@@ -1,0 +1,30 @@
+{
+  "cohort_id": "(all)",
+  "open_issue_count": 3,
+  "total_issue_count": 5,
+  "evidence_count": 12,
+  "highest_severity": "high",
+  "repeated_issue_clusters": [
+    ["issue_abc123", "issue_def456"]
+  ],
+  "unresolved_supported_surface_count": 2,
+  "recommended_mitigation": "Triage high-severity issues; consider pausing new sessions until investigated.",
+  "recommended_downgrade": false,
+  "clusters_by_subsystem": [
+    {
+      "cluster_id": "cluster_executor_xyz",
+      "cohort_id": "",
+      "subsystem": "executor",
+      "workflow_or_context": "ops_reporting",
+      "issue_ids": ["issue_abc123", "issue_def456"],
+      "severity": "high",
+      "summary": "executor: 2 issue(s)",
+      "playbook_id": "executor_blocked",
+      "created_at_utc": "2025-03-16T16:00:00Z"
+    }
+  ],
+  "operator_do_now": "Check recovery guide for executor; run reliability to reproduce.",
+  "link_support": "workflow-dataset release triage",
+  "link_recovery": "workflow-dataset recovery suggest --subsystem executor",
+  "link_readiness": "workflow-dataset release report"
+}

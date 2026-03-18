@@ -1,0 +1,9 @@
+{
+  "scope_id": "operator_morning_scope",
+  "status": "active",
+  "allowed": true,
+  "reason": "governed_scope_active",
+  "detail": "Scope operator_morning_scope is active; role and domain checks passed.",
+  "recommendation": "Delegation is allowed within this scope's boundaries.",
+  "generated_at_utc": "2025-03-16T12:00:00.000000+00:00"
+}

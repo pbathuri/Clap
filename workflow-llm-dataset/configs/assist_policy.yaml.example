@@ -1,0 +1,35 @@
+# M32H.1 — Assist engine policy: quiet hours, focus-safe, interruptibility
+# Copy to data/local/assist_engine/policy.yaml to enable.
+# All times UTC.
+
+quiet_hours:
+  - start_utc: "22:00"
+    end_utc: "07:00"
+    description: "Night quiet (no assist suggestions)"
+  # Optional second window, e.g. lunch:
+  # - start_utc: "12:00"
+  #   end_utc: "13:00"
+  #   description: "Lunch focus"
+
+focus_safe:
+  enabled: false
+  max_interruptiveness: 0.3
+  min_confidence: 0.7
+  description: "When on, only show low-interrupt high-confidence suggestions"
+
+interruptibility_rules:
+  # No suggestions when in focused mode on project "main_app"
+  - work_mode: focused
+    project_id: main_app
+    trust_level: "*"
+    allow_suggestions: false
+    hold_back_reason_template: "Quiet focus mode for project {project_id}"
+  # In any focused mode, cap interruptiveness
+  - work_mode: focused
+    project_id: "*"
+    trust_level: "*"
+    allow_suggestions: true
+    max_interruptiveness: 0.25
+    hold_back_reason_template: ""
+
+default_hold_back: false

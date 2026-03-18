@@ -1,0 +1,20 @@
+{
+  "preset_id": "review_before_production",
+  "label": "Review before production",
+  "description": "Run with narrowed production cut; complete review before enabling operator mode or full production.",
+  "recommended_routing_policy_id": "conservative",
+  "production_cut_narrowed": true,
+  "operator_mode_trusted": false,
+  "require_review_before_production": true,
+  "do_after_migration": [
+    "Run workflow-dataset continuity-confidence report.",
+    "Narrow production cut until review is complete.",
+    "Run continuity-confidence explain to see downgraded capabilities."
+  ],
+  "avoid_after_migration": [
+    "Do not enable operator mode until review is complete.",
+    "Do not assume all backends or features are available."
+  ],
+  "next_review_action": "workflow-dataset continuity-confidence report",
+  "when_to_use": "Use when confidence is review_required or usable_degraded, or device is constrained_laptop."
+}

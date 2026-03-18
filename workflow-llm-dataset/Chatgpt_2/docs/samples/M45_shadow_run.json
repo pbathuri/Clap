@@ -1,0 +1,63 @@
+{
+  "shadow_run_id": "shadow_abc123",
+  "plan_source": "job",
+  "plan_ref": "weekly_status_from_notes",
+  "loop_type": "job",
+  "status": "completed",
+  "current_step_index": 1,
+  "expected_outcomes": [
+    {
+      "step_index": 0,
+      "step_id": "step_0_weekly_status_from_notes",
+      "label": "weekly_status_from_notes",
+      "expected_artifact": "report",
+      "expected_status": "success",
+      "success_criteria": "simulate success"
+    }
+  ],
+  "observed_outcomes": [
+    {
+      "step_index": 0,
+      "step_id": "step_0_weekly_status_from_notes",
+      "observed_status": "success",
+      "observed_artifact": "report",
+      "drift_summary": "",
+      "matched_expected": true
+    }
+  ],
+  "confidence_loop": {
+    "scope": "loop",
+    "step_index": null,
+    "score": 0.72,
+    "factors": ["step_average", "runtime_stability", "trust_posture", "memory_prior"],
+    "degraded_penalty": 0
+  },
+  "confidence_step": [
+    {
+      "scope": "step",
+      "step_index": 0,
+      "score": 0.68,
+      "factors": ["benchmark", "runtime_stability", "memory_prior", "trust_posture"],
+      "degraded_penalty": 0
+    }
+  ],
+  "risk_markers": [
+    { "scope": "step", "step_index": 0, "level": "medium", "reason": "confidence_moderate" },
+    { "scope": "loop", "step_index": null, "level": "medium", "reason": "loop_confidence_moderate" }
+  ],
+  "safe_to_continue": {
+    "may_continue": true,
+    "mode_allowed": "shadow_only",
+    "next_gate_type": "",
+    "conditions": []
+  },
+  "forced_takeover": {
+    "forced": false,
+    "reason": "",
+    "failed_gate_type": "",
+    "handoff_summary": ""
+  },
+  "timestamp_start": "2025-03-16T16:00:00.000000+00:00",
+  "timestamp_end": "2025-03-16T16:00:01.000000+00:00",
+  "executor_run_id": ""
+}

@@ -1,0 +1,12 @@
+{
+  "workflow_id": "morning_entry_first_action",
+  "kind": "morning_entry_first_action",
+  "label": "Morning entry → first action",
+  "description": "Start day: change since last, top queue, first recommended action.",
+  "vertical_pack_id": "founder_operator_core",
+  "estimated_frequency": "daily",
+  "entry_point": "continuity morning or day status",
+  "typical_steps": ["day start or resume", "continuity morning", "open queue or inbox", "first action"],
+  "current_step_count": 4,
+  "suggested_step_count": 2
+}

@@ -1,0 +1,49 @@
+{
+  "pack_id": "roadmap_carry_forward_pack",
+  "generated_at_iso": "2025-03-17T12:00:00Z",
+  "items": [
+    {
+      "item_id": "gate_warning_launch_narrowly",
+      "label": "Launch decision is launch_narrowly; stable v1 may be approved with narrow conditions.",
+      "category": "deferred",
+      "rationale": "Gate warning at stable-v1; revisit after v1 watch period.",
+      "when_to_revisit": "Next stability review or when evidence strengthens.",
+      "source": "launch_decision_pack"
+    },
+    {
+      "item_id": "limitation_manual_approval",
+      "label": "Approval and trust gates require operator action; no unattended real execution.",
+      "category": "deferred",
+      "rationale": "Known limitation at first-user release; intentionally left beyond v1.",
+      "when_to_revisit": "Roadmap or when addressing scope expansion.",
+      "source": "release_readiness"
+    },
+    {
+      "item_id": "limitation_local_first",
+      "label": "All state is local-first; no built-in cloud sync or ticketing.",
+      "category": "deferred",
+      "rationale": "Known limitation at first-user release; intentionally left beyond v1.",
+      "when_to_revisit": "Roadmap or when addressing scope expansion.",
+      "source": "release_readiness"
+    },
+    {
+      "item_id": "roadmap_manual_approval",
+      "label": "Unattended real execution / full automation",
+      "category": "roadmap",
+      "rationale": "Approval and trust gates require operator action in v1.",
+      "when_to_revisit": "When trust and approval policy supports unattended flows.",
+      "source": "roadmap"
+    },
+    {
+      "item_id": "roadmap_cloud_sync",
+      "label": "Cloud sync / ticketing integration",
+      "category": "roadmap",
+      "rationale": "All state is local-first in v1; no built-in cloud sync.",
+      "when_to_revisit": "When cloud or ticketing is in scope.",
+      "source": "roadmap"
+    }
+  ],
+  "experimental_count": 0,
+  "deferred_count": 3,
+  "summary": "0 experimental, 3 deferred, 2 roadmap item(s) carried forward beyond v1."
+}

@@ -1,0 +1,100 @@
+{
+  "bundle_id": "founder_operator_prod",
+  "name": "Founder / Operator (production cut)",
+  "description": "Production deployment bundle for founder/operator vertical: morning ops, weekly status, supervised operator trust, local-first.",
+  "version": "1.0",
+  "curated_pack_id": "founder_operator_core",
+  "contents": {
+    "curated_pack_id": "founder_operator_core",
+    "required_runtime": {
+      "min_python": "3.11",
+      "required_capabilities": [
+        "config_exists",
+        "edge_checks",
+        "approval_registry_optional",
+        "job_packs_loaded",
+        "macros_available"
+      ],
+      "runtime_prerequisites": [
+        "config_exists",
+        "edge_checks",
+        "job_packs_loaded",
+        "macros_available"
+      ],
+      "machine_assumptions": {
+        "local_only": true,
+        "python_required": true
+      }
+    },
+    "required_packs": {
+      "pack_ids": [],
+      "value_pack_id": "founder_ops_plus",
+      "workflow_ids": [
+        "morning_ops",
+        "weekly_status_from_notes",
+        "weekly_status",
+        "morning_reporting"
+      ],
+      "required_approvals_setup": [
+        "approval_registry_optional",
+        "path_workspace",
+        "path_repo",
+        "apply_confirm"
+      ]
+    },
+    "allowed_trust_preset_ids": [
+      "supervised_operator",
+      "cautious",
+      "bounded_trusted_routine"
+    ],
+    "required_queue_day_workspace_refs": {
+      "workday_preset_id": "founder_operator",
+      "default_experience_profile_id": "founder_calm"
+    },
+    "support_recovery_refs": [
+      "docs/rollout/OPERATOR_RUNBOOKS.md",
+      "docs/rollout/RECOVERY_ESCALATION.md",
+      "workflow-dataset recovery suggest --case failed_upgrade",
+      "workflow-dataset vertical-packs recovery --id founder_operator_core --step <N>"
+    ],
+    "excluded_surface_ids": [],
+    "quarantined_surface_metadata": {}
+  },
+  "supported_upgrade_path": {
+    "from_version_min": "0.1.0",
+    "to_version_max": "1.x",
+    "channel_ids": [
+      "stable",
+      "preview"
+    ],
+    "reversible": true,
+    "migration_hints": [
+      "Run workflow-dataset package install-check before and after upgrade.",
+      "Create rollback checkpoint before upgrade."
+    ]
+  },
+  "supported_rollback_path": {
+    "supported": true,
+    "checkpoint_required_before_upgrade": true,
+    "rollback_hints": [
+      "Use workflow-dataset upgrade rollback --checkpoint <id> if upgrade fails.",
+      "Checkpoint is created automatically before apply_upgrade."
+    ]
+  },
+  "recovery_posture": {
+    "applicable_recovery_case_ids": [
+      "failed_upgrade",
+      "blocked_approval_policy",
+      "stuck_project_session_agent",
+      "invalid_workspace_state",
+      "broken_pack_state"
+    ],
+    "vertical_playbook_id": "founder_operator_playbook",
+    "degraded_startup_guidance": "If startup fails: run workflow-dataset package install-check; run workflow-dataset vertical-packs progress; run workflow-dataset recovery suggest.",
+    "recovery_doc_refs": [
+      "docs/rollout/RECOVERY_ESCALATION.md",
+      "workflow-dataset vertical-packs playbook --id founder_operator_core"
+    ]
+  },
+  "generated_at": "2026-03-17T18:38:18.147363+00:00"
+}

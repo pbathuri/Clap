@@ -1,0 +1,8 @@
+{
+  "batch_approve_max_risk": "low",
+  "auto_queue_action_types": ["planner_compile"],
+  "always_manual_review_action_types": ["executor_resume"],
+  "always_manual_review_risk_levels": ["high"],
+  "always_manual_review_modes": ["real"],
+  "defer_revisit_max_days": 7
+}

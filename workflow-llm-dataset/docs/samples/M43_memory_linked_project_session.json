@@ -1,0 +1,29 @@
+{
+  "project_id": "proj_alpha",
+  "session_id": "sess_001",
+  "memory_links": [
+    {
+      "memory_id": "mem_abc",
+      "entity_type": "project",
+      "entity_id": "proj_alpha",
+      "confidence": 0.9,
+      "needs_review": false
+    },
+    {
+      "memory_id": "mem_abc",
+      "entity_type": "session",
+      "entity_id": "sess_001",
+      "confidence": 0.85,
+      "needs_review": false
+    }
+  ],
+  "memory_context_for_live_context": {
+    "project_id": "proj_alpha",
+    "session_id": "sess_001",
+    "snippets": [
+      { "memory_id": "mem_abc", "text": "Last time on this project: focus was on docs/plan.md and the deploy checklist." }
+    ],
+    "summary": "1 memory snippet(s) for project=proj_alpha session=sess_001.",
+    "source": "memory_fusion"
+  }
+}

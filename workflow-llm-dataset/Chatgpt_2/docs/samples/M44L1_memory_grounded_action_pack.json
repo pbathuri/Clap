@@ -1,0 +1,30 @@
+{
+  "action_pack_id": "mgap_founder_case_alpha_20250316",
+  "label": "Memory-grounded actions for founder_case_alpha",
+  "description": "Actions driven by prior successful cases; review before applying.",
+  "vertical_id": "",
+  "project_id": "founder_case_alpha",
+  "actions": [
+    {
+      "action_id": "mga_1",
+      "label": "Memory-backed action",
+      "command_hint": "workflow-dataset memory-intelligence suggest --project founder_case_alpha",
+      "what_worked_summary": "Last session: ran onboarding flow demo then logged outcomes; next step was to run weekly_status_from_notes --mode simulate.",
+      "prior_case_unit_ids": ["unit_xyz"],
+      "confidence": 0.85,
+      "reviewable": true
+    }
+  ],
+  "prior_successful_cases": [
+    {
+      "unit_id": "unit_xyz",
+      "snippet": "Last session: ran onboarding flow demo then logged outcomes; next step was to run weekly_status_from_notes --mode simulate.",
+      "source": "session",
+      "session_id": "sess_2",
+      "relevance_summary": "Onboarding demo + weekly_status simulate worked.",
+      "confidence": 0.85
+    }
+  ],
+  "reviewable": true,
+  "created_at_utc": "2025-03-16T15:05:00.000000+00:00"
+}

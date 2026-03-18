@@ -1,0 +1,23 @@
+{
+  "shadow_run_id": "shadow_abc123",
+  "gates": [
+    { "gate_type": "must_review_next_step", "passed": true, "recommended_action": "Continue." },
+    { "gate_type": "must_stop_loop", "passed": true, "recommended_action": "Loop may continue in allowed mode." },
+    { "gate_type": "may_continue_shadow_only", "passed": true, "recommended_action": "Continue in shadow only." },
+    { "gate_type": "may_continue_bounded_real", "passed": false, "failure_reason": { "gate_type": "may_continue_bounded_real", "reason": "Loop confidence or risk does not allow bounded real", "threshold_crossed": "confidence_or_risk" }, "recommended_action": "Do not promote to real without review." },
+    { "gate_type": "must_downgrade_profile", "passed": true, "recommended_action": "No downgrade required." },
+    { "gate_type": "must_handoff_human", "passed": true, "recommended_action": "No handoff required." }
+  ],
+  "safe_to_continue": {
+    "may_continue": true,
+    "mode_allowed": "shadow_only",
+    "next_gate_type": "",
+    "conditions": []
+  },
+  "forced_takeover": {
+    "forced": false,
+    "reason": "",
+    "failed_gate_type": "",
+    "handoff_summary": ""
+  }
+}

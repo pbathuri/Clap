@@ -1,0 +1,22 @@
+{
+  "playbook_id": "executor_blocked",
+  "label": "Executor / run blocked",
+  "description": "Issues involving executor, run blocked, or step failure.",
+  "steps": [
+    "Run: workflow-dataset recovery suggest --subsystem executor",
+    "Run: workflow-dataset reliability run --id <path_id> to reproduce",
+    "Check automation-inbox and review-studio for related items"
+  ],
+  "operator_do_now": {
+    "guidance": "Check recovery guide for executor; run reliability to reproduce.",
+    "link_support": "workflow-dataset release triage",
+    "link_recovery": "workflow-dataset recovery suggest --subsystem executor",
+    "link_readiness": "workflow-dataset release report",
+    "commands": ["recovery suggest --subsystem executor", "reliability run"]
+  },
+  "link_support": "workflow-dataset release triage",
+  "link_recovery": "workflow-dataset recovery suggest --subsystem executor",
+  "link_readiness": "workflow-dataset release report",
+  "related_subsystems": ["executor", "supervised_loop", "background_run"],
+  "when_to_use": "Executor step failed, run blocked, or automation handoff."
+}

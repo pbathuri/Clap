@@ -1,0 +1,30 @@
+{
+  "id": "ops_reporting_short",
+  "description": "Two-step chain: verify then weekly_status demo with save-artifact. Good for quick ops reporting smoke test.",
+  "steps": [
+    {
+      "id": "verify",
+      "type": "cli",
+      "label": "Release verify",
+      "params": {
+        "args": ["release", "verify"],
+        "timeout": 60
+      },
+      "resumable": true
+    },
+    {
+      "id": "demo_weekly",
+      "type": "cli",
+      "label": "Weekly status demo",
+      "params": {
+        "args": ["release", "demo", "--workflow", "weekly_status", "--save-artifact"],
+        "timeout": 300
+      },
+      "expected_outputs": ["stdout", "stderr"],
+      "resumable": true
+    }
+  ],
+  "variant_label": "default",
+  "stop_conditions": [],
+  "workflow_names": ["weekly_status"]
+}

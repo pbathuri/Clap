@@ -1,0 +1,11 @@
+{
+  "path_id": "morning_entry_fast",
+  "workflow_id": "morning_entry_first_action",
+  "label": "Morning entry → first action (fast)",
+  "description": "Single continuity morning + first recommended action.",
+  "compressed_steps": ["continuity morning", "run first recommended action"],
+  "single_command": "workflow-dataset vertical-speed repeat-value (use morning prefill)",
+  "step_count_before": 4,
+  "step_count_after": 2,
+  "precondition": "Day started; continuity morning available."
+}

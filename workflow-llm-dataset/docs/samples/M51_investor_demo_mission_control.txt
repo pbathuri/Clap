@@ -1,0 +1,13 @@
+=== Investor demo — Mission control (presentation) ===
+
+1. Readiness     Environment: required_ok=True
+2. Role / pack   founder_operator_prod
+3. Memory        Carry-forward: …  Resume: …
+4. Context       Goal (supervised loop): …
+5. First value   First-value stage: in_progress  vertical=founder_operator_prod
+6. Safe next     Recommended: Run next path step …
+7. Evidence      Friction: …  blocked_cases=0
+8. Supervised    Next proposed (needs approval): …
+
+[Degraded — disclose to audience]
+  • No strong vertical lock; demo narrative is thinner.

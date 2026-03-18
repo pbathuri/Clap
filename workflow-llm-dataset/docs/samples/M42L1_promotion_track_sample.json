@@ -1,0 +1,8 @@
+{
+  "track_id": "limited_cohort",
+  "name": "Limited cohort",
+  "description": "Candidate eligible for limited cohort rollout after shadow and gates.",
+  "order_index": 1,
+  "required_previous_track_id": "experimental_only",
+  "gates_description": "Shadow-mode evaluation acceptable; scorecard recommend promote or hold; council optional."
+}

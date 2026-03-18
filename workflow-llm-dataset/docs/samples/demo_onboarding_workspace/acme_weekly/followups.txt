@@ -1,0 +1,4 @@
+Follow-ups for demo session:
+- Priority: reply to two advisor emails
+- Todo: queue calmness review for ops reporting
+- Next: run workflow-dataset day status after onboarding

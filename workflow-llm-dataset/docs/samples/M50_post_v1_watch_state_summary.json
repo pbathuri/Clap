@@ -1,0 +1,11 @@
+{
+  "stable_v1_recommendation": "stable_v1_approved_narrow",
+  "narrow_conditions_in_effect": [
+    "Launch decision is launch_narrowly; stable v1 may be approved with narrow conditions."
+  ],
+  "gate_warnings_summary": "1 gate warning(s): Launch decision is launch_narrowly; stable v1 may be approved with narrow conditions.",
+  "experimental_summary": "No experimental surfaces in current cut.",
+  "deferred_summary": "Gate warnings represent conditions to revisit: Launch decision is launch_narrowly. Known limitations (deferred): Approval and trust gates require operator action; All state is local-first.",
+  "next_review_action": "Resolve or accept narrow conditions; run workflow-dataset stable-v1 report and v1-ops maintenance-pack.",
+  "generated_at_iso": "2025-03-17T12:00:00Z"
+}

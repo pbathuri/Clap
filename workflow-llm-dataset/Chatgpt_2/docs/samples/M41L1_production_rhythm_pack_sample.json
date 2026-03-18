@@ -1,0 +1,12 @@
+{
+  "pack_id": "weekly_production",
+  "name": "Weekly production rhythm",
+  "description": "Run weekly ops jobs and review supportability, adaptation, and triage.",
+  "rhythm": "weekly",
+  "job_ids": ["supportability_refresh", "adaptation_audit"],
+  "review_checklist": [
+    "Review release readiness and supportability report.",
+    "Review adaptation/experiment queue and devlab status.",
+    "Review triage playbook and cohort health if not done daily."
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "total_count": 28,
+  "is_overloaded": true,
+  "overload_threshold": 20,
+  "by_section": {
+    "review_ready": 15,
+    "approval": 6,
+    "blocked": 4,
+    "automation": 3
+  },
+  "by_mode": {
+    "review_ready": 22,
+    "focus_ready": 10,
+    "operator_ready": 7,
+    "wrap_up": 5
+  },
+  "top_blocked_item_id": "uq_auto_blocked_1",
+  "top_blocked_summary": "Automation run failed: timeout; requires operator review.",
+  "recommended_cap": 10,
+  "overflow_message": "Queue has 28 items (over threshold 20). Consider using a mode view to narrow: queue view --mode focus | review | operator | wrap-up.",
+  "suggested_action": "queue view --mode focus  # or review | operator | wrap-up",
+  "generated_at_utc": "2025-03-16T12:00:00.000000+00:00"
+}

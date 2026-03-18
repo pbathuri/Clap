@@ -1,0 +1,10 @@
+{
+  "profile_id": "balanced",
+  "name": "Balanced",
+  "description": "Mix of do-now (queue, memory refresh) and schedule-later (runtime reset, automation pause).",
+  "allowed_pattern_ids": ["*"],
+  "require_council_for_pattern_ids": ["benchmark_refresh_rollback", "degraded_feature_quarantine"],
+  "do_now_pattern_ids": ["queue_calmness_retune", "memory_curation_refresh", "continuity_resume_reconciliation"],
+  "schedule_later_default_reason": "Run in next maintenance window.",
+  "max_actions_without_council": 0
+}

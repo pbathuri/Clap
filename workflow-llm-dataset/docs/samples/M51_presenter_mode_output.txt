@@ -1,0 +1,18 @@
+=== Presenter mode ===
+Presenter mode: ON
+Beat 1/8 — startup readiness
+
+[Degraded — narrative continues]
+Quick transparency: this machine is in a degraded or thinner state than our best-case demo— I'll still walk you through the same five-minute arc so you see how the product behaves when honest about limits. Main signal: No strong vertical lock; demo narrative is thinner. We'll stay on script and not oversell.
+
+— Current beat —
+  SHOW:  Terminal full screen; font readable.
+  RUN:   workflow-dataset investor-demo presenter-mode --on
+  SAY:   This is local-first. Nothing here depends on cloud for the story we're about to tell.
+  IF DEGRADED SAY: We're not in perfect readiness—that's fine. Say: 'I'll show you the same product arc in five minutes, just with honest limits on this machine.'
+
+Next commands:
+  • workflow-dataset investor-demo presenter-mode --on
+  • workflow-dataset investor-demo cue
+  • workflow-dataset investor-demo script
+  • workflow-dataset investor-demo session stage

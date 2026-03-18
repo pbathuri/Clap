@@ -1,0 +1,5 @@
+{
+  "candidate_id": "run_xyz789",
+  "prior_id": "run_prev_stable",
+  "reason": "Rollback by operator"
+}

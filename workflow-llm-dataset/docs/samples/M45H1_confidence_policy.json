@@ -1,0 +1,11 @@
+{
+  "policy_id": "default_job",
+  "loop_type": "job",
+  "label": "Default confidence policy for job",
+  "min_loop_confidence_for_bounded_real": 0.75,
+  "max_risk_level_for_bounded_real": "medium",
+  "require_min_step_confidence": 0.4,
+  "allow_high_risk": false,
+  "operator_summary_shadow_only": "Loop type 'job' remains shadow-only: confidence or risk does not meet policy for bounded real execution. Review gate-report and confidence; fix issues or accept shadow-only.",
+  "operator_summary_eligible": "Loop type 'job' meets policy: eligible for bounded real execution (still subject to approval). Use promotion flow if desired."
+}

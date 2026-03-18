@@ -1,0 +1,25 @@
+{
+  "blockers": [
+    {
+      "id": "production_cut_not_frozen",
+      "summary": "Production cut is not frozen; no vertical locked.",
+      "source": "production_cut",
+      "remediation_hint": "Lock production cut for chosen vertical: workflow-dataset production-cut lock.",
+      "severity": "blocker"
+    },
+    {
+      "id": "release_readiness_blocked",
+      "summary": "Release readiness is blocked.",
+      "source": "release_readiness",
+      "remediation_hint": "Resolve release blockers: workflow-dataset release readiness.",
+      "severity": "blocker"
+    }
+  ],
+  "warnings": [
+    {
+      "id": "launch_narrowly",
+      "summary": "Launch decision is launch_narrowly; stable v1 may be approved with narrow conditions.",
+      "source": "launch_decision_pack"
+    }
+  ]
+}

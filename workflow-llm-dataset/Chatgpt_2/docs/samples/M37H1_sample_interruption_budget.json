@@ -1,0 +1,9 @@
+{
+  "budget_id": "per_hour",
+  "period_hours": 1.0,
+  "max_interruptions": 15,
+  "consumed": 7,
+  "remaining": 8,
+  "window_start_utc": "2025-03-16T14:00:00.000000+00:00",
+  "recommendation": "Under budget; interruptions allowed."
+}

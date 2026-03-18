@@ -1,0 +1,10 @@
+{
+  "candidate_id": "route_top_queue_item",
+  "label": "Route top queue item to single action",
+  "description": "Use action-route for highest-priority queue item to get one command.",
+  "workflow_id": "queue_item_to_action",
+  "friction_cluster_id": "queue_to_action_handoff",
+  "route_to_action": "workflow-dataset vertical-speed action-route",
+  "expected_step_reduction": 2,
+  "priority": "high"
+}

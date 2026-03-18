@@ -1,0 +1,16 @@
+=== 5-minute investor demo script (~304s) ===
+[If anything is yellow or degraded: name it once, then continue—credibility beats pretending green.]
+
+— Beat 1 @ ~0:00  (38s)  [startup_readiness] —
+  SHOW:  Terminal full screen; font readable.
+  RUN:   workflow-dataset investor-demo presenter-mode --on  &&  workflow-dataset investor-demo cue
+  SAY:   This is local-first. Nothing here depends on cloud for the story we're about to tell.
+  IF DEGRADED: We're not in perfect readiness—that's fine. Say: 'I'll show you the same product arc in five minutes, just with honest limits on this machine.'
+
+— Beat 2 @ ~0:38  (38s)  [role_onboarding] —
+  SHOW:  Same terminal.
+  RUN:   workflow-dataset investor-demo session start  (if no session yet)
+  SAY:   We deliberately pick one role pack and vertical so investors don't get lost in breadth.
+  IF DEGRADED: If vertical isn't locked, say: 'Imagine this locked to your vertical—same flow.'
+
+(... beats 3–8: memory → context → first value → artifact → supervised → closing MC ...)

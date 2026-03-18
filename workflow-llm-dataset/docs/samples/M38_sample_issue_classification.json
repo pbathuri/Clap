@@ -1,0 +1,44 @@
+{
+  "issue_id": "issue_abc123",
+  "cohort_id": "broader_ops_q1",
+  "project_id": "founder_case_alpha",
+  "workflow_or_context": "ops_reporting",
+  "trust_mode": "supervised_operator",
+  "evidence_ids": ["ev_a1b2c3d4e5f6"],
+  "severity": "high",
+  "impact_scope": "cohort",
+  "reproducibility": "yes",
+  "affected_subsystems": ["executor", "background_run"],
+  "supportability": {
+    "supported_surface_involved": true,
+    "experimental_surface_involved": false,
+    "recovery_exists": true,
+    "trust_boundary_violation": false,
+    "summary": "Supported surface"
+  },
+  "cohort_impact": {
+    "cohort_id": "broader_ops_q1",
+    "session_count_affected": 2,
+    "should_pause_cohort": true,
+    "should_downgrade": false,
+    "summary": "Affected sessions: 2; pause recommended"
+  },
+  "triage_status": "reproduced",
+  "reproducibility_note": {
+    "steps_summary": "Run workflow X then step Y",
+    "steps_detail": ["Run workflow X", "Trigger step Y", "Observe timeout"],
+    "reproducible": true,
+    "notes": ""
+  },
+  "operator_notes": {
+    "reproduction_hints": "Use reliability run --id path_install",
+    "mitigation_notes": "Temporary workaround: disable background run",
+    "internal_notes": "",
+    "updated_at_utc": "2025-03-16T15:00:00Z"
+  },
+  "summary": "Executor step timeout in background run; reproducible.",
+  "route_target": "reliability",
+  "created_at_utc": "2025-03-16T14:30:00Z",
+  "updated_at_utc": "2025-03-16T15:00:00Z",
+  "resolved_at_utc": ""
+}

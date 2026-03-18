@@ -1,0 +1,14 @@
+{
+  "recommendation": "not_yet_repair_required",
+  "recommendation_label": "Not yet stable v1 — repair required",
+  "confidence_summary": {
+    "confidence": "high",
+    "rationale": "One or more gate blockers must be resolved before stable v1 can be approved.",
+    "evidence_refs": ["production_cut", "release_readiness", "launch_decision_pack", "stability_decision_pack", "v1_ops", "continuity_confidence", "deploy_health", "vertical_value"],
+    "strongest_evidence_for": "Production cut frozen and launch decision is go; resolve stability/readiness blockers.",
+    "strongest_evidence_against": "Release readiness is blocked."
+  },
+  "narrow_condition": "",
+  "next_required_action": "Resolve blockers (workflow-dataset stable-v1 blockers); then re-run workflow-dataset stable-v1 gate.",
+  "generated_at_iso": "2025-03-17T12:00:00Z"
+}

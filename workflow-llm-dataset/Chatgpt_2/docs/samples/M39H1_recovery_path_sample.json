@@ -1,0 +1,38 @@
+{
+  "curated_pack_id": "founder_operator_core",
+  "blocked_step_index": 3,
+  "failure_entry": {
+    "step_index": 3,
+    "symptom": "No approval scope; real run blocked",
+    "remediation_hint": "Add path_workspace via onboard approve",
+    "escalation_command": "workflow-dataset onboard status"
+  },
+  "recovery_path": {
+    "recovery_path_id": "recover_after_approval_block",
+    "label": "Recover after approval block",
+    "steps": [
+      {
+        "step_order": 1,
+        "command": "workflow-dataset onboard status",
+        "label": "Check approval state"
+      },
+      {
+        "step_order": 2,
+        "command": "workflow-dataset onboard approve",
+        "label": "Add path_workspace or path_repo scope"
+      },
+      {
+        "step_order": 3,
+        "command": "workflow-dataset macro run --id morning_ops --mode simulate",
+        "label": "Retry first simulate"
+      }
+    ],
+    "target_milestone_id": "first_simulate_done"
+  },
+  "operator_guidance": "Path stalled: run the escalation command for your step, then follow the recovery path to get back to first-value. Use vertical-packs recovery --id founder_operator_core --step <N> to see steps.",
+  "operator_commands": [
+    "workflow-dataset vertical-packs recovery --id founder_operator_core --step 3",
+    "workflow-dataset onboard status",
+    "workflow-dataset trust cockpit"
+  ]
+}

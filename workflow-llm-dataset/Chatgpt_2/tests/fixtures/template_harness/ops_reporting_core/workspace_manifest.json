@@ -1,0 +1,12 @@
+{
+  "workflow": "ops_reporting_workspace",
+  "template_id": "ops_reporting_core",
+  "artifact_list": [
+    "source_snapshot.md",
+    "status_brief.md",
+    "action_register.md",
+    "decision_requests.md"
+  ],
+  "grounding": "task_context_only",
+  "timestamp": "2026-03-15T12:00:00Z"
+}

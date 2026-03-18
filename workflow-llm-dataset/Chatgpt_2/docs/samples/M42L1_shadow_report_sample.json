@@ -1,0 +1,24 @@
+{
+  "candidate_id": "run_cand_abc",
+  "total_runs": 12,
+  "match_count": 2,
+  "candidate_better_count": 7,
+  "production_better_count": 2,
+  "disagree_count": 0,
+  "other_count": 1,
+  "avg_production_score": 0.52,
+  "avg_candidate_score": 0.61,
+  "operator_summary": "Shadow runs: 12 total. Match: 2, Candidate better: 7, Production better: 2. Avg production score: 0.520, Avg candidate score: 0.610. Recommendation: candidate favorable in shadow; consider next track.",
+  "recent_runs": [
+    {
+      "candidate_id": "run_cand_abc",
+      "production_run_id": "prod_run_1",
+      "candidate_run_id": "cand_run_1",
+      "slice_id": "ops_reporting",
+      "production_score": 0.5,
+      "candidate_score": 0.65,
+      "outcome": "candidate_better",
+      "at_iso": "2025-03-15T14:00:00Z"
+    }
+  ]
+}

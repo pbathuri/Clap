@@ -1,0 +1,14 @@
+{
+  "preset_id": "narrow_trusted_routine",
+  "label": "Narrow trusted routine",
+  "description": "Single or few trusted routines; bounded real execution within one review domain.",
+  "authority_tier_id": "bounded_trusted_real",
+  "trust_preset_id": "bounded_trusted_routine",
+  "allowed_action_classes": ["observe", "suggest", "draft", "sandbox_write", "execute_simulate", "queued_execute", "execute_trusted_real"],
+  "forbidden_action_classes": ["commit_or_send"],
+  "default_review_domain_id": "operator_routine",
+  "default_role_id": "operator",
+  "max_routine_ids": 3,
+  "when_to_use": "Use when delegating one or a small set of trusted routines (e.g. morning_digest, approval_sweep) with real execution but no commit/send.",
+  "created_utc": ""
+}

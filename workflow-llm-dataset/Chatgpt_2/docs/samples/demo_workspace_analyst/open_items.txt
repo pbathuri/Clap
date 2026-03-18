@@ -1,0 +1,4 @@
+Open items for demo:
+- Todo: sync with PM on milestone dates
+- Next: queue review for blocked lanes
+- Priority: customer interview summary for board deck

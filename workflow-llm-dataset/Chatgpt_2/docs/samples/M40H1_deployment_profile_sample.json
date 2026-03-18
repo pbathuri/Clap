@@ -1,0 +1,13 @@
+{
+  "profile_id": "careful_production_cut",
+  "name": "Careful production cut",
+  "description": "Careful production cut: frozen scope, validated bundle, upgrade/rollback readiness required. For sustained production use.",
+  "profile_type": "careful_production_cut",
+  "recommended_bundle_ids": [
+    "founder_operator_prod"
+  ],
+  "allow_operator_mode": true,
+  "allow_real_run_with_approval": true,
+  "pause_guidance": "Pause when deploy-bundle validate fails, upgrade is in progress, or rollback readiness is lost. Do not run real jobs until repair completes.",
+  "repair_guidance": "Run deploy-bundle validate and recovery-report. Fix all validation errors; ensure rollback checkpoint exists before any upgrade. Resume only when validation_passed and upgrade_readiness are true."
+}

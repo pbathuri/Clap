@@ -1,0 +1,7 @@
+# M51: USB investor demo — bounded thresholds (local-first, no cloud).
+# Adjust only for demo packaging; do not broaden product scope.
+
+min_disk_free_mb: 512
+min_ram_mb_degraded_below: 4096
+python_min_major: 3
+python_min_minor: 10

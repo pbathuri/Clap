@@ -1,0 +1,9 @@
+{
+  "shadow_run_id": "shadow_takeover_xyz",
+  "forced_takeover": {
+    "forced": true,
+    "reason": "High risk and low confidence; hand off to human",
+    "failed_gate_type": "must_handoff_human",
+    "handoff_summary": "Shadow run shadow_takeover_xyz: High risk and low confidence; hand off to human. Review gate-report and resolve before continuing."
+  }
+}

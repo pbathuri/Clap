@@ -1,0 +1,33 @@
+{
+  "launch_kit_id": "founder_operator_core_launch",
+  "curated_pack_id": "founder_operator_core",
+  "label": "Founder / Operator (core) launch",
+  "launch_started_at_utc": "2025-03-16T14:00:00.000000+00:00",
+  "is_active": true,
+  "proof_summary": {
+    "met_count": 2,
+    "pending_count": 7,
+    "failed_count": 0,
+    "first_value_milestone_reached": true
+  },
+  "milestone_progress": {
+    "reached_milestone_ids": ["first_run_completed", "first_simulate_done"],
+    "next_milestone_id": "onboard_approvals_done",
+    "next_milestone_label": "Onboard approvals",
+    "blocked_step_index": 0,
+    "suggested_next_command": "workflow-dataset onboard status"
+  },
+  "what_is_working": [
+    "2 success proof(s) met",
+    "First-value milestone reached",
+    "Milestones reached: first_run_completed, first_simulate_done",
+    "Launch active (started 2025-03-16)",
+    "No blocked step"
+  ],
+  "what_is_not_working": [
+    "7 proof(s) still pending",
+    "—"
+  ],
+  "operator_summary": "Vertical: Founder / Operator (core) launch. Proofs met: 2, pending: 7, failed: 0. First-value reached: true. Blocked step: none. Working: 2 success proof(s) met; First-value milestone reached; Milestones reached: first_run_completed, first_simulate_done. Not working: 7 proof(s) still pending.",
+  "generated_at_utc": "2025-03-16T15:00:00.000000+00:00"
+}

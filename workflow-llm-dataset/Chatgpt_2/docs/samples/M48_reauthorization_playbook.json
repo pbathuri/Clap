@@ -1,0 +1,15 @@
+{
+  "playbook_id": "after_suspend",
+  "label": "After suspend",
+  "description": "Resume or revoke a suspended delegated scope.",
+  "situation": "suspended",
+  "steps": [
+    "Review why the scope was suspended (policy, confidence, or manual).",
+    "If safe to continue: run workflow-dataset governed-operator suspend --clear --id <scope_id>.",
+    "If not safe: run workflow-dataset governed-operator revoke --id <scope_id> and create a new scope if needed.",
+    "Re-run governed-operator check --role <role> --routine <routine> to confirm delegation is allowed."
+  ],
+  "when_to_use": "Use when a scope is in suspended state and you need to either resume or permanently revoke.",
+  "outcome_note": "Clearing suspension restores the scope to active; revoking removes it until a new scope is created.",
+  "created_utc": ""
+}

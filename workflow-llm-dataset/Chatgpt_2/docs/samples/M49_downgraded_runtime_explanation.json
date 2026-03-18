@@ -1,0 +1,46 @@
+{
+  "continuity_classification": "usable_degraded",
+  "continuity_label": "Usable with degraded capabilities; review warnings.",
+  "downgraded_capabilities": [
+    {
+      "note_id": "downgrade_restore_warning",
+      "subsystem_or_feature": "restore",
+      "description": "Target runtime has fewer backends than source.",
+      "recommendation": "Review migration_restore validation warnings.",
+      "created_utc": ""
+    }
+  ],
+  "promoted_capabilities": [],
+  "production_cut_narrowed": true,
+  "operator_mode_ready": false,
+  "model_route_adjustments": [
+    {
+      "adjustment_id": "route_llm",
+      "task_family_or_vertical": "default",
+      "current_route": "primary",
+      "recommended_route": "suggestion_only_or_install_backend",
+      "reason": "Target has no LLM backend available; use suggestion-only or install backend.",
+      "created_utc": ""
+    }
+  ],
+  "operator_mode_adjustments": [
+    {
+      "adjustment_id": "op_suspend_or_review",
+      "scope_or_domain": "operator_routine",
+      "recommended_action": "allow_after_review",
+      "reason": "Post-restore: operator mode not trusted until review.",
+      "created_utc": ""
+    }
+  ],
+  "recommended_posture": {
+    "posture_id": "usable_degraded",
+    "label": "Use with care",
+    "description": "Some capabilities may be degraded; narrow production cut if needed.",
+    "production_cut_narrowed": true,
+    "operator_mode_trusted": false,
+    "require_review_before_production": true,
+    "next_review_action": "workflow-dataset continuity-confidence report",
+    "created_utc": ""
+  },
+  "next_review_action": "workflow-dataset continuity-confidence report"
+}

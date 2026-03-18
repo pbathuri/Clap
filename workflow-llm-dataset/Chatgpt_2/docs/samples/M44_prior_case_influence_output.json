@@ -1,0 +1,23 @@
+{
+  "recommendation_id": "rec_abc123",
+  "found": true,
+  "prior_cases": [
+    {
+      "unit_id": "unit_1",
+      "snippet": "Founder case alpha: completed onboarding flow draft; next run demo and log outcomes.",
+      "source": "session",
+      "session_id": "sess_xyz",
+      "relevance_summary": "Founder case alpha: completed onboarding flow draft; next run demo and log outcomes.",
+      "confidence": 0.92
+    }
+  ],
+  "rationale_recall": [
+    {
+      "rationale_id": "r_abc",
+      "summary": "Retrieved prior context used to ground this recommendation.",
+      "source_unit_ids": ["unit_1"],
+      "influence_strength": "medium"
+    }
+  ],
+  "influence_summary": "1 prior case(s) and 1 rationale(s) influenced this recommendation."
+}

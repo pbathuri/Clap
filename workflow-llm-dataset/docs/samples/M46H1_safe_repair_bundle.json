@@ -1,0 +1,11 @@
+{
+  "bundle_id": "queue_memory_baseline",
+  "name": "Queue + memory baseline",
+  "description": "Re-establish queue calmness and memory curation baseline. Low risk.",
+  "pattern_ids": ["queue_calmness_retune", "memory_curation_refresh"],
+  "do_now_guidance": "Safe to run now; read-heavy and non-destructive.",
+  "schedule_later_guidance": "If system is under load, run in next quiet window.",
+  "operator_summary": "Do now: queue summary + calmness review, then memory curation refresh. Schedule later only if under load.",
+  "preconditions": [],
+  "signal_hints": [["drift", "queue"], ["drift", "memory_curation"]]
+}

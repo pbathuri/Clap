@@ -1,0 +1,43 @@
+{
+  "job_id": "reliability_refresh",
+  "name": "Reliability sweep",
+  "description": "Run golden-path reliability run to validate install and core flows.",
+  "job_class": "maintenance",
+  "cadence": {
+    "interval_hours": 0.0,
+    "interval_days": 1.0,
+    "label": "daily"
+  },
+  "prerequisites": [
+    {
+      "prerequisite_id": "install_ok",
+      "description": "Install check passes",
+      "check_command": "workflow-dataset package install-check",
+      "required": true
+    }
+  ],
+  "run_command": "reliability_run",
+  "run_command_args": ["golden_first_run"],
+  "max_duration_seconds": 300,
+  "output_surfaces": ["reliability"],
+  "escalation_targets": [
+    {
+      "surface_id": "reliability",
+      "command_hint": "workflow-dataset reliability run --id golden_first_run",
+      "label": "Reliability"
+    },
+    {
+      "surface_id": "support",
+      "command_hint": "workflow-dataset recovery suggest --case failed_upgrade",
+      "label": "Recovery"
+    }
+  ],
+  "blocked_reasons": [
+    {
+      "reason_id": "install_fail",
+      "summary": "Install check failed",
+      "escalation_command": "workflow-dataset package install-check"
+    }
+  ],
+  "retryable": true
+}

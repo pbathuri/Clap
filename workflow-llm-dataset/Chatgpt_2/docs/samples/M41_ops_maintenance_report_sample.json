@@ -1,0 +1,25 @@
+{
+  "next_due_job_id": "queue_calmness_review",
+  "due_jobs": [
+    {
+      "job_id": "queue_calmness_review",
+      "next_due_utc": "2025-03-15T06:00:00Z",
+      "name": "Queue calmness review"
+    },
+    {
+      "job_id": "reliability_refresh",
+      "next_due_utc": "2025-03-15T12:00:00Z",
+      "name": "Reliability sweep"
+    }
+  ],
+  "overdue_jobs": [],
+  "blocked_job_id": "",
+  "highest_value_overdue_id": "",
+  "recent_outcome": {
+    "job_id": "issue_cluster_review",
+    "outcome": "pass",
+    "summary": "triage_health ok",
+    "finished_utc": "2025-03-14T18:30:00Z"
+  },
+  "recommended_action": "workflow-dataset ops-jobs run --id queue_calmness_review"
+}

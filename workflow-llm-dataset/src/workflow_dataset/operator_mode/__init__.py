@@ -1,0 +1,90 @@
+"""
+M35E–M35H: Personal operator mode.
+M35H.1: Responsibility bundles, emergency/safe pause, revocation flows, work-impact explanation.
+"""
+
+from workflow_dataset.operator_mode.models import (
+    ResponsibilityKind,
+    DelegatedResponsibility,
+    OperatorModeProfile,
+    SuspensionRevocationState,
+    OperatorModeSummary,
+    ResponsibilityBundle,
+    PauseKind,
+    PauseState,
+    RevocationRecord,
+    WorkImpactExplanation,
+    PauseRevocationReport,
+)
+from workflow_dataset.operator_mode.store import (
+    list_profile_ids,
+    get_profile,
+    save_profile,
+    list_responsibility_ids,
+    get_responsibility,
+    save_responsibility,
+    load_suspension_revocation_state,
+    save_suspension_revocation_state,
+    list_bundle_ids,
+    get_bundle,
+    save_bundle,
+    load_pause_state,
+    save_pause_state,
+    load_revocation_history,
+    append_revocation_record,
+)
+from workflow_dataset.operator_mode.bundles import (
+    create_bundle,
+    add_responsibility_to_bundle,
+    remove_responsibility_from_bundle,
+    resolve_bundle_responsibility_ids,
+)
+from workflow_dataset.operator_mode.pause_revocation import (
+    set_emergency_pause,
+    set_safe_pause,
+    clear_pause,
+    revoke_responsibility,
+    revoke_bundle,
+    build_pause_revocation_report,
+)
+from workflow_dataset.operator_mode.explain import explain_work_impact
+
+__all__ = [
+    "ResponsibilityKind",
+    "DelegatedResponsibility",
+    "OperatorModeProfile",
+    "SuspensionRevocationState",
+    "OperatorModeSummary",
+    "ResponsibilityBundle",
+    "PauseKind",
+    "PauseState",
+    "RevocationRecord",
+    "WorkImpactExplanation",
+    "PauseRevocationReport",
+    "list_profile_ids",
+    "get_profile",
+    "save_profile",
+    "list_responsibility_ids",
+    "get_responsibility",
+    "save_responsibility",
+    "load_suspension_revocation_state",
+    "save_suspension_revocation_state",
+    "list_bundle_ids",
+    "get_bundle",
+    "save_bundle",
+    "load_pause_state",
+    "save_pause_state",
+    "load_revocation_history",
+    "append_revocation_record",
+    "create_bundle",
+    "add_responsibility_to_bundle",
+    "remove_responsibility_from_bundle",
+    "resolve_bundle_responsibility_ids",
+    "set_emergency_pause",
+    "set_safe_pause",
+    "clear_pause",
+    "revoke_responsibility",
+    "revoke_bundle",
+    "build_pause_revocation_report",
+    "explain_work_impact",
+]

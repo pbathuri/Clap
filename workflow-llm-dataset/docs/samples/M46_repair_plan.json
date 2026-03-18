@@ -1,0 +1,62 @@
+{
+  "repair_loop_id": "rl_sample_abc123",
+  "plan_id": "queue_calmness_retune",
+  "plan_name": "Queue calmness re-tune",
+  "status": "proposed",
+  "source_signal_id": "drift_123",
+  "source_signal_type": "drift",
+  "created_at": "2025-03-16T12:00:00Z",
+  "updated_at": "2025-03-16T12:00:00Z",
+  "approved_at": "",
+  "approved_by": "",
+  "executed_at": "",
+  "results": [],
+  "verification": null,
+  "rollback": null,
+  "escalation_reason": "",
+  "plan": {
+    "plan_id": "queue_calmness_retune",
+    "name": "Queue calmness re-tune",
+    "description": "Run queue summary and calmness review to re-establish baseline.",
+    "target_subsystem": {
+      "subsystem_id": "queue",
+      "name": "Queue",
+      "description": "Background queue and calmness"
+    },
+    "actions": [
+      {
+        "action_id": "queue_summary",
+        "name": "Queue summary",
+        "description": "Run queue summary (read-only).",
+        "run_command": "queue",
+        "run_command_args": ["summary"],
+        "preconditions": [],
+        "rollback_command": "",
+        "rollback_args": []
+      },
+      {
+        "action_id": "queue_calmness_review",
+        "name": "Queue calmness review",
+        "description": "Trigger queue calmness review ops job.",
+        "run_command": "ops-jobs",
+        "run_command_args": ["run", "--job", "queue_calmness_review"],
+        "preconditions": [],
+        "rollback_command": "",
+        "rollback_args": []
+      }
+    ],
+    "preconditions": [],
+    "required_review_gate": {
+      "gate_id": "operator_approve",
+      "kind": "operator_approval",
+      "description": "Operator must approve before running queue jobs.",
+      "passed": false,
+      "passed_at": "",
+      "passed_by": ""
+    },
+    "verification_command": "queue",
+    "verification_args": ["summary"],
+    "rollback_on_failed_repair": false,
+    "escalation_target": "mission_control"
+  }
+}

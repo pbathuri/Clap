@@ -1,0 +1,6 @@
+{
+  "candidate_id": "run_abc123",
+  "decision": "promote_production_safe",
+  "scope": "production_safe",
+  "reason": "Promoted to production-safe"
+}

@@ -1,0 +1,132 @@
+{
+  "playbook_id": "founder_operator_playbook",
+  "curated_pack_id": "founder_operator_core",
+  "label": "Founder/operator vertical playbook",
+  "description": "Common failure points and recovery paths for founder/operator first-value path.",
+  "failure_entries": [
+    {
+      "step_index": 1,
+      "symptom": "Install fails or dirs missing",
+      "remediation_hint": "Run from repo root; ensure data/local exists",
+      "escalation_command": "workflow-dataset package first-run",
+      "recovery_path_id": "recover_after_install"
+    },
+    {
+      "step_index": 3,
+      "symptom": "No approval scope; real run blocked",
+      "remediation_hint": "Add path_workspace via onboard approve",
+      "escalation_command": "workflow-dataset onboard status",
+      "recovery_path_id": "recover_after_approval_block"
+    },
+    {
+      "step_index": 4,
+      "symptom": "Simulate times out or errors",
+      "remediation_hint": "Check runtime backends; run runtime recommend",
+      "escalation_command": "workflow-dataset runtime backends",
+      "recovery_path_id": "recover_after_simulate_fail"
+    },
+    {
+      "step_index": 5,
+      "symptom": "Real run rejected",
+      "remediation_hint": "Ensure approvals granted; check trust cockpit",
+      "escalation_command": "workflow-dataset trust cockpit",
+      "recovery_path_id": "recover_after_real_rejected"
+    }
+  ],
+  "recovery_paths": [
+    {
+      "recovery_path_id": "recover_after_install",
+      "label": "Recover after install failure",
+      "steps": [
+        {
+          "step_order": 1,
+          "command": "workflow-dataset package first-run",
+          "label": "Re-run first-run from repo root"
+        },
+        {
+          "step_order": 2,
+          "command": "workflow-dataset package install-check",
+          "label": "Verify install"
+        },
+        {
+          "step_order": 3,
+          "command": "workflow-dataset vertical-packs first-value --id founder_operator_core",
+          "label": "Resume first-value path"
+        }
+      ],
+      "target_milestone_id": "first_run_completed"
+    },
+    {
+      "recovery_path_id": "recover_after_approval_block",
+      "label": "Recover after approval block",
+      "steps": [
+        {
+          "step_order": 1,
+          "command": "workflow-dataset onboard status",
+          "label": "Check approval state"
+        },
+        {
+          "step_order": 2,
+          "command": "workflow-dataset onboard approve",
+          "label": "Add path_workspace or path_repo scope"
+        },
+        {
+          "step_order": 3,
+          "command": "workflow-dataset macro run --id morning_ops --mode simulate",
+          "label": "Retry first simulate"
+        }
+      ],
+      "target_milestone_id": "first_simulate_done"
+    },
+    {
+      "recovery_path_id": "recover_after_simulate_fail",
+      "label": "Recover after simulate failure",
+      "steps": [
+        {
+          "step_order": 1,
+          "command": "workflow-dataset runtime backends",
+          "label": "Check backends"
+        },
+        {
+          "step_order": 2,
+          "command": "workflow-dataset runtime recommend --task-class desktop_copilot",
+          "label": "Get recommended runtime"
+        },
+        {
+          "step_order": 3,
+          "command": "workflow-dataset macro run --id morning_ops --mode simulate",
+          "label": "Retry simulate"
+        }
+      ],
+      "target_milestone_id": "first_simulate_done"
+    },
+    {
+      "recovery_path_id": "recover_after_real_rejected",
+      "label": "Recover after real run rejected",
+      "steps": [
+        {
+          "step_order": 1,
+          "command": "workflow-dataset trust cockpit",
+          "label": "Check trust and approvals"
+        },
+        {
+          "step_order": 2,
+          "command": "workflow-dataset onboard status",
+          "label": "Confirm approval scope"
+        },
+        {
+          "step_order": 3,
+          "command": "workflow-dataset jobs run --id weekly_status_from_notes --mode real",
+          "label": "Retry real run"
+        }
+      ],
+      "target_milestone_id": "first_real_done"
+    }
+  ],
+  "operator_guidance_stalled": "Path stalled: run the escalation command for your step, then follow the recovery path to get back to first-value. Use vertical-packs recovery --id founder_operator_core --step <N> to see steps.",
+  "operator_commands_stalled": [
+    "workflow-dataset vertical-packs recovery --id founder_operator_core --step 3",
+    "workflow-dataset onboard status",
+    "workflow-dataset trust cockpit"
+  ]
+}

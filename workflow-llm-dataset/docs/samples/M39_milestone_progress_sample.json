@@ -1,0 +1,14 @@
+{
+  "active_curated_pack_id": "founder_operator_core",
+  "path_id": "founder_ops_plus_first_value",
+  "next_milestone_id": "first_simulate_done",
+  "next_milestone_label": "First simulate",
+  "reached_milestone_ids": [
+    "first_run_completed",
+    "runtime_check_done",
+    "onboard_approvals_done"
+  ],
+  "blocked_step_index": 0,
+  "strongest_value_path_id": "founder_ops_plus_first_value",
+  "suggested_next_command": "workflow-dataset macro run --id morning_ops --mode simulate"
+}
