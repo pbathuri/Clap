@@ -144,8 +144,9 @@ def test_apply_approval_choices_creates_registry(tmp_path: Path) -> None:
     # path = repo_root/data/local/capability_discovery/approvals.yaml -> repo_root = path.parent.parent.parent.parent
     repo_root = path.parent.parent.parent.parent
     reg = load_approval_registry(repo_root)
-    assert "data/local" in reg.approved_paths
-    assert "data/local/workspaces" in reg.approved_paths
+    pkeys = [e.get("path") if isinstance(e, dict) else e for e in reg.approved_paths]
+    assert "data/local" in pkeys
+    assert "data/local/workspaces" in pkeys
 
 
 def test_apply_approval_choices_refusal_omits(tmp_path: Path) -> None:
@@ -161,8 +162,9 @@ def test_apply_approval_choices_refusal_omits(tmp_path: Path) -> None:
         merge_with_existing=True,
     )
     reg = load_approval_registry(repo_root)
-    assert "data/local" in reg.approved_paths
-    assert "data/local/workspaces" not in reg.approved_paths
+    pkeys = [e.get("path") if isinstance(e, dict) else e for e in reg.approved_paths]
+    assert "data/local" in pkeys
+    assert "data/local/workspaces" not in pkeys
 
 
 def test_apply_approval_choices_approve_scopes(tmp_path: Path) -> None:

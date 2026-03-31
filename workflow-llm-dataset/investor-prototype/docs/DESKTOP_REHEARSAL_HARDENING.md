@@ -21,6 +21,15 @@ See **`INVESTOR_DEMO_CANONICAL_PATH.md`** (5-min + 2-min backup) and **`REHEARSA
 
 **Before the room:** snapshot export to `public/edge-desktop-snapshot.json` and/or warm with `?live=1` on role screen.
 
+## Hardening smoke check (CLI)
+
+Run once to validate CLI snapshot wiring (no UI rebuild):
+
+```bash
+cd investor-prototype
+./scripts/demo-dev-api-smoke.sh
+```
+
 ## Live vs cached vs demo story
 
 - **Connected** — Fresh API snapshot.  

@@ -23,7 +23,10 @@ def format_profile_report(profile: CapabilityProfile) -> str:
     lines.append("## Approved paths")
     if profile.approved_paths:
         for p in profile.approved_paths:
-            lines.append(f"- {p}")
+            if isinstance(p, dict):
+                lines.append(f"- {p.get('path', p)}")
+            else:
+                lines.append(f"- {p}")
     else:
         lines.append("- (none in registry)")
     lines.append("")

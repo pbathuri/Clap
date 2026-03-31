@@ -39,6 +39,11 @@ def test_adapter_meta_shape():
     assert "field_status" in am
     assert isinstance(am["field_status"], dict)
     assert len(snap.get("sources_ok") or []) >= 1
+    assert "local_operator_summary" in snap
+    lo = snap["local_operator_summary"]
+    assert lo is not None
+    assert "machine_readiness" in lo
+    assert "operator_readiness" in lo
 
 
 def test_timeout_uses_stale_cache(tmp_path: Path):

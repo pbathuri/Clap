@@ -1,5 +1,5 @@
 """
-M23C-F2: Execute read-only and sandbox-only adapter actions. No mutation of originals.
+M23C-F2: Execute adapter actions with approval gating; read-only/sandbox by default, write_file allowed.
 """
 
 from __future__ import annotations
@@ -13,12 +13,14 @@ from workflow_dataset.desktop_adapters.file_runner import (
     run_inspect_path,
     run_list_directory,
     run_snapshot_to_sandbox,
+    run_write_file,
 )
 from workflow_dataset.desktop_adapters.notes_runner import (
     run_read_text,
     run_summarize_text_for_workflow,
     run_propose_status_from_notes,
 )
+from workflow_dataset.desktop_adapters.finder_runner import run_open_folder
 from workflow_dataset.desktop_adapters.sandbox_config import get_sandbox_root
 from workflow_dataset.capability_discovery.approval_check import check_execution_allowed
 
@@ -104,6 +106,33 @@ def run_execute(
     ts = _utc_iso()
 
     if adapter_id == "file_ops":
+        if action_id == "write_file":
+            content = params.get("content")
+            res = run_write_file(path, content)
+            if res.error:
+                return ExecuteResult(
+                    success=False,
+                    adapter_id=adapter_id,
+                    action_id=action_id,
+                    message=res.error,
+                    provenance=[ProvenanceEntry(adapter_id, action_id, path, ts, "error", res.error)],
+                )
+            out = {
+                "path": path,
+                "exists": res.exists,
+                "is_file": res.is_file,
+                "is_dir": res.is_dir,
+                "size_bytes": res.size_bytes,
+                "mtime_iso": res.mtime_iso,
+            }
+            return ExecuteResult(
+                success=True,
+                adapter_id=adapter_id,
+                action_id=action_id,
+                message="ok",
+                output=out,
+                provenance=[ProvenanceEntry(adapter_id, action_id, path, ts, "ok", "write_file")],
+            )
         if action_id == "inspect_path":
             res = run_inspect_path(path)
             if res.error:
@@ -222,6 +251,26 @@ def run_execute(
                 message="ok",
                 output={"suggested_lines": res.suggested_lines},
                 provenance=[ProvenanceEntry(adapter_id, action_id, path, ts, "ok", f"{len(res.suggested_lines)} lines")],
+            )
+
+    if adapter_id == "finder_open":
+        if action_id == "open_folder":
+            res = run_open_folder(path)
+            if not res.success:
+                return ExecuteResult(
+                    success=False,
+                    adapter_id=adapter_id,
+                    action_id=action_id,
+                    message=res.error,
+                    provenance=[ProvenanceEntry(adapter_id, action_id, path, ts, "error", res.error)],
+                )
+            return ExecuteResult(
+                success=True,
+                adapter_id=adapter_id,
+                action_id=action_id,
+                message="ok",
+                output={"opened": res.path},
+                provenance=[ProvenanceEntry(adapter_id, action_id, path, ts, "ok", "finder_open")],
             )
 
     return ExecuteResult(

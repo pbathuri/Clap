@@ -1,5 +1,5 @@
 """
-M23C-F2: File/folder adapter execution. Read-only + copy to sandbox only; no mutation of originals.
+M23C-F2: File/folder adapter execution. Read-only + copy to sandbox; write_file allowed with approvals.
 """
 
 from __future__ import annotations
@@ -56,6 +56,25 @@ def run_inspect_path(path: str | Path) -> InspectResult:
         )
     except OSError as e:
         return InspectResult(exists=True, is_file=False, is_dir=False, error=f"permission_denied: {e!s}")
+
+
+def run_write_file(path: str | Path, content: str | None) -> InspectResult:
+    """Write UTF-8 content to file; creates parent directories."""
+    if not str(path).strip():
+        return InspectResult(exists=False, is_file=False, is_dir=False, error="path_not_found")
+    p = Path(path).expanduser().resolve()
+    try:
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content or "", encoding="utf-8")
+        return run_inspect_path(p)
+    except OSError as e:
+        exists = p.exists()
+        return InspectResult(
+            exists=exists,
+            is_file=p.is_file() if exists else False,
+            is_dir=p.is_dir() if exists else False,
+            error=f"permission_denied: {e!s}",
+        )
 
 
 def run_list_directory(path: str | Path) -> ListDirectoryResult:

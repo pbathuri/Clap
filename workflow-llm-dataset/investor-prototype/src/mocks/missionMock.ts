@@ -46,6 +46,8 @@ export interface MissionSurfaceState {
   keyThemes?: string[];
   /** From onboarding ready-state likely_priorities */
   keyPriorities?: string[];
+  /** Live local operator (approved folders, workflow, tools, proposals) */
+  localOperator?: import('../adapters/mapLocalOperatorSummary').LocalOperatorSurface;
 }
 
 export const ROLE_OPTIONS: {

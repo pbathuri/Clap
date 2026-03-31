@@ -4,7 +4,8 @@ Single JSON snapshot for Edge Operator Desktop prototype.
 
 from __future__ import annotations
 
-import json
+import os
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -28,145 +29,96 @@ def _root(repo_root: Path | str | None) -> Path:
         return Path.cwd().resolve()
 
 
+_SNAPSHOT_TIMEOUT_SEC = float(os.environ.get("EDGE_DESKTOP_SNAPSHOT_TIMEOUT_SEC", "12"))
+
+
+def _run_with_timeout(label: str, fn) -> tuple[Any | None, str | None]:
+    """Run a fetcher with a bounded timeout to avoid hanging snapshots."""
+    out: list[Any | None] = [None]
+    err: list[BaseException | None] = [None]
+
+    def _run() -> None:
+        try:
+            out[0] = fn()
+        except BaseException as e:
+            err[0] = e
+
+    if _SNAPSHOT_TIMEOUT_SEC <= 0:
+        try:
+            return fn(), None
+        except BaseException as e:
+            return None, str(e)[:500]
+    t = threading.Thread(target=_run, daemon=True, name=f"edge_snapshot_{label}")
+    t.start()
+    t.join(timeout=_SNAPSHOT_TIMEOUT_SEC)
+    if t.is_alive():
+        return None, f"{label} timed out after {_SNAPSHOT_TIMEOUT_SEC:.0f}s"
+    if err[0] is not None:
+        return None, str(err[0])[:500]
+    return out[0], None
+
+
 def build_edge_desktop_snapshot(repo_root: Path | str | None = None) -> dict[str, Any]:
     root = _root(repo_root)
-    out: dict[str, Any] = {
-        "generated_at": utc_now_iso(),
-        "repo_root": str(root),
-        "sources_ok": [],
-        "errors": {},
-        "readiness": None,
-        "bootstrap_last": None,
-        "onboarding_ready": None,
-        "workspace_home": None,
-        "workspace_home_text": None,
-        "day_status": None,
-        "day_status_text": None,
-        "guidance_next_action": None,
-        "operator_summary": None,
-        "inbox": [],
-    }
-
     try:
-        from workflow_dataset.demo_usb import build_readiness_report
-        from workflow_dataset.demo_usb.bundle_root import resolve_demo_bundle_root
+        from workflow_dataset.live_desktop_adapter import build_live_adapter_snapshot, RefreshPolicy
 
-        out["readiness"] = build_readiness_report(resolve_demo_bundle_root(None)).to_dict()
-        out["sources_ok"].append("readiness")
-    except Exception as e:
-        out["errors"]["readiness"] = str(e)[:500]
-
-    try:
-        host_base = Path.home() / ".workflow-demo-host"
-        if host_base.is_dir():
-            best: tuple[float, Path] | None = None
-            for sub in host_base.iterdir():
-                p = sub / ".workflow-demo" / "last_bootstrap.json"
-                if p.is_file():
-                    m = p.stat().st_mtime
-                    if best is None or m > best[0]:
-                        best = (m, p)
-            if best:
-                out["bootstrap_last"] = {
-                    "path": str(best[1]),
-                    "record": json.loads(best[1].read_text(encoding="utf-8")),
-                }
-                out["sources_ok"].append("bootstrap_last")
-    except Exception as e:
-        out["errors"]["bootstrap_last"] = str(e)[:500]
-
-    try:
-        from workflow_dataset.demo_onboarding import (
-            build_ready_to_assist_state,
-            build_completion_state,
+        pol = RefreshPolicy(
+            timeout_seconds=min(6.0, _SNAPSHOT_TIMEOUT_SEC),
+            presenter_fast_path=False,
+            merge_last_good_cache=True,
+            skip_slow_text_fetchers=False,
+            max_parallel_wait_seconds=min(25.0, _SNAPSHOT_TIMEOUT_SEC * 2),
         )
-
-        st = build_ready_to_assist_state(root)
-        comp = build_completion_state(root)
-        out["onboarding_ready"] = {
-            "ready_to_assist": st.to_dict(),
-            "completion": comp.to_dict(),
+        out: dict[str, Any] = build_live_adapter_snapshot(repo_root=root, policy=pol)
+    except Exception as e:
+        out = {
+            "generated_at": utc_now_iso(),
+            "repo_root": str(root),
+            "sources_ok": [],
+            "errors": {"live_adapter": str(e)[:500]},
+            "readiness": None,
+            "bootstrap_last": None,
+            "onboarding_ready": None,
+            "workspace_home": None,
+            "workspace_home_text": None,
+            "day_status": None,
+            "day_status_text": None,
+            "guidance_next_action": None,
+            "operator_summary": None,
+            "inbox": [],
         }
-        out["sources_ok"].append("onboarding_ready")
-    except Exception as e:
-        out["errors"]["onboarding_ready"] = str(e)[:500]
+    # Keep adapter meta out of the base snapshot unless explicitly requested elsewhere.
+    out.pop("adapter_meta", None)
+    out["repo_root"] = str(root)
+    out.setdefault("errors", {})
+    out.setdefault("sources_ok", [])
 
-    try:
-        from workflow_dataset.workspace.state import build_workspace_home_snapshot
-
-        out["workspace_home"] = build_workspace_home_snapshot(root).to_dict()
-        out["sources_ok"].append("workspace_home")
-    except Exception as e:
-        out["errors"]["workspace_home"] = str(e)[:500]
-
-    try:
-        from workflow_dataset.workspace.cli import cmd_home
-
-        out["workspace_home_text"] = cmd_home(
-            repo_root=root, preset_id=None, profile_id="calm_default"
-        )
-        out["sources_ok"].append("workspace_home_text")
-    except Exception as e:
-        out["errors"]["workspace_home_text"] = str(e)[:500]
-
-    try:
-        from workflow_dataset.workday.surface import build_daily_operating_surface
-
-        out["day_status"] = build_daily_operating_surface(root).to_dict()
-        out["sources_ok"].append("day_status")
-    except Exception as e:
-        out["errors"]["day_status"] = str(e)[:500]
-
-    try:
-        from workflow_dataset.workday.cli import cmd_day_status
-
-        out["day_status_text"] = cmd_day_status(root)
-        out["sources_ok"].append("day_status_text")
-    except Exception as e:
-        out["errors"]["day_status_text"] = str(e)[:500]
-
-    try:
-        from workflow_dataset.quality_guidance.guidance import next_best_action_guidance
-
-        g = next_best_action_guidance(root)
-        if g:
-            out["guidance_next_action"] = g.to_dict()
-        out["sources_ok"].append("guidance_next_action")
-    except Exception as e:
-        out["errors"]["guidance_next_action"] = str(e)[:500]
-
-    try:
-        from workflow_dataset.quality_guidance.operator_summary import build_operator_summary
-
-        out["operator_summary"] = build_operator_summary(root).to_dict()
-        out["sources_ok"].append("operator_summary")
-    except Exception as e:
-        out["errors"]["operator_summary"] = str(e)[:500]
-
-    try:
-        from workflow_dataset.review_studio.inbox import build_inbox
-
-        items = build_inbox(repo_root=root, status="pending", limit=25)
-        out["inbox"] = [
-            {
-                "item_id": i.item_id,
-                "kind": i.kind,
-                "priority": i.priority,
-                "summary": (i.summary or "")[:120],
-            }
-            for i in items
-        ]
-        out["sources_ok"].append("inbox")
-    except Exception as e:
-        out["errors"]["inbox"] = str(e)[:500]
-
-    try:
-        from workflow_dataset.investor_mission_control import build_mission_control_investor_home
-
-        ih = build_mission_control_investor_home(root)
-        out["investor_mission_control_home"] = ih.to_dict()
+    inv_home, err = _run_with_timeout(
+        "investor_mission_control_home",
+        lambda: __import__("workflow_dataset.investor_mission_control", fromlist=["build_mission_control_investor_home"])
+        .build_mission_control_investor_home(root)
+        .to_dict(),
+    )
+    if err:
+        out["errors"]["investor_mission_control_home"] = err
+    elif inv_home is not None:
+        out["investor_mission_control_home"] = inv_home
         out["sources_ok"].append("investor_mission_control_home")
+
+    # Shallow supervised task-run surface for shells (full detail remains in local_operator_summary).
+    try:
+        from workflow_dataset.local_operator.summary import build_operator_state_summary
+
+        osum = build_operator_state_summary(root)
+        tr = osum.get("task_runs") or {}
+        out["supervised_task_run"] = {
+            "last_task_run": osum.get("last_task_run"),
+            "recent": (tr.get("recent") or [])[:10],
+            "total_stored": tr.get("total_stored", 0),
+        }
+        out["sources_ok"].append("supervised_task_run")
     except Exception as e:
-        out["errors"]["investor_mission_control_home"] = str(e)[:500]
+        out["errors"]["supervised_task_run"] = str(e)[:500]
 
     return out

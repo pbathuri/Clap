@@ -60,6 +60,33 @@ export interface EdgeDesktopSnapshot {
     what_it_needs_from_user?: string;
     preset_id?: string;
   } | null;
+  local_operator_summary?: {
+    machine_readiness?: Record<string, unknown>;
+    operator_readiness?: Record<string, unknown>;
+    approved_folders?: { count?: number; items?: unknown[] };
+    workflow_tree?: { node_count?: number; roots?: string[] };
+    tool_registry?: Record<string, unknown>;
+    action_proposals?: { count?: number; items?: unknown[] };
+    updated_at?: string;
+    last_execution?: {
+      action_id?: string;
+      success?: boolean;
+      message?: string;
+      adapter_id?: string;
+      action_type?: string;
+      outcome?: string;
+      at?: string;
+    } | null;
+    /** Optional; mirrors Python operator summary when present */
+    task_runs?: { total_stored?: number; recent?: unknown[] };
+    last_task_run?: Record<string, unknown> | null;
+  } | null;
+  /** Shallow supervised task-run surface from edge snapshot builder (Python) */
+  supervised_task_run?: {
+    last_task_run?: Record<string, unknown> | null;
+    recent?: unknown[];
+    total_stored?: number;
+  } | null;
   inbox?: Array<{
     item_id: string;
     kind: string;

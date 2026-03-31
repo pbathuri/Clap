@@ -39,11 +39,11 @@ def _file_ops_contract() -> AdapterContract:
     return AdapterContract(
         adapter_id="file_ops",
         adapter_type="file_ops",
-        capability_description="Local file and folder: inspect, list, read, snapshot to sandbox. F2: read-only + copy to sandbox only; no mutation of originals.",
+        capability_description="Local file and folder: inspect, list, read, write, snapshot to sandbox. F2: read-only + copy to sandbox; write_file requires approval.",
         supported_actions=[
             ActionSpec("read_file", "Read file contents", [{"name": "path", "type": "string", "required": "true"}], ["content"], True, False),
             ActionSpec("list_dir", "List directory contents", [{"name": "path", "type": "string", "required": "true"}], ["entries"], True, False),
-            ActionSpec("write_file", "Write content to file (simulate: preview only)", [{"name": "path", "type": "string", "required": "true"}, {"name": "content", "type": "string", "required": "false"}], ["path"], True, False),
+            ActionSpec("write_file", "Write content to file (simulate: preview only)", [{"name": "path", "type": "string", "required": "true"}, {"name": "content", "type": "string", "required": "false"}], ["path"], True, True),
             # F2: inspect/list/snapshot with real read-only or sandbox-only execution
             ActionSpec("inspect_path", "Inspect path metadata (exists, is_file, is_dir, size, mtime)", [{"name": "path", "type": "string", "required": "true"}], ["metadata"], True, True),
             ActionSpec("list_directory", "List directory entries (names and types)", [{"name": "path", "type": "string", "required": "true"}], ["entries"], True, True),
@@ -106,9 +106,25 @@ def _app_launch_contract() -> AdapterContract:
     )
 
 
+def _finder_open_contract() -> AdapterContract:
+    return AdapterContract(
+        adapter_id="finder_open",
+        adapter_type="finder_open",
+        capability_description="Open a folder in Finder (macOS). F1: bounded real execution within approved scope.",
+        supported_actions=[
+            ActionSpec("open_folder", "Open folder in Finder", [{"name": "path", "type": "string", "required": "true"}], ["opened"], True, True),
+        ],
+        required_approvals=["user_confirm_before_open"],
+        supports_simulate=True,
+        supports_real_execution=True,
+        failure_modes=["path_not_found", "automation_not_allowed"],
+    )
+
+
 BUILTIN_ADAPTERS: list[AdapterContract] = [
     _file_ops_contract(),
     _notes_document_contract(),
     _browser_open_contract(),
     _app_launch_contract(),
+    _finder_open_contract(),
 ]

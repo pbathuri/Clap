@@ -34,6 +34,7 @@ def test_run_scan_file_ops_executable_actions():
     file_ops = next((a for a in profile.adapters_available if a.adapter_id == "file_ops"), None)
     assert file_ops is not None
     assert file_ops.supports_real_execution is True
+    assert hasattr(file_ops, "adapter_mode")
     assert "inspect_path" in file_ops.executable_action_ids
     assert "list_directory" in file_ops.executable_action_ids
 
@@ -64,7 +65,32 @@ def test_approval_registry_load_empty_when_missing(tmp_path):
 
 def test_approval_registry_save_and_load(tmp_path):
     reg = ApprovalRegistry(
-        approved_paths=["/tmp/foo", "data/docs"],
+        approved_paths=[
+            {
+                "path": "/tmp/foo",
+                "allowed_operations": ["read", "open", "index"],
+                "recursive": True,
+                "inherit_mode": "inherit",
+                "sensitivity_tag": "personal",
+                "approval_source": "explicit_user",
+                "revocation_state": "active",
+                "approved_at": "",
+                "reviewed_at": "",
+                "expires_at": "",
+            },
+            {
+                "path": "data/docs",
+                "allowed_operations": ["read"],
+                "recursive": False,
+                "inherit_mode": "none",
+                "sensitivity_tag": "confidential",
+                "approval_source": "policy_default",
+                "revocation_state": "active",
+                "approved_at": "",
+                "reviewed_at": "",
+                "expires_at": "",
+            },
+        ],
         approved_apps=["Notes", "Safari"],
         approved_action_scopes=[{"adapter_id": "file_ops", "action_id": "inspect_path", "executable": True}],
     )
@@ -87,5 +113,5 @@ def test_run_scan_uses_approval_registry(tmp_path):
     reg = ApprovalRegistry(approved_paths=["/allowed"], approved_apps=["CustomApp"])
     save_approval_registry(reg, tmp_path)
     profile = run_scan(repo_root=tmp_path, approval_registry=load_approval_registry(tmp_path))
-    assert "/allowed" in profile.approved_paths
+    assert any(p.get("path") == "/allowed" for p in profile.approved_paths)
     assert "CustomApp" in profile.approved_apps

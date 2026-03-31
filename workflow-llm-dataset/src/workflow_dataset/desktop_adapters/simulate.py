@@ -106,6 +106,10 @@ def run_simulate(adapter_id: str, action_id: str, params: dict[str, Any] | None 
         else:
             preview_parts.append("  Resolved: not in approved list (preview only).")
         preview_parts.append("  Would launch app (simulate only; F3).")
+    elif adapter_id == "finder_open":
+        path = params.get("path", "")
+        preview_parts.append(f"  Folder: {path}")
+        preview_parts.append("  Would open folder in Finder (simulate only).")
     else:
         preview_parts.append("  (No custom preview for this adapter/action.)")
 

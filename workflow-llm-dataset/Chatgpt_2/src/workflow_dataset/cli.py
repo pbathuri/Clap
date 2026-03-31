@@ -4210,17 +4210,19 @@ def demo_edge_desktop_snapshot_cmd(
     output: str = typer.Option("", "--output", "-o", help="Write JSON to file"),
 ) -> None:
     """Aggregate snapshot for Edge Operator Desktop UI: readiness, onboarding, workspace, day, guidance, inbox."""
-    import json
     from workflow_dataset.edge_desktop.snapshot import build_edge_desktop_snapshot
+
+    import sys
+    from workflow_dataset.edge_desktop.json_dump import dumps_snapshot_json
 
     root = Path(repo_root).resolve() if repo_root else None
     snap = build_edge_desktop_snapshot(repo_root=root)
-    text = json.dumps(snap, indent=2, default=str)
+    text = dumps_snapshot_json(snap)
     if output:
         Path(output).write_text(text, encoding="utf-8")
         console.print(f"[green]Wrote {output}[/green]")
     else:
-        console.print(text)
+        sys.stdout.write(text + "\n")
 
 
 @demo_group.command("live-adapter-snapshot")
@@ -4237,7 +4239,8 @@ def demo_live_adapter_snapshot_cmd(
     prefetch_after: bool = typer.Option(False, "--prefetch-after", help="After building, write result as last-good cache."),
 ) -> None:
     """M52: Timed parallel snapshot + adapter_meta (live vs stale_cache). For investor desktop prototype."""
-    import json
+    import sys
+    from workflow_dataset.edge_desktop.json_dump import dumps_snapshot_json
     from workflow_dataset.live_desktop_adapter import (
         build_live_adapter_snapshot,
         RefreshPolicy,
@@ -4251,17 +4254,17 @@ def demo_live_adapter_snapshot_cmd(
         merge_last_good_cache=not no_cache_merge,
         skip_slow_text_fetchers=False,
     )
+
     snap = build_live_adapter_snapshot(repo_root=root, policy=pol)
     if prefetch_after:
         save_last_good_snapshot(snap, root)
-    text = json.dumps(snap, indent=2, default=str)
+    text = dumps_snapshot_json(snap)
     if output:
         Path(output).write_text(text, encoding="utf-8")
         console.print(f"[green]Wrote {output}[/green]")
     else:
-        console.print(text)
+        sys.stdout.write(text + "\n")
     am = snap.get("adapter_meta") or {}
-    import sys
     sys.stderr.write(
         f"adapter: live={sum(1 for v in (am.get('field_status') or {}).values() if v == 'live')} "
         f"stale_cache={sum(1 for v in (am.get('field_status') or {}).values() if v == 'stale_cache')} "
@@ -7906,14 +7909,19 @@ def approvals_list(
 
 def _approvals_list_impl(repo_root: str) -> None:
     from workflow_dataset.capability_discovery import load_approval_registry, get_registry_path
+    from workflow_dataset.capability_discovery.approval_registry import normalize_approved_paths
     root = Path(repo_root).resolve() if repo_root else None
     path = get_registry_path(root)
     registry = load_approval_registry(root)
     console.print("[bold]Approval registry[/bold]")
     console.print(f"  [dim]Source: {path}[/dim]")
     console.print("  approved_paths:")
-    for p in registry.approved_paths:
-        console.print(f"    - {p}")
+    for p in normalize_approved_paths(registry.approved_paths):
+        console.print(f"    - path: {p.get('path')}")
+        console.print(f"      ops: {', '.join(p.get('allowed_operations') or []) or '—'}")
+        console.print(f"      recursive: {p.get('recursive')}  inherit_mode: {p.get('inherit_mode')}")
+        console.print(f"      sensitivity: {p.get('sensitivity_tag')}  approval_source: {p.get('approval_source')}")
+        console.print(f"      revocation_state: {p.get('revocation_state')}")
     if not registry.approved_paths:
         console.print("    (none)")
     console.print("  approved_apps:")
@@ -7926,6 +7934,467 @@ def _approvals_list_impl(repo_root: str) -> None:
         console.print(f"    - {s}")
     if not registry.approved_action_scopes:
         console.print("    (none; scopes from adapter contracts)")
+
+
+@approvals_group.command("add-path")
+def approvals_add_path(
+    path: str = typer.Option(..., "--path", help="Path to approve"),
+    ops: list[str] = typer.Option([], "--ops", help="Allowed operations (repeatable)"),
+    recursive: bool = typer.Option(True, "--recursive/--no-recursive"),
+    inherit_mode: str = typer.Option("inherit", "--inherit-mode", help="inherit | none"),
+    sensitivity_tag: str = typer.Option("unspecified", "--sensitivity", help="Sensitivity tag"),
+    approval_source: str = typer.Option("explicit_user", "--approval-source"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Add or update an approved folder entry with metadata."""
+    from workflow_dataset.capability_discovery import load_approval_registry, save_approval_registry
+    from workflow_dataset.capability_discovery.approval_registry import normalize_approved_paths
+
+    root = Path(repo_root).resolve() if repo_root else None
+    registry = load_approval_registry(root)
+    entries = normalize_approved_paths(registry.approved_paths)
+    entry = {
+        "path": path,
+        "allowed_operations": list(ops),
+        "recursive": bool(recursive),
+        "inherit_mode": inherit_mode,
+        "sensitivity_tag": sensitivity_tag,
+        "approval_source": approval_source,
+        "revocation_state": "active",
+        "approved_at": "",
+        "reviewed_at": "",
+        "expires_at": "",
+    }
+    existing = next((e for e in entries if e.get("path") == path), None)
+    if existing:
+        existing.update(entry)
+    else:
+        entries.append(entry)
+    registry.approved_paths = entries
+    save_approval_registry(registry, root)
+    console.print(f"[green]Approved path saved:[/green] {path}")
+
+
+@approvals_group.command("revoke-path")
+def approvals_revoke_path(
+    path: str = typer.Option(..., "--path", help="Path to revoke"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Revoke an approved folder entry (sets revocation_state=revoked)."""
+    from workflow_dataset.capability_discovery import load_approval_registry, save_approval_registry
+    from workflow_dataset.capability_discovery.approval_registry import normalize_approved_paths
+
+    root = Path(repo_root).resolve() if repo_root else None
+    registry = load_approval_registry(root)
+    entries = normalize_approved_paths(registry.approved_paths)
+    existing = next((e for e in entries if e.get("path") == path), None)
+    if existing:
+        existing["revocation_state"] = "revoked"
+    else:
+        entries.append({
+            "path": path,
+            "allowed_operations": [],
+            "recursive": True,
+            "inherit_mode": "inherit",
+            "sensitivity_tag": "unspecified",
+            "approval_source": "explicit_user",
+            "revocation_state": "revoked",
+            "approved_at": "",
+            "reviewed_at": "",
+            "expires_at": "",
+        })
+    registry.approved_paths = entries
+    save_approval_registry(registry, root)
+    console.print(f"[yellow]Revoked path:[/yellow] {path}")
+
+
+# ----- Local operator (Phase 1) -----
+local_group = typer.Typer(help="Local operator: ingest approved folders, discover tools, propose actions.")
+app.add_typer(local_group, name="local")
+
+local_approved_group = typer.Typer(
+    help="Approved-folder lifecycle (writes data/local/capability_discovery/approvals.yaml).",
+)
+local_group.add_typer(local_approved_group, name="approved-folders")
+
+
+@local_approved_group.command("add")
+def local_approved_folders_add(
+    path: str = typer.Option(..., "--path", "-p", help="Directory to approve for local operator scope"),
+    ops: list[str] = typer.Option([], "--ops", help="Allowed operations (repeat); default read"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Register an approved folder (read scope for ingest / proposals / execution)."""
+    from workflow_dataset.capability_discovery.approval_registry import is_documentation_placeholder_path
+    from workflow_dataset.local_operator.approved_folders import add_approved_folder
+
+    if is_documentation_placeholder_path(path):
+        console.print(
+            "[red]Refusing documentation placeholder path; use a real directory "
+            "(see docs/LOCAL_OPERATOR_RUNBOOK.md).[/red]"
+        )
+        raise typer.Exit(1)
+    root = Path(repo_root).resolve() if repo_root else None
+    use_ops = list(ops) if ops else ["read"]
+    add_approved_folder(path, ops=use_ops, repo_root=root)
+    console.print(f"[green]Added approved folder:[/green] {path}  ops={use_ops}")
+
+
+@local_approved_group.command("list")
+def local_approved_folders_list(
+    show_all: bool = typer.Option(False, "--all", help="Include revoked entries"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """List approved-folder entries from the registry."""
+    from workflow_dataset.local_operator.approved_folders import list_approved_folders
+
+    root = Path(repo_root).resolve() if repo_root else None
+    entries = list_approved_folders(root)
+    if not show_all:
+        entries = [e for e in entries if e.get("revocation_state") == "active"]
+    console.print("[bold]Approved folders[/bold]")
+    if not entries:
+        console.print("  (none)")
+        return
+    for e in entries:
+        p = str(e.get("path") or "")
+        try:
+            resolved = Path(p).expanduser()
+            if root and not resolved.is_absolute():
+                resolved = (root / resolved).resolve()
+            else:
+                resolved = resolved.resolve()
+            exists = resolved.exists()
+        except Exception:
+            exists = False
+        console.print(
+            f"  - {p}  state={e.get('revocation_state')}  path_exists={exists}  ops={e.get('allowed_operations') or []}"
+        )
+
+
+@local_approved_group.command("revoke")
+def local_approved_folders_revoke(
+    path: str = typer.Option(..., "--path", "-p", help="Path to revoke"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Revoke an approved folder (stops proposals/execution for that path)."""
+    from workflow_dataset.local_operator.approved_folders import revoke_approved_folder
+
+    root = Path(repo_root).resolve() if repo_root else None
+    revoke_approved_folder(path, repo_root=root)
+    console.print(f"[yellow]Revoked approved folder:[/yellow] {path}")
+
+
+@local_group.command("setup-status")
+def local_setup_status(
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Show local operator setup/capability readiness."""
+    from workflow_dataset.local_operator.setup import build_setup_status
+    root = Path(repo_root).resolve() if repo_root else None
+    status = build_setup_status(root)
+    console.print("[bold]Local operator setup status[/bold]")
+    mr = status.get("machine_readiness") or {}
+    console.print(f"  [dim]Machine:[/dim] {mr.get('summary', mr)}")
+    op = status.get("operator_readiness") or {}
+    console.print(f"  [dim]Operator:[/dim] {op.get('summary', op)}")
+    for step in op.get("next_steps") or []:
+        console.print(f"    → {step}")
+    console.print("  capability_trust:")
+    for c in status.get("capability_trust") or []:
+        console.print(f"    - {c.get('capability_id')}: ready={c.get('ready')} notes={c.get('notes')}")
+
+
+@local_group.command("ingest")
+def local_ingest(
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Ingest approved folders and build workflow/task tree."""
+    from workflow_dataset.local_operator.ingest import ingest_approved_folders
+    root = Path(repo_root).resolve() if repo_root else None
+    state = ingest_approved_folders(root)
+    count = len(state.get("workflow_tree") or [])
+    console.print(f"[green]Ingested approved folders.[/green] workflow_nodes={count}")
+
+
+@local_group.command("discover-tools")
+def local_discover_tools(
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Discover tools/apps from approved folder evidence."""
+    from workflow_dataset.local_operator.tool_discovery import discover_tools
+    root = Path(repo_root).resolve() if repo_root else None
+    tools = discover_tools(root)
+    console.print(f"[green]Discovered tools:[/green] {len(tools)}")
+    for t in tools:
+        console.print(f"  - {t.get('tool_id')}: inferred={t.get('inferred')} installed={t.get('installed')} mode={t.get('adapter_mode')}")
+
+
+@local_group.command("propose-actions")
+def local_propose_actions(
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Generate local action proposals from approved folders."""
+    from workflow_dataset.local_operator.action_proposals import propose_local_actions
+    root = Path(repo_root).resolve() if repo_root else None
+    state = propose_local_actions(root)
+    proposals = state.get("action_proposals") or []
+    console.print(f"[green]Proposed actions:[/green] {len(proposals)}")
+    for p in proposals[:10]:
+        console.print(f"  - {p.get('action_id')}: {p.get('label')} ({p.get('risk_tier')})")
+
+
+@local_group.command("execute-action")
+def local_execute_action(
+    action_id: str = typer.Option(..., "--action-id", help="Action id to execute"),
+    approved: bool = typer.Option(False, "--approved", help="Confirm approved execution"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Execute a proposed local action by id (requires --approved)."""
+    from workflow_dataset.local_operator.execution_controller import run_supervised_execution
+    root = Path(repo_root).resolve() if repo_root else None
+    result = run_supervised_execution(action_id, approved=approved, repo_root=root)
+    if not result.get("success"):
+        console.print(f"[red]Execution failed:[/red] {result.get('message')}")
+        raise typer.Exit(code=1)
+    console.print(f"[green]Executed:[/green] {action_id}")
+
+
+@local_group.command("plan-task")
+def local_plan_task(
+    prompt: str = typer.Option(..., "--prompt", help="Task prompt to plan"),
+    json_out: bool = typer.Option(False, "--json", help="Print full plan record as JSON"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Plan a local operator task prompt into a task plan."""
+    import json as json_mod
+
+    from workflow_dataset.local_operator.task_planning import plan_task
+
+    root = Path(repo_root).resolve() if repo_root else None
+    plan = plan_task(prompt, repo_root=root)
+    if json_out:
+        console.print(json_mod.dumps(plan, indent=2, default=str))
+        if str(plan.get("status") or "") != "planned":
+            raise typer.Exit(1)
+        return
+    scope_path = (plan.get("approved_scope") or {}).get("path") or ""
+    console.print("[bold]Task plan[/bold]")
+    status = str(plan.get("status") or "")
+    reason = str(plan.get("reason") or "")
+    console.print(f"  plan_id={plan.get('plan_id')}")
+    console.print(f"  status={status}")
+    console.print(f"  reason={reason or '(none)'}")
+    console.print(f"  workflow_pattern={plan.get('workflow_pattern') or ''}")
+    console.print(f"  approved_scope={scope_path or '(none)'}")
+    if status != "planned":
+        pats = plan.get("supported_workflow_patterns") or []
+        if pats:
+            console.print(f"  supported_workflow_patterns={','.join(str(p) for p in pats)}")
+        hint = str(plan.get("user_hint") or "").strip()
+        if hint:
+            console.print(f"  hint={hint}")
+        console.print(f"[red]Plan not ready:[/red] status={status} reason={reason or '(none)'}")
+        raise typer.Exit(1)
+
+
+@local_group.command("approve-task")
+def local_approve_task(
+    plan_id: str = typer.Option(..., "--plan-id", help="Task plan id to approve"),
+    json_out: bool = typer.Option(False, "--json", help="Print approve result as JSON"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Approve a local task plan for execution."""
+    import json as json_mod
+
+    from workflow_dataset.local_operator.task_runs import approve_task_plan
+
+    root = Path(repo_root).resolve() if repo_root else None
+    plan = approve_task_plan(plan_id, repo_root=root)
+    if json_out:
+        console.print(json_mod.dumps(plan, indent=2, default=str))
+        if plan.get("error"):
+            raise typer.Exit(1)
+        return
+    if plan.get("error"):
+        console.print(f"[red]Approve failed:[/red] {plan.get('error')}")
+        raise typer.Exit(1)
+    console.print(f"[green]Plan approved:[/green] {plan.get('plan_id')}")
+
+
+@local_group.command("run-task")
+def local_run_task(
+    plan_id: str = typer.Option(..., "--plan-id", help="Task plan id to run"),
+    approved: bool = typer.Option(False, "--approved", help="Confirm approved execution"),
+    json_out: bool = typer.Option(False, "--json", help="Print full run record as JSON"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Run a task plan (requires --approved)."""
+    import json as json_mod
+
+    from workflow_dataset.local_operator.task_runs import run_task_plan
+
+    root = Path(repo_root).resolve() if repo_root else None
+    run = run_task_plan(plan_id, approved=approved, repo_root=root)
+    status = str(run.get("status") or "")
+    reason = str(run.get("reason") or "")
+    if json_out:
+        console.print(json_mod.dumps(run, indent=2, default=str))
+        if status in {"failed", "blocked"}:
+            raise typer.Exit(1)
+        return
+    console.print("[bold]Task run[/bold]")
+    console.print(f"  run_id={run.get('run_id')}")
+    console.print(f"  status={status}")
+    console.print(f"  workflow_pattern={run.get('workflow_pattern') or ''}")
+    console.print(f"  artifact_path={run.get('artifact_path')}")
+    console.print(f"  reason={reason or '(none)'}")
+    if status in {"failed", "blocked"}:
+        console.print(f"[red]Task run {status}:[/red] {reason or '(none)'}")
+        raise typer.Exit(1)
+
+
+@local_group.command("list-task-runs")
+def local_list_task_runs(
+    limit: int = typer.Option(20, "--limit", help="Maximum runs to list (newest first)"),
+    json_out: bool = typer.Option(False, "--json", help="Print rows as JSON array"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """List recent supervised task runs from local JSON store (newest first)."""
+    import json as json_mod
+
+    from workflow_dataset.local_operator.task_store import list_recent_task_run_summaries
+
+    root = Path(repo_root).resolve() if repo_root else None
+    rows = list_recent_task_run_summaries(root, limit=limit)
+    if json_out:
+        console.print(json_mod.dumps(rows, indent=2))
+        return
+    console.print("[bold]Recent task runs[/bold]")
+    if not rows:
+        console.print("  (none)")
+        return
+    for row in rows:
+        console.print(
+            f"  - {row.get('run_id')}  status={row.get('status')}  "
+            f"pattern={row.get('workflow_pattern') or '—'}  "
+            f"completed_at={row.get('completed_at') or '—'}"
+        )
+        prev = row.get("prompt_preview") or ""
+        if prev:
+            console.print(f"    prompt: {prev}")
+
+
+@local_group.command("task-status")
+def local_task_status(
+    run_id: str = typer.Option("", "--run-id", help="Task run id (defaults to last run)"),
+    json_out: bool = typer.Option(False, "--json", help="Print full run record as JSON"),
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Show status for a task run."""
+    import json as json_mod
+
+    from workflow_dataset.local_operator.state_store import load_operator_state
+    from workflow_dataset.local_operator.task_store import load_task_run
+
+    root = Path(repo_root).resolve() if repo_root else None
+    use_run_id = run_id.strip()
+    if not use_run_id:
+        state = load_operator_state(root)
+        use_run_id = str(state.get("last_task_run_id") or "").strip()
+    if not use_run_id:
+        console.print("[yellow]No task run available.[/yellow]")
+        raise typer.Exit(1)
+    run = load_task_run(use_run_id, root)
+    if not run:
+        console.print(f"[red]Task run not found:[/red] {use_run_id}")
+        raise typer.Exit(1)
+    if json_out:
+        console.print(json_mod.dumps(run, indent=2, default=str))
+        return
+    console.print("[bold]Task run status[/bold]")
+    console.print(f"  run_id={run.get('run_id')}")
+    console.print(f"  status={run.get('status')}")
+    console.print(f"  workflow_pattern={run.get('workflow_pattern') or ''}")
+    console.print(f"  created_at={run.get('created_at') or ''}")
+    console.print(f"  completed_at={run.get('completed_at') or ''}")
+    console.print(f"  prompt={run.get('prompt')}")
+    console.print(f"  artifact_path={run.get('artifact_path')}")
+    console.print(f"  reason={run.get('reason') or ''}")
+    steps = run.get("steps") or []
+    console.print(f"  step_count={len(steps)}")
+    for step in steps:
+        idx = step.get("step_index")
+        step_id = step.get("step_id")
+        success = step.get("success")
+        message = step.get("message") or ""
+        completed_at = step.get("completed_at") or ""
+        step_status = step.get("step_status") or ("completed" if success else "failed")
+        console.print(
+            f"    - [{idx}] {step_id} status={step_status} success={success} "
+            f"message={message} completed_at={completed_at}"
+        )
+
+
+@local_group.command("summary")
+def local_summary(
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+    json_out: bool = typer.Option(False, "--json", help="Print full summary as JSON"),
+) -> None:
+    """User-facing operator summary: readiness, folders, workflow, tools, proposals, last execution."""
+    import json as json_mod
+    from workflow_dataset.local_operator.summary import build_local_operator_cli_summary
+
+    root = Path(repo_root).resolve() if repo_root else None
+    data = build_local_operator_cli_summary(root, as_json=json_out)
+    if json_out:
+        console.print(json_mod.dumps(data, indent=2))
+        return
+    r = data.get("readiness") or {}
+    console.print("[bold]Local operator summary[/bold]")
+    console.print(f"  Machine: {(r.get('machine') or {}).get('summary', '')}")
+    console.print(f"  Operator: {(r.get('operator') or {}).get('summary', '')}")
+    af = data.get("approved_folders") or {}
+    console.print(f"  Approved folders (ingested): {af.get('count', 0)}")
+    wf = data.get("workflow_tree") or {}
+    console.print(f"  Workflow nodes: {wf.get('node_count', 0)}  roots={wf.get('roots', [])[:3]}")
+    tr = data.get("tool_registry") or {}
+    console.print(f"  Tools: total={tr.get('total', 0)} installed={tr.get('installed', 0)}")
+    ap = data.get("action_proposals") or {}
+    console.print(f"  Proposals: {ap.get('count', 0)}")
+    le = data.get("last_execution")
+    if le:
+        console.print(f"  Last execution: {le.get('action_id')} success={le.get('success')} at={le.get('at')}")
+    else:
+        console.print("  Last execution: (none yet)")
+    tr = data.get("task_runs") or {}
+    console.print(f"  Task runs stored: {tr.get('total_stored', 0)}")
+    recent = tr.get("recent") or []
+    if recent:
+        console.print("  Recent task runs:")
+        for row in recent[:5]:
+            console.print(
+                f"    - {row.get('run_id')}  {row.get('status')}  "
+                f"{row.get('workflow_pattern') or '—'}  {row.get('completed_at') or '—'}"
+            )
+    console.print(f"  State updated_at: {data.get('updated_at') or '—'}")
+
+
+@local_group.command("validate-surfaces")
+def local_validate_surfaces(
+    repo_root: str = typer.Option("", "--repo-root", help="Override repo root"),
+) -> None:
+    """Validate summary coherence across CLI, console, and shell snapshot."""
+    from workflow_dataset.local_operator.validation import validate_surface_coherence
+    root = Path(repo_root).resolve() if repo_root else None
+    report = validate_surface_coherence(root)
+    if report.get("ok"):
+        console.print("[green]Surface coherence OK.[/green]")
+    else:
+        console.print("[red]Surface coherence errors:[/red]")
+        for err in report.get("errors") or []:
+            console.print(f"  - {err}")
+        raise typer.Exit(code=1)
 
 
 # ----- M23E-F1 Task demonstration capture + replay (simulate only) -----

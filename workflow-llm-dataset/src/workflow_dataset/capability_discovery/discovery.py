@@ -14,7 +14,11 @@ from workflow_dataset.capability_discovery.models import (
     AdapterCapability,
     ActionScope,
 )
-from workflow_dataset.capability_discovery.approval_registry import load_approval_registry, ApprovalRegistry
+from workflow_dataset.capability_discovery.approval_registry import (
+    load_approval_registry,
+    ApprovalRegistry,
+    normalize_approved_paths,
+)
 
 
 def run_scan(
@@ -34,12 +38,21 @@ def run_scan(
     for a in adapters:
         av = check_availability(a.adapter_id)
         executable_ids = [act.action_id for act in a.supported_actions if act.supports_real]
+        if not av.get("available", False):
+            adapter_mode = "none"
+        elif a.supports_real_execution:
+            adapter_mode = "supervised_live"
+        elif a.supports_simulate:
+            adapter_mode = "simulated"
+        else:
+            adapter_mode = "propose_only"
         adapter_caps.append(AdapterCapability(
             adapter_id=a.adapter_id,
             adapter_type=a.adapter_type,
             available=av.get("available", False),
             supports_simulate=a.supports_simulate,
             supports_real_execution=a.supports_real_execution,
+            adapter_mode=adapter_mode,
             action_count=len(a.supported_actions),
             executable_action_ids=executable_ids,
         ))
@@ -50,7 +63,7 @@ def run_scan(
                 executable=act.supports_real,
                 supports_simulate=act.supports_simulate,
             ))
-    approved_paths = list(approval_registry.approved_paths) if approval_registry else []
+    approved_paths = normalize_approved_paths(list(approval_registry.approved_paths)) if approval_registry else []
     approved_apps = list(approval_registry.approved_apps) if approval_registry else []
     if not approved_apps:
         approved_apps = list(APPROVED_APP_NAMES)

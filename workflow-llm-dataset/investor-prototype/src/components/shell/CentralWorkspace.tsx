@@ -5,6 +5,7 @@ import type { RailSectionId } from '../../shell/models';
 import { useDemoFlow } from '../../state/DemoFlowContext';
 import { GlassSurface } from '../mission/GlassSurface';
 import { useStaggerReveal } from '../../hooks/useStaggerReveal';
+import { LocalOperatorShellCard } from './LocalOperatorShellCard';
 
 const RAIL_ORDER: RailSectionId[] = ['home', 'work', 'guidance', 'inbox'];
 
@@ -108,6 +109,9 @@ function WorkView({
           />
         )}
       </GlassSurface>
+      {m.localOperator?.visible && (
+        <LocalOperatorShellCard lo={m.localOperator} />
+      )}
       <GlassSurface label="Work · Memory detail" style={{ padding: 20 }}>
         <div className="label-caps" style={{ marginBottom: 10 }}>
           Memory bootstrap

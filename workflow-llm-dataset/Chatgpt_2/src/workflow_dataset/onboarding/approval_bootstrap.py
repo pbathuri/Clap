@@ -13,6 +13,7 @@ from workflow_dataset.capability_discovery.approval_registry import (
     load_approval_registry,
     save_approval_registry,
     get_registry_path,
+    normalize_approved_paths,
 )
 from workflow_dataset.capability_discovery.discovery import run_scan
 from workflow_dataset.desktop_bench.trusted_actions import TRUSTED_ADAPTER_ACTIONS
@@ -49,7 +50,8 @@ def collect_approval_requests(
         "data/local/pilot",
         "data/local/notes",
     ]
-    for p in (existing.approved_paths if existing else []):
+    for entry in existing.approved_paths if existing else []:
+        p = str(entry.get("path") or "") if isinstance(entry, dict) else str(entry or "")
         if p and p not in suggested_paths:
             suggested_paths.append(p)
 
@@ -152,18 +154,25 @@ def apply_approval_choices(
     reg_path = get_registry_path(root)
     existing = load_approval_registry(root) if reg_path.exists() and reg_path.is_file() else None
 
-    paths = list(existing.approved_paths) if (merge_with_existing and existing) else []
+    paths = normalize_approved_paths(list(existing.approved_paths) if (merge_with_existing and existing) else [])
     apps = list(existing.approved_apps) if (merge_with_existing and existing) else []
     scopes = list(existing.approved_action_scopes) if (merge_with_existing and existing) else []
 
+    def _entry_path(e: dict) -> str:
+        return str(e.get("path") or "")
+
     for p in approve_paths or []:
         p = (p or "").strip()
-        if p and p not in paths:
-            paths.append(p)
+        if not p:
+            continue
+        if any(_entry_path(e) == p for e in paths):
+            continue
+        paths.append(
+            normalize_approved_paths([{"path": p, "allowed_operations": ["read", "open", "index"]}])[0]
+        )
     for p in refuse_paths or []:
         p = (p or "").strip()
-        if p in paths:
-            paths.remove(p)
+        paths = [e for e in paths if _entry_path(e) != p]
 
     for a in approve_apps or []:
         a = (a or "").strip()

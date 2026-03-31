@@ -83,6 +83,57 @@ def infer_project_from_path(path: str, scan_roots: list[str] | None = None) -> s
     return parts[0] if parts else "unknown"
 
 
+def _is_project_root(path: Path) -> bool:
+    """Heuristic: project root if marker files or a README exist."""
+    if not path.exists() or not path.is_dir():
+        return False
+    markers = [
+        ".git",
+        "pyproject.toml",
+        "package.json",
+        "requirements.txt",
+        "Cargo.toml",
+        "go.mod",
+        "README.md",
+        "README.txt",
+    ]
+    for m in markers:
+        if (path / m).exists():
+            return True
+    return False
+
+
+def infer_project_roots_from_paths(paths: list[str], repo_root: Path | str | None = None) -> list[Path]:
+    """Infer likely project roots from approved folder paths."""
+    root = Path(repo_root).resolve() if repo_root else None
+    out: list[Path] = []
+    seen: set[str] = set()
+    for p in paths:
+        if not p:
+            continue
+        candidate = Path(p).expanduser()
+        if root is not None and not candidate.is_absolute():
+            candidate = (root / candidate).resolve()
+        else:
+            candidate = candidate.resolve()
+        if candidate.is_file():
+            candidate = candidate.parent
+        if _is_project_root(candidate):
+            key = str(candidate)
+            if key not in seen:
+                seen.add(key)
+                out.append(candidate)
+            continue
+        if candidate.exists() and candidate.is_dir():
+            for child in candidate.iterdir():
+                if child.is_dir() and _is_project_root(child):
+                    key = str(child.resolve())
+                    if key not in seen:
+                        seen.add(key)
+                        out.append(child.resolve())
+    return out
+
+
 def get_assistive_context(
     graph_path: Path | str,
     style_signals_dir: Path | str,

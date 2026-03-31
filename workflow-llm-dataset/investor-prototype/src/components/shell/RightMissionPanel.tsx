@@ -1,6 +1,7 @@
 import type { MissionSurfaceState } from '../../mocks/missionMock';
 import { useDemoFlow } from '../../state/DemoFlowContext';
 import { GlassSurface } from '../mission/GlassSurface';
+import { LocalOperatorShellCard } from './LocalOperatorShellCard';
 
 export function RightMissionPanel({ m }: { m: MissionSurfaceState }) {
   const {
@@ -53,6 +54,9 @@ export function RightMissionPanel({ m }: { m: MissionSurfaceState }) {
             {m.assistState}
           </div>
         </GlassSurface>
+        {m.localOperator?.visible && (
+          <LocalOperatorShellCard lo={m.localOperator} compact />
+        )}
         <GlassSurface label="Mission · Role" style={{ padding: 16 }}>
           <div className="label-caps" style={{ marginBottom: 6 }}>
             Role

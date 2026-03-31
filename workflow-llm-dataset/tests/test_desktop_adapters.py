@@ -323,12 +323,28 @@ def test_run_execute_refused_when_path_not_in_approved_paths(tmp_path):
         "file_ops", "inspect_path", {"path": str(other_dir / "f.txt")}, repo_root=tmp_path
     )
     assert result_other.success is False
-    assert "approved_paths" in result_other.message or "Path not in" in result_other.message
+    assert (
+        "approved_paths" in result_other.message
+        or "Path not in" in result_other.message
+        or "operation" in result_other.message.lower()
+    )
 
     result_allowed = run_execute(
         "file_ops", "inspect_path", {"path": str(allowed_dir / "f.txt")}, repo_root=tmp_path
     )
     assert result_allowed.success is True
+
+
+def test_simulate_finder_open_folder():
+    result = run_simulate("finder_open", "open_folder", {"path": "/tmp"})
+    assert result.success is True
+    assert "Finder" in result.preview or "open folder" in result.preview.lower()
+
+
+def test_run_execute_finder_open_folder(tmp_path, monkeypatch):
+    monkeypatch.setenv("WORKFLOW_DATASET_FINDER_DRY_RUN", "1")
+    result = run_execute("finder_open", "open_folder", {"path": str(tmp_path)})
+    assert result.success is True
 
 
 # ----- F3: URL validation -----

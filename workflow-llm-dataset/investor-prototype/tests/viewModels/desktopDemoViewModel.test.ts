@@ -64,4 +64,28 @@ describe('buildDesktopDemoViewModel', () => {
     expect(vm.keyThemes).toEqual(['A', 'B']);
     expect(vm.keyPriorities).toEqual(['P1', 'P2']);
   });
+
+  it('surfaces local operator when snapshot includes local_operator_summary', () => {
+    const mock = getMissionState('founder_operator');
+    const snap = {
+      generated_at: '2025-01-01T12:00:00',
+      repo_root: '/x',
+      sources_ok: ['readiness', 'local_operator_summary'],
+      errors: {},
+      readiness: { capability_level: { value: 'L2' } },
+      local_operator_summary: {
+        machine_readiness: { summary: 'macOS; active_approved_folders=2' },
+        operator_readiness: { summary: 'nodes=5' },
+        approved_folders: { count: 2, items: [{ path: '/a' }, { path: '/b' }] },
+        workflow_tree: { node_count: 5, roots: ['r1'] },
+        tool_registry: { total: 3, installed: 1 },
+        action_proposals: { count: 1, items: [{ label: 'Finder' }] },
+      },
+    } as unknown as EdgeDesktopSnapshot;
+    const vm = buildDesktopDemoViewModel(snap, 'founder_operator', mock, 'live');
+    expect(vm.localOperator?.visible).toBe(true);
+    expect(vm.localOperator?.approvedFoldersCount).toBe(2);
+    expect(missionSurfaceOnly(vm).localOperator?.workflowNodeCount).toBe(5);
+    expect(vm.timeline.some((t) => t.label.includes('Local operator'))).toBe(true);
+  });
 });

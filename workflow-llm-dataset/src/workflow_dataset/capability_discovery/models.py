@@ -5,6 +5,7 @@ M23D-F1: Capability discovery model. Maps adapters, approved paths/apps, and act
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any
 
 
 @dataclass
@@ -25,6 +26,7 @@ class AdapterCapability:
     supports_simulate: bool
     supports_real_execution: bool
     action_count: int
+    adapter_mode: str = "none"  # none | simulated | propose_only | supervised_live | session_trusted_live
     executable_action_ids: list[str] = field(default_factory=list)
 
 
@@ -32,6 +34,6 @@ class AdapterCapability:
 class CapabilityProfile:
     """Aggregated capability view: adapters, approved paths/apps, action scopes."""
     adapters_available: list[AdapterCapability] = field(default_factory=list)
-    approved_paths: list[str] = field(default_factory=list)
+    approved_paths: list[dict[str, Any]] = field(default_factory=list)
     approved_apps: list[str] = field(default_factory=list)
     action_scopes: list[ActionScope] = field(default_factory=list)

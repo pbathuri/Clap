@@ -1,0 +1,88 @@
+# System Architecture
+
+## Top-level layers
+1. Control Plane
+2. Workflow-Tree Core
+3. Agent Runtime
+4. Tool / Environment Adapter Layer
+5. Memory / Context Layer
+6. Product Surfaces
+7. Demo / Investor Layer
+8. Packaging / Device Layer
+
+## 1. Control Plane
+Responsible for:
+- permissions
+- trust state
+- approvals
+- policy enforcement
+- session scope
+- safety boundaries
+
+## 2. Workflow-Tree Core
+Responsible for:
+- workflows
+- tasks
+- subtasks
+- prompts
+- tools
+- data
+- policies
+- checks
+- artifacts
+
+## 3. Agent Runtime
+Responsible for:
+- orchestrator agent
+- specialist agent roles
+- decomposition
+- planning
+- execution mode switching
+- resume / replay / audit
+
+## 4. Tool / Environment Adapter Layer
+Responsible for:
+- file system access
+- desktop app control
+- terminal execution
+- browser actions
+- spreadsheet / analytics adapters
+- design tool adapters
+- coding tool adapters
+
+## 5. Memory / Context Layer
+Responsible for:
+- onboarding memory
+- workflow inference
+- recurring patterns
+- role-specific knowledge
+- task-local context
+- approved long-term memory
+
+## 6. Product Surfaces
+Responsible for:
+- browser desktop shell
+- mission-control
+- onboarding
+- role switching
+- first-value
+- guidance
+- inbox
+- review
+- trust surfaces
+
+## 7. Demo / Investor Layer
+Responsible for:
+- rehearsal-safe state
+- presenter mode
+- canonical path
+- prefetch / caching
+- demo-specific wording and staging
+
+## 8. Packaging / Device Layer
+Responsible for:
+- launch
+- install / first run
+- reset
+- preflight
+- future portability toward dedicated hardware

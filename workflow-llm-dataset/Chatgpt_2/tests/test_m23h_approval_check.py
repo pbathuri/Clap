@@ -14,6 +14,22 @@ from workflow_dataset.capability_discovery.approval_registry import (
 )
 
 
+def _approved_path(path: str, ops: list[str] | None = None, **overrides):
+    return {
+        "path": path,
+        "allowed_operations": ops or ["read"],
+        "recursive": True,
+        "inherit_mode": "inherit",
+        "sensitivity_tag": "unspecified",
+        "approval_source": "explicit_user",
+        "revocation_state": "active",
+        "approved_at": "",
+        "reviewed_at": "",
+        "expires_at": "",
+        **overrides,
+    }
+
+
 def test_check_allowed_when_registry_file_missing(tmp_path):
     """When approvals.yaml does not exist, check_execution_allowed returns (True, '')."""
     allowed, msg = check_execution_allowed(
@@ -80,7 +96,7 @@ def test_check_path_refused_when_not_under_approved(tmp_path):
     other = tmp_path / "other"
     other.mkdir()
     reg = ApprovalRegistry(
-        approved_paths=[str(allowed_dir)],
+        approved_paths=[_approved_path(str(allowed_dir))],
         approved_action_scopes=[
             {"adapter_id": "file_ops", "action_id": "inspect_path", "executable": True},
         ],
@@ -100,7 +116,7 @@ def test_check_path_allowed_when_under_approved(tmp_path):
     f = allowed_dir / "f.txt"
     f.write_text("x")
     reg = ApprovalRegistry(
-        approved_paths=[str(allowed_dir)],
+        approved_paths=[_approved_path(str(allowed_dir))],
         approved_action_scopes=[
             {"adapter_id": "file_ops", "action_id": "inspect_path", "executable": True},
         ],
@@ -111,3 +127,43 @@ def test_check_path_allowed_when_under_approved(tmp_path):
     )
     assert allowed is True
     assert msg == ""
+
+
+def test_check_path_refused_when_revoked(tmp_path):
+    """Revoked approved_paths entries do not allow execution."""
+    allowed_dir = tmp_path / "allowed"
+    allowed_dir.mkdir()
+    f = allowed_dir / "f.txt"
+    f.write_text("x")
+    reg = ApprovalRegistry(
+        approved_paths=[_approved_path(str(allowed_dir), revocation_state="revoked")],
+        approved_action_scopes=[
+            {"adapter_id": "file_ops", "action_id": "inspect_path", "executable": True},
+        ],
+    )
+    save_approval_registry(reg, tmp_path)
+    allowed, msg = check_execution_allowed(
+        "file_ops", "inspect_path", {"path": str(f)}, repo_root=tmp_path
+    )
+    assert allowed is False
+    assert "revoked" in msg.lower() or "approved_paths" in msg
+
+
+def test_check_path_refused_when_op_not_allowed(tmp_path):
+    """When allowed_operations excludes required op, refused."""
+    allowed_dir = tmp_path / "allowed"
+    allowed_dir.mkdir()
+    f = allowed_dir / "f.txt"
+    f.write_text("x")
+    reg = ApprovalRegistry(
+        approved_paths=[_approved_path(str(allowed_dir), ops=["write"])],
+        approved_action_scopes=[
+            {"adapter_id": "file_ops", "action_id": "inspect_path", "executable": True},
+        ],
+    )
+    save_approval_registry(reg, tmp_path)
+    allowed, msg = check_execution_allowed(
+        "file_ops", "inspect_path", {"path": str(f)}, repo_root=tmp_path
+    )
+    assert allowed is False
+    assert "operation" in msg.lower() or "approved_paths" in msg

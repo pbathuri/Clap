@@ -10,22 +10,61 @@ from workflow_dataset.capability_discovery.approval_registry import (
     ApprovalRegistry,
     get_registry_path,
     load_approval_registry,
+    normalize_approved_paths,
 )
 
 
-def _path_under_approved(path_value: str, approved_paths: list[str], repo_root: Path | None) -> bool:
-    """True if path_value (resolved) is under one of the approved_paths (resolved)."""
+def _required_operation(adapter_id: str, action_id: str) -> str:
+    """Return required operation label for action (read/write/etc)."""
+    if adapter_id == "file_ops":
+        if action_id in {"inspect_path", "list_directory", "read_file", "list_dir", "read_text", "summarize_text_for_workflow", "propose_status_from_notes", "snapshot_to_sandbox"}:
+            return "read"
+        if action_id in {"write_file"}:
+            return "write"
+    if adapter_id == "finder_open":
+        if action_id in {"open_folder"}:
+            return "read"
+    if adapter_id == "notes_document":
+        if action_id in {"read_text", "summarize_text_for_workflow", "propose_status_from_notes"}:
+            return "read"
+        if action_id in {"create_note", "append_to_note"}:
+            return "write"
+    return ""
+
+
+def _path_under_approved(
+    path_value: str,
+    approved_paths: list[dict],
+    repo_root: Path | None,
+    required_op: str = "",
+) -> bool:
+    """True if path_value (resolved) is under one of the approved_paths entries."""
     if not path_value or not approved_paths:
         return len(approved_paths) == 0
     try:
         p = Path(path_value).expanduser().resolve()
-        for allowed in approved_paths:
-            if not allowed.strip():
+        for entry in approved_paths:
+            if not isinstance(entry, dict):
                 continue
-            allowed_path = Path(allowed).expanduser().resolve()
-            if repo_root is not None:
-                if not allowed_path.is_absolute():
-                    allowed_path = (Path(repo_root) / allowed_path).resolve()
+            if str(entry.get("revocation_state")) and entry.get("revocation_state") != "active":
+                continue
+            allowed_ops = list(entry.get("allowed_operations") or [])
+            if required_op and allowed_ops and required_op not in allowed_ops:
+                continue
+            raw_path = str(entry.get("path") or "")
+            if not raw_path:
+                continue
+            allowed_path = Path(raw_path).expanduser()
+            if repo_root is not None and not allowed_path.is_absolute():
+                allowed_path = (Path(repo_root) / allowed_path).resolve()
+            else:
+                allowed_path = allowed_path.resolve()
+            recursive = bool(entry.get("recursive", True))
+            inherit_mode = str(entry.get("inherit_mode") or "inherit")
+            if not recursive or inherit_mode == "none":
+                if p == allowed_path:
+                    return True
+                continue
             try:
                 p.relative_to(allowed_path)
                 return True
@@ -66,7 +105,7 @@ def check_execution_allowed(
     if registry is None:
         registry = load_approval_registry(root)
 
-    approved_paths = getattr(registry, "approved_paths", []) or []
+    approved_paths = normalize_approved_paths(getattr(registry, "approved_paths", []) or [])
     approved_action_scopes = getattr(registry, "approved_action_scopes", []) or []
     path_value = (params or {}).get("path", "").strip()
     path_using_actions = {
@@ -76,6 +115,8 @@ def check_execution_allowed(
         "read_text",
         "summarize_text_for_workflow",
         "propose_status_from_notes",
+        "write_file",
+        "open_folder",
     }
 
     if approved_action_scopes and not _scope_allowed(adapter_id, action_id, approved_action_scopes):
@@ -84,9 +125,11 @@ def check_execution_allowed(
             "Add it to data/local/capability_discovery/approvals.yaml approved_action_scopes or remove the registry file."
         )
     if action_id in path_using_actions and path_value:
-        if approved_paths and not _path_under_approved(path_value, approved_paths, root):
+        required_op = _required_operation(adapter_id, action_id)
+        if approved_paths and not _path_under_approved(path_value, approved_paths, root, required_op=required_op):
             return False, (
-                f"Path not in approved_paths. Add path to data/local/capability_discovery/approvals.yaml approved_paths "
+                f"Path not approved for required operation ({required_op or 'unknown'}). Add path to "
+                "data/local/capability_discovery/approvals.yaml approved_paths "
                 "or clear approved_paths to allow all paths."
             )
 

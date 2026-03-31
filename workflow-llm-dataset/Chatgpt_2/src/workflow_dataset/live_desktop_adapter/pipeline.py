@@ -5,8 +5,11 @@ M52: Timed parallel fetch, cache merge, presenter-aware live adapter pipeline.
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor, wait
+from concurrent.futures.thread import _worker
 from pathlib import Path
 from typing import Any
+import threading
+import weakref
 
 try:
     from workflow_dataset.utils.dates import utc_now_iso
@@ -19,6 +22,27 @@ except Exception:
 from workflow_dataset.edge_desktop.fetchers import merge_patches
 from workflow_dataset.live_desktop_adapter.models import AdapterMeta, RefreshPolicy
 from workflow_dataset.live_desktop_adapter.cache import load_last_good_snapshot, save_last_good_snapshot
+
+
+class DaemonThreadPoolExecutor(ThreadPoolExecutor):
+    """ThreadPoolExecutor with daemon threads to avoid hanging process exit."""
+
+    def _adjust_thread_count(self) -> None:
+        if len(self._threads) < self._max_workers:
+            ref = weakref.ref(self)
+            t = threading.Thread(
+                name=f"{self._thread_name_prefix}_{len(self._threads)}",
+                target=_worker,
+                args=(
+                    ref,
+                    self._work_queue,
+                    self._initializer,
+                    self._initargs,
+                ),
+                daemon=True,
+            )
+            t.start()
+            self._threads.add(t)
 
 
 def _empty_snapshot(root: Path) -> dict[str, Any]:
@@ -36,6 +60,7 @@ def _empty_snapshot(root: Path) -> dict[str, Any]:
         "day_status_text": None,
         "guidance_next_action": None,
         "operator_summary": None,
+        "local_operator_summary": None,
         "inbox": [],
         "adapter_meta": {},
     }
@@ -106,7 +131,7 @@ def build_live_adapter_snapshot(
     global_budget = max(0.5, min(60.0, global_budget))
 
     if to_run:
-        ex = ThreadPoolExecutor(max_workers=min(10, n))
+        ex = DaemonThreadPoolExecutor(max_workers=min(10, n))
         try:
             futs = {ex.submit(_safe_run, fid, fn, root): fid for fid, fn in to_run}
             done_set, pending = wait(futs.keys(), timeout=global_budget)

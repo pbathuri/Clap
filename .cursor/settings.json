@@ -1,0 +1,34 @@
+{
+  "plugins": {
+    "huggingface-skills": {
+      "enabled": true
+    },
+    "firecrawl": {
+      "enabled": true
+    },
+    "compound-engineering": {
+      "enabled": true
+    },
+    "parallel": {
+      "enabled": true
+    },
+    "context7-plugin": {
+      "enabled": true
+    },
+    "browse": {
+      "enabled": true
+    },
+    "superpowers": {
+      "enabled": true
+    },
+    "langfuse": {
+      "enabled": true
+    },
+    "runlayer": {
+      "enabled": true
+    },
+    "webflow": {
+      "enabled": true
+    }
+  }
+}

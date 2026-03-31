@@ -8,6 +8,7 @@ import type { MissionSurfaceState, TimelineEntry } from '../mocks/missionMock';
 import type { EdgeDataSource } from '../adapters/edgeDesktopTypes';
 import type { EdgeDesktopSnapshot } from '../adapters/edgeDesktopTypes';
 import { softenEngineeringCopy } from '../lib/investorCopy';
+import { mapLocalOperatorSummary } from '../adapters/mapLocalOperatorSummary';
 
 export type DesktopDemoViewModel = MissionSurfaceState & {
   dataProvenance: EdgeDataSource;
@@ -47,10 +48,23 @@ function buildTimeline(
   if (ok.includes('guidance_next_action') && snap.guidance_next_action)
     push('Guidance · next action', true);
   if (ok.includes('operator_summary')) push('Operator summary');
+  if (ok.includes('local_operator_summary')) push('Local operator · laptop scope', true);
   const inboxN = snap.inbox?.length ?? 0;
   push(`Inbox · ${inboxN} pending item(s)`, inboxN > 0);
   if (rows.length < 4) {
-    return base.timeline.map((t, j) => ({ ...t, id: `mix-${j}` }));
+    const mixed = base.timeline.map((t, j) => ({ ...t, id: `mix-${j}` }));
+    if (ok.includes('local_operator_summary')) {
+      return [
+        {
+          id: 'live-lo',
+          label: 'Local operator · laptop scope',
+          time: '',
+          tone: 'highlight' as const,
+        },
+        ...mixed,
+      ].slice(0, 10);
+    }
+    return mixed;
   }
   rows.push({
     id: 'gen',
@@ -225,6 +239,7 @@ export function buildDesktopDemoViewModel(
     liveGeneratedAt: snap.generated_at,
     keyThemes: themeList.length ? themeList : mock.keyThemes,
     keyPriorities: priorityList.length ? priorityList : mock.keyPriorities,
+    localOperator: mapLocalOperatorSummary(snap),
   };
 
   return {

@@ -938,6 +938,8 @@ def get_home_counts(settings: Settings, session_id: str | None = None) -> dict[s
     workspaces = get_workspaces(settings, session_id=sid or "", limit=100)
     rollbacks = list_rollback_records(settings)
     generations = get_generation_requests(settings, session_id=sid or "", limit=100) if getattr(settings, "generation", None) else []
+    operator_summary = get_operator_state_summary(settings)
+    approved_folders = int((operator_summary.get("approved_folders") or {}).get("count") or 0)
     return {
         "sessions": len(get_setup_sessions(settings)),
         "projects": len(projects),
@@ -948,7 +950,15 @@ def get_home_counts(settings: Settings, session_id: str | None = None) -> dict[s
         "workspaces": len(workspaces),
         "rollback_records": len(rollbacks),
         "generations": len(generations),
+        "approved_folders": approved_folders,
     }
+
+
+def get_operator_state_summary(settings: Settings) -> dict[str, Any]:
+    """Shaped local operator summary for console surfaces."""
+    from workflow_dataset.local_operator.summary import build_operator_state_summary
+
+    return build_operator_state_summary()
 
 
 def get_llm_status(runs_dir: Path | str | None = None) -> dict[str, Any]:

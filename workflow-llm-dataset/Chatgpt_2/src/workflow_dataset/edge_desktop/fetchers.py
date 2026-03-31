@@ -107,10 +107,19 @@ def fetch_day_status(root: Path) -> FetcherResult:
 
 
 def fetch_day_status_text(root: Path) -> FetcherResult:
+    # Do not import workday.cli here: it circular-imports with workflow_dataset.cli
+    # when the main CLI package is still loading. Same logic as cmd_day_status.
     try:
-        from workflow_dataset.workday.cli import cmd_day_status
+        from workflow_dataset.workday.surface import (
+            build_daily_operating_surface,
+            format_daily_operating_surface,
+        )
 
-        return (["day_status_text"], {"day_status_text": cmd_day_status(root)})
+        surf = build_daily_operating_surface(root)
+        return (
+            ["day_status_text"],
+            {"day_status_text": format_daily_operating_surface(surf)},
+        )
     except Exception as e:
         return ([], {"errors": {"day_status_text": str(e)[:500]}})
 
@@ -135,6 +144,15 @@ def fetch_operator_summary(root: Path) -> FetcherResult:
         return (["operator_summary"], {"operator_summary": build_operator_summary(root).to_dict()})
     except Exception as e:
         return ([], {"errors": {"operator_summary": str(e)[:500]}})
+
+
+def fetch_local_operator_summary(root: Path) -> FetcherResult:
+    try:
+        from workflow_dataset.local_operator.summary import build_operator_state_summary
+
+        return (["local_operator_summary"], {"local_operator_summary": build_operator_state_summary(root)})
+    except Exception as e:
+        return ([], {"errors": {"local_operator_summary": str(e)[:500]}})
 
 
 def fetch_inbox(root: Path) -> FetcherResult:
@@ -171,6 +189,7 @@ FETCHERS: list[tuple[str, Callable[[Path], FetcherResult], bool]] = [
     ("day_status_text", fetch_day_status_text, False),
     ("guidance_next_action", fetch_guidance_next_action, True),
     ("operator_summary", fetch_operator_summary, True),
+    ("local_operator_summary", fetch_local_operator_summary, True),
     ("inbox", fetch_inbox, True),
 ]
 
