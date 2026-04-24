@@ -198,8 +198,8 @@ agents: {
 
 工具：
 
-- `memory_search` — 返回带有文件 + 行范围的片段。
-- `memory_get` — 按路径读取记忆文件内容。
+- `memory_search` - 返回带有文件 + 行范围的片段。
+- `memory_get` - 按路径读取记忆文件内容。
 
 本地模式：
 

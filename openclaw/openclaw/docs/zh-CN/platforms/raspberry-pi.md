@@ -50,7 +50,7 @@ x-i18n:
 
 ## 1) 刷写系统
 
-使用 **Raspberry Pi OS Lite (64-bit)** — 无头服务器不需要桌面。
+使用 **Raspberry Pi OS Lite (64-bit)** - 无头服务器不需要桌面。
 
 1. 下载 [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
 2. 选择系统：**Raspberry Pi OS Lite (64-bit)**
@@ -132,7 +132,7 @@ npm run build
 npm link
 ```
 
-可修改安装让你可以直接访问日志和代码 — 对调试 ARM 特定问题很有用。
+可修改安装让你可以直接访问日志和代码 - 对调试 ARM 特定问题很有用。
 
 ## 7) 运行新手引导
 
@@ -268,7 +268,7 @@ uname -m
 }
 ```
 
-**不要尝试在 Pi 上运行本地 LLM** — 即使是小模型也太慢了。让 Claude/GPT 来做繁重的工作。
+**不要尝试在 Pi 上运行本地 LLM** - 即使是小模型也太慢了。让 Claude/GPT 来做繁重的工作。
 
 ---
 
@@ -358,8 +358,8 @@ echo 'wireless-power off' | sudo tee -a /etc/network/interfaces
 
 ## 另请参阅
 
-- [Linux 指南](/platforms/linux) — 通用 Linux 设置
-- [DigitalOcean 指南](/platforms/digitalocean) — 云替代方案
-- [Hetzner 指南](/install/hetzner) — Docker 设置
-- [Tailscale](/gateway/tailscale) — 远程访问
-- [节点](/nodes) — 将你的笔记本电脑/手机与 Pi Gateway 网关配对
+- [Linux 指南](/platforms/linux) - 通用 Linux 设置
+- [DigitalOcean 指南](/platforms/digitalocean) - 云替代方案
+- [Hetzner 指南](/install/hetzner) - Docker 设置
+- [Tailscale](/gateway/tailscale) - 远程访问
+- [节点](/nodes) - 将你的笔记本电脑/手机与 Pi Gateway 网关配对

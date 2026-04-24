@@ -1,4 +1,4 @@
-# D3 — Devlab proposal generator from repo intake + model compare
+# D3 - Devlab proposal generator from repo intake + model compare
 
 ## Summary
 
@@ -7,9 +7,9 @@ Proposal generator that turns:
 - **Model comparison results** (`data/local/devlab/model_compare/model_compare_report.json`)
 
 into local-only, advisory artifacts:
-- **devlab_proposal.md** — advisory summary of intake + model compare + next steps
-- **cursor_prompt.txt** — prompt for operator/Cursor to suggest concrete edits (no auto-apply)
-- **rfc_skeleton.md** — RFC skeleton for operator to complete and approve
+- **devlab_proposal.md** - advisory summary of intake + model compare + next steps
+- **cursor_prompt.txt** - prompt for operator/Cursor to suggest concrete edits (no auto-apply)
+- **rfc_skeleton.md** - RFC skeleton for operator to complete and approve
 
 **Requirements met:** advisory only; no code modification; local-only artifacts.
 

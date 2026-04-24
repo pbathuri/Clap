@@ -1,4 +1,4 @@
-# M23C-F2 — Local File/Folder + Notes Adapter — Delivery
+# M23C-F2 - Local File/Folder + Notes Adapter - Delivery
 
 ## 1. Files modified
 
@@ -108,9 +108,9 @@ pytest tests/test_desktop_adapters.py -v
 
 ## 6. Remaining weaknesses (F2 only)
 
-- **No recursion in list_directory** — Single directory only; no recursive listing option.
-- **Snapshot overwrites** — If sandbox subdir already exists with same name, copytree may fail (dirs_exist_ok=False); no merge semantics.
-- **Text encoding** — read_text uses UTF-8 with errors=replace; no encoding param.
-- **Propose status** — Heuristic is simple (first 20 non-empty lines as bullets); no LLM or structured extraction.
-- **Provenance in memory only** — ExecuteResult carries provenance for the call; no persistent audit log yet.
-- **browser_open / app_launch** — Still simulate-only; no change in F2.
+- **No recursion in list_directory** - Single directory only; no recursive listing option.
+- **Snapshot overwrites** - If sandbox subdir already exists with same name, copytree may fail (dirs_exist_ok=False); no merge semantics.
+- **Text encoding** - read_text uses UTF-8 with errors=replace; no encoding param.
+- **Propose status** - Heuristic is simple (first 20 non-empty lines as bullets); no LLM or structured extraction.
+- **Provenance in memory only** - ExecuteResult carries provenance for the call; no persistent audit log yet.
+- **browser_open / app_launch** - Still simulate-only; no change in F2.

@@ -1,4 +1,4 @@
-# M23H — Desktop bridge operator reference
+# M23H - Desktop bridge operator reference
 
 How to verify the desktop bridge, what is simulate-only, and how to enable safe approved real execution.
 

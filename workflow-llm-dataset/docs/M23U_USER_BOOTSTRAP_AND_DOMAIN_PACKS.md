@@ -1,4 +1,4 @@
-# M23U — User Bootstrap + Domain Pack Builder + Specialization Recipes
+# M23U - User Bootstrap + Domain Pack Builder + Specialization Recipes
 
 ## Purpose
 
@@ -8,7 +8,7 @@ Turn a generic local operator system into one that understands the user’s **fi
 - Mapping that profile to **domain packs**
 - Mapping domain packs to job packs, routines, model/dataset/integration classes, and **specialization recipes**
 - Providing a **policy layer** that filters by machine and safety posture
-- **Recipe generation only** — no auto-download, no auto-training
+- **Recipe generation only** - no auto-download, no auto-training
 
 All behavior is **local**, **inspectable**, and **operator-approved**.
 
@@ -97,30 +97,30 @@ From `profile operator-summary` (or `build_operator_summary`):
 
 ## Safety and constraints
 
-- **Explicit only** — User work profile and domain pack selection are explicit and editable; no silent inference of high-risk approvals or cloud behavior.  
-- **Recipe generation only** — No auto-download of datasets, no auto-launch of training. Licensing/compliance fields are for operator review.  
-- **Catalog as input** — An external model/tool catalog (e.g. Ollama) is an optional input to the policy layer; we filter and recommend. We do not fetch catalogs by default.  
-- **Local-only** — All outputs under `data/local/onboarding/`; domain pack and recipe definitions in code or local config.  
-- **Gates preserved** — `check_job_policy` and the approval registry remain the execution gate; domain/recipe layer only recommends and configures.
+- **Explicit only** - User work profile and domain pack selection are explicit and editable; no silent inference of high-risk approvals or cloud behavior.  
+- **Recipe generation only** - No auto-download of datasets, no auto-launch of training. Licensing/compliance fields are for operator review.  
+- **Catalog as input** - An external model/tool catalog (e.g. Ollama) is an optional input to the policy layer; we filter and recommend. We do not fetch catalogs by default.  
+- **Local-only** - All outputs under `data/local/onboarding/`; domain pack and recipe definitions in code or local config.  
+- **Gates preserved** - `check_job_policy` and the approval registry remain the execution gate; domain/recipe layer only recommends and configures.
 
 ---
 
 ## What this phase does NOT do
 
-- **No auto-training** — Does not invoke training backends or start training jobs.  
-- **No auto-download** — Does not download datasets or models; recipes may reference approved dataset/model IDs with licensing metadata for the operator to resolve.  
-- **No auto-enable of external integrations** — Does not turn on Ollama or other runtimes; only recommends model classes that match policy.  
-- **No silent high-risk approvals** — Does not add or assume approval registry entries.  
-- **No cloud-default behavior** — All defaults remain local and simulate-first where applicable.
+- **No auto-training** - Does not invoke training backends or start training jobs.  
+- **No auto-download** - Does not download datasets or models; recipes may reference approved dataset/model IDs with licensing metadata for the operator to resolve.  
+- **No auto-enable of external integrations** - Does not turn on Ollama or other runtimes; only recommends model classes that match policy.  
+- **No silent high-risk approvals** - Does not add or assume approval registry entries.  
+- **No cloud-default behavior** - All defaults remain local and simulate-first where applicable.
 
 ---
 
 ## Tests
 
-- **test_user_work_profile.py** — Profile create, save, load, bootstrap.  
-- **test_domain_packs.py** — Domain list, get, recommend by field, policy filtering, unsupported/refusal.  
-- **test_specialization_recipes.py** — Recipe build, explain, licensing metadata, no auto-download/train.  
-- **test_operator_summary.py** — Summary generation, machine/resource filtering.
+- **test_user_work_profile.py** - Profile create, save, load, bootstrap.  
+- **test_domain_packs.py** - Domain list, get, recommend by field, policy filtering, unsupported/refusal.  
+- **test_specialization_recipes.py** - Recipe build, explain, licensing metadata, no auto-download/train.  
+- **test_operator_summary.py** - Summary generation, machine/resource filtering.
 
 Run:
 

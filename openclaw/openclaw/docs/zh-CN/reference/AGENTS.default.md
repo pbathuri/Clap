@@ -12,7 +12,7 @@ x-i18n:
   workflow: 15
 ---
 
-# AGENTS.md — OpenClaw 个人助手（默认）
+# AGENTS.md - OpenClaw 个人助手（默认）
 
 ## 首次运行（推荐）
 
@@ -101,24 +101,24 @@ git commit -m "Add Clawd workspace"
 
 ## 核心 Skills（在设置 → Skills 中启用）
 
-- **mcporter** — 用于管理外部 Skill 后端的工具服务器运行时/CLI。
-- **Peekaboo** — 快速 macOS 截图，可选 AI 视觉分析。
-- **camsnap** — 从 RTSP/ONVIF 安防摄像头捕获帧、片段或运动警报。
-- **oracle** — 支持 OpenAI 的智能体 CLI，具有会话回放和浏览器控制。
-- **eightctl** — 从终端控制你的睡眠。
-- **imsg** — 发送、读取、流式传输 iMessage 和短信。
-- **wacli** — WhatsApp CLI：同步、搜索、发送。
-- **discord** — Discord 操作：回应、贴纸、投票。使用 `user:<id>` 或 `channel:<id>` 目标（纯数字 id 有歧义）。
-- **gog** — Google Suite CLI：Gmail、日历、云端硬盘、通讯录。
-- **spotify-player** — 终端 Spotify 客户端，用于搜索/排队/控制播放。
-- **sag** — 具有 mac 风格 say UX 的 ElevenLabs 语音；默认流式输出到扬声器。
-- **Sonos CLI** — 从脚本控制 Sonos 扬声器（发现/状态/播放/音量/分组）。
-- **blucli** — 从脚本播放、分组和自动化 BluOS 播放器。
-- **OpenHue CLI** — 用于场景和自动化的 Philips Hue 照明控制。
-- **OpenAI Whisper** — 本地语音转文字，用于快速听写和语音邮件转录。
-- **Gemini CLI** — 从终端使用 Google Gemini 模型进行快速问答。
-- **bird** — X/Twitter CLI，无需浏览器即可发推、回复、阅读话题和搜索。
-- **agent-tools** — 用于自动化和辅助脚本的实用工具包。
+- **mcporter** - 用于管理外部 Skill 后端的工具服务器运行时/CLI。
+- **Peekaboo** - 快速 macOS 截图，可选 AI 视觉分析。
+- **camsnap** - 从 RTSP/ONVIF 安防摄像头捕获帧、片段或运动警报。
+- **oracle** - 支持 OpenAI 的智能体 CLI，具有会话回放和浏览器控制。
+- **eightctl** - 从终端控制你的睡眠。
+- **imsg** - 发送、读取、流式传输 iMessage 和短信。
+- **wacli** - WhatsApp CLI：同步、搜索、发送。
+- **discord** - Discord 操作：回应、贴纸、投票。使用 `user:<id>` 或 `channel:<id>` 目标（纯数字 id 有歧义）。
+- **gog** - Google Suite CLI：Gmail、日历、云端硬盘、通讯录。
+- **spotify-player** - 终端 Spotify 客户端，用于搜索/排队/控制播放。
+- **sag** - 具有 mac 风格 say UX 的 ElevenLabs 语音；默认流式输出到扬声器。
+- **Sonos CLI** - 从脚本控制 Sonos 扬声器（发现/状态/播放/音量/分组）。
+- **blucli** - 从脚本播放、分组和自动化 BluOS 播放器。
+- **OpenHue CLI** - 用于场景和自动化的 Philips Hue 照明控制。
+- **OpenAI Whisper** - 本地语音转文字，用于快速听写和语音邮件转录。
+- **Gemini CLI** - 从终端使用 Google Gemini 模型进行快速问答。
+- **bird** - X/Twitter CLI，无需浏览器即可发推、回复、阅读话题和搜索。
+- **agent-tools** - 用于自动化和辅助脚本的实用工具包。
 
 ## 使用说明
 

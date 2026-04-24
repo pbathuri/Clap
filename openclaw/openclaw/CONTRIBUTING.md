@@ -74,7 +74,7 @@ Welcome to the lobster tank! 🦞
 - Ensure CI checks pass
 - Keep PRs focused (one thing per PR; do not mix unrelated concerns)
 - Describe what & why
-- **Include screenshots** — one showing the problem/before, one showing the fix/after (for UI or visual changes)
+- **Include screenshots** - one showing the problem/before, one showing the fix/after (for UI or visual changes)
 
 ## Control UI Decorators
 
@@ -110,7 +110,7 @@ We are currently prioritizing:
 
 - **Stability**: Fixing edge cases in channel connections (WhatsApp/Telegram).
 - **UX**: Improving the onboarding wizard and error messages.
-- **Skills**: For skill contributions, head to [ClawHub](https://clawhub.ai/) — the community hub for OpenClaw skills.
+- **Skills**: For skill contributions, head to [ClawHub](https://clawhub.ai/) - the community hub for OpenClaw skills.
 - **Performance**: Optimizing token usage and compaction logic.
 
 Check the [GitHub Issues](https://github.com/openclaw/openclaw/issues) for "good first issue" labels!
@@ -118,9 +118,9 @@ Check the [GitHub Issues](https://github.com/openclaw/openclaw/issues) for "good
 ## Maintainers
 
 We're selectively expanding the maintainer team.
-If you're an experienced contributor who wants to help shape OpenClaw's direction — whether through code, docs, or community — we'd like to hear from you.
+If you're an experienced contributor who wants to help shape OpenClaw's direction - whether through code, docs, or community - we'd like to hear from you.
 
-Being a maintainer is a responsibility, not an honorary title. We expect active, consistent involvement — triaging issues, reviewing PRs, and helping move the project forward.
+Being a maintainer is a responsibility, not an honorary title. We expect active, consistent involvement - triaging issues, reviewing PRs, and helping move the project forward.
 
 Still interested? Email contributing@openclaw.ai with:
 
@@ -131,7 +131,7 @@ Still interested? Email contributing@openclaw.ai with:
 - Languages you speak and where you're based
 - How much time you can realistically commit
 
-We welcome people across all skill sets — engineering, documentation, community management, and more.
+We welcome people across all skill sets - engineering, documentation, community management, and more.
 We review every human-only-written application carefully and add maintainers slowly and deliberately.
 Please allow a few weeks for a response.
 
@@ -139,12 +139,12 @@ Please allow a few weeks for a response.
 
 We take security reports seriously. Report vulnerabilities directly to the repository where the issue lives:
 
-- **Core CLI and gateway** — [openclaw/openclaw](https://github.com/openclaw/openclaw)
-- **macOS desktop app** — [openclaw/openclaw](https://github.com/openclaw/openclaw) (apps/macos)
-- **iOS app** — [openclaw/openclaw](https://github.com/openclaw/openclaw) (apps/ios)
-- **Android app** — [openclaw/openclaw](https://github.com/openclaw/openclaw) (apps/android)
-- **ClawHub** — [openclaw/clawhub](https://github.com/openclaw/clawhub)
-- **Trust and threat model** — [openclaw/trust](https://github.com/openclaw/trust)
+- **Core CLI and gateway** - [openclaw/openclaw](https://github.com/openclaw/openclaw)
+- **macOS desktop app** - [openclaw/openclaw](https://github.com/openclaw/openclaw) (apps/macos)
+- **iOS app** - [openclaw/openclaw](https://github.com/openclaw/openclaw) (apps/ios)
+- **Android app** - [openclaw/openclaw](https://github.com/openclaw/openclaw) (apps/android)
+- **ClawHub** - [openclaw/clawhub](https://github.com/openclaw/clawhub)
+- **Trust and threat model** - [openclaw/trust](https://github.com/openclaw/trust)
 
 For issues that don't fit a specific repo, or if you're unsure, email **security@openclaw.ai** and we'll route it.
 

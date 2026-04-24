@@ -30,12 +30,12 @@ OpenClaw 使用单一智能体工作区目录（`agents.defaults.workspace`）�
 
 在 `agents.defaults.workspace` 内，OpenClaw 期望以下用户可编辑的文件：
 
-- `AGENTS.md` — 操作指令 + "记忆"
-- `SOUL.md` — 人设、边界、语气
-- `TOOLS.md` — 用户维护的工具说明（例如 `imsg`、`sag`、约定）
-- `BOOTSTRAP.md` — 一次性首次运行仪式（完成后删除）
-- `IDENTITY.md` — 智能体名称/风格/表情
-- `USER.md` — 用户档案 + 偏好称呼
+- `AGENTS.md` - 操作指令 + "记忆"
+- `SOUL.md` - 人设、边界、语气
+- `TOOLS.md` - 用户维护的工具说明（例如 `imsg`、`sag`、约定）
+- `BOOTSTRAP.md` - 一次性首次运行仪式（完成后删除）
+- `IDENTITY.md` - 智能体名称/风格/表情
+- `USER.md` - 用户档案 + 偏好称呼
 
 在新会话的第一轮，OpenClaw 将这些文件的内容直接注入智能体上下文。
 

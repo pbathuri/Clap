@@ -1,4 +1,4 @@
-# Edge Readiness — Docs and Sample Profiles
+# Edge Readiness - Docs and Sample Profiles
 
 Local deployment profiles for the workflow-dataset edge layer. No hardware device specs; no cloud. All outputs under `data/local/edge/`.
 

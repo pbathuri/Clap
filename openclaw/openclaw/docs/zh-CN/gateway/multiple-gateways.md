@@ -19,10 +19,10 @@ x-i18n:
 
 ## 隔离检查清单（必需）
 
-- `OPENCLAW_CONFIG_PATH` — 每个实例的配置文件
-- `OPENCLAW_STATE_DIR` — 每个实例的会话、凭证、缓存
-- `agents.defaults.workspace` — 每个实例的工作区根目录
-- `gateway.port`（或 `--port`）— 每个实例唯一
+- `OPENCLAW_CONFIG_PATH` - 每个实例的配置文件
+- `OPENCLAW_STATE_DIR` - 每个实例的会话、凭证、缓存
+- `agents.defaults.workspace` - 每个实例的工作区根目录
+- `gateway.port`（或 `--port`）- 每个实例唯一
 - 派生端口（浏览器/画布）不得重叠
 
 如果这些是共享的，你将遇到配置竞争和端口冲突。

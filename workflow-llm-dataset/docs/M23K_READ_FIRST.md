@@ -1,4 +1,4 @@
-# M23K — Operator-Approved Workday Copilot — Read First
+# M23K - Operator-Approved Workday Copilot - Read First
 
 ## 1. What already exists for jobs, trust, approvals, and diagnostics
 
@@ -27,15 +27,15 @@
 
 | Module | Files | Purpose |
 |--------|-------|--------|
-| B — Recommendation | copilot/recommendations.py | recommend_jobs(repo_root) → list of {recommendation_id, job_pack_id, reason, trust_level, required_approvals, mode_allowed, blocking_issues}; explicit reasons from job_packs_report + specialization + policy. |
-| C — Routines | copilot/routines.py, copilot/routine_store.py | Routine schema (routine_id, title, description, job_pack_ids, ordering, required_approvals, simulate_only); list_routines, get_routine, save_routine; data/local/copilot/routines. |
-| D — Plan preview | copilot/plan.py | PlanPreview (plan_id, jobs_or_routine, order, mode, approvals_required, trusted_actions_involved, expected_outputs, blocked, blocked_reason); build_plan_for_job(job_id), build_plan_for_routine(routine_id); no execution. |
-| E — Execution | copilot/run.py | run_plan(plan_id, mode, repo_root) → execute jobs in order; stop on first blocked unless override; record plan_run (plan_id, jobs, mode, approvals_checked, executed, blocked, timestamps); persist under data/local/copilot/runs. |
-| F — Reminders | copilot/reminders.py | Reminder (reminder_id, routine_id or job_pack_id, due_at, one_off, title); list_reminders, add_reminder, reminders_due; store data/local/copilot/reminders.yaml; no auto-run. |
-| G — Mission control | mission_control/state.py, report.py | state["copilot"] = {recommended_jobs, recommended_routines, blocked_count, upcoming_reminders, recent_plan_runs_count, next_copilot_action}; report [Copilot] section. |
-| H — Report/docs | copilot/report.py, docs/M23K_COPILOT_OPERATOR.md | copilot_report (recommendations, accepted/skipped, routine_usage, blocked_causes, plan_run_mix, stale_reminders); operator doc. |
-| I — CLI | cli.py | copilot recommend, copilot plan --job/--routine, copilot run --plan --mode, copilot reminders list/add/due, copilot report. |
-| J — Tests | tests/test_copilot.py | recommend, routine CRUD, plan preview, run plan simulate, reminders, report. |
+| B - Recommendation | copilot/recommendations.py | recommend_jobs(repo_root) → list of {recommendation_id, job_pack_id, reason, trust_level, required_approvals, mode_allowed, blocking_issues}; explicit reasons from job_packs_report + specialization + policy. |
+| C - Routines | copilot/routines.py, copilot/routine_store.py | Routine schema (routine_id, title, description, job_pack_ids, ordering, required_approvals, simulate_only); list_routines, get_routine, save_routine; data/local/copilot/routines. |
+| D - Plan preview | copilot/plan.py | PlanPreview (plan_id, jobs_or_routine, order, mode, approvals_required, trusted_actions_involved, expected_outputs, blocked, blocked_reason); build_plan_for_job(job_id), build_plan_for_routine(routine_id); no execution. |
+| E - Execution | copilot/run.py | run_plan(plan_id, mode, repo_root) → execute jobs in order; stop on first blocked unless override; record plan_run (plan_id, jobs, mode, approvals_checked, executed, blocked, timestamps); persist under data/local/copilot/runs. |
+| F - Reminders | copilot/reminders.py | Reminder (reminder_id, routine_id or job_pack_id, due_at, one_off, title); list_reminders, add_reminder, reminders_due; store data/local/copilot/reminders.yaml; no auto-run. |
+| G - Mission control | mission_control/state.py, report.py | state["copilot"] = {recommended_jobs, recommended_routines, blocked_count, upcoming_reminders, recent_plan_runs_count, next_copilot_action}; report [Copilot] section. |
+| H - Report/docs | copilot/report.py, docs/M23K_COPILOT_OPERATOR.md | copilot_report (recommendations, accepted/skipped, routine_usage, blocked_causes, plan_run_mix, stale_reminders); operator doc. |
+| I - CLI | cli.py | copilot recommend, copilot plan --job/--routine, copilot run --plan --mode, copilot reminders list/add/due, copilot report. |
+| J - Tests | tests/test_copilot.py | recommend, routine CRUD, plan preview, run plan simulate, reminders, report. |
 
 ## 5. Safety/risk note
 

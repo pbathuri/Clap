@@ -2,7 +2,7 @@
 
 Observation is tiered by edge feasibility and privacy sensitivity. Higher tiers add more sources and/or richer semantics; they may require more compute or tighter privacy controls.
 
-## Tier 1 — v1 edge-feasible
+## Tier 1 - v1 edge-feasible
 
 Suitable for Raspberry Pi 5 + AI module; minimal footprint and clear user value.
 
@@ -16,7 +16,7 @@ Suitable for Raspberry Pi 5 + AI module; minimal footprint and clear user value.
 | **Calendar metadata** | Event titles, times, attendees (if available); no body/content. | CalDAV or local calendar API. |
 | **Manual user teaching** | User-provided labels, corrections, step-by-step instructions. | Explicit; highest trust. |
 
-## Tier 2 — Richer semantics
+## Tier 2 - Richer semantics
 
 Requires more integration and possibly more compute; defer until Tier 1 is stable.
 
@@ -27,7 +27,7 @@ Requires more integration and possibly more compute; defer until Tier 1 is stabl
 | Clipboard patterns | Type and frequency; optional hashes for dedup; no raw content by default. |
 | Richer app-level semantics | e.g. “spreadsheet cell range” or “document section” without content. |
 
-## Tier 3 — Advanced
+## Tier 3 - Advanced
 
 Not for v1; consider only after Tier 1–2 are proven and privacy controls are clear.
 

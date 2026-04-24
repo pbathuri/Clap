@@ -1,4 +1,4 @@
-# M23A Chain Lab — Operator Guide
+# M23A Chain Lab - Operator Guide
 
 How to define, run, inspect, and maintain chain runs locally. All under `data/local/chain_lab/`; no cloud, no auto-apply.
 
@@ -8,17 +8,17 @@ How to define, run, inspect, and maintain chain runs locally. All under `data/lo
 
 A chain is a JSON file with:
 
-- **id** — unique identifier
-- **description** — short summary (optional)
-- **steps** — list of step objects. Each step has:
-  - **id** — step id (e.g. `verify`, `demo_weekly`)
-  - **type** — `cli` (run workflow-dataset CLI subprocess)
-  - **label** — display label (optional)
-  - **params** — for `cli`: `args` (list of CLI args), optional `timeout` (seconds)
-  - **expected_inputs** / **expected_outputs** — optional contract
-  - **resumable** — optional, default true
-- **variant_label** — optional variant name
-- **stop_conditions** / **workflow_names** — optional metadata
+- **id** - unique identifier
+- **description** - short summary (optional)
+- **steps** - list of step objects. Each step has:
+  - **id** - step id (e.g. `verify`, `demo_weekly`)
+  - **type** - `cli` (run workflow-dataset CLI subprocess)
+  - **label** - display label (optional)
+  - **params** - for `cli`: `args` (list of CLI args), optional `timeout` (seconds)
+  - **expected_inputs** / **expected_outputs** - optional contract
+  - **resumable** - optional, default true
+- **variant_label** - optional variant name
+- **stop_conditions** / **workflow_names** - optional metadata
 
 **Ways to get a chain:**
 
@@ -41,8 +41,8 @@ Chains are stored under `data/local/chain_lab/chains/<id>.json`.
 
 - **Where output goes**  
   Each run gets a directory: `data/local/chain_lab/runs/<run_id>/`.  
-  - `run_manifest.json` — run metadata, status, step results.  
-  - `steps/0/`, `steps/1/`, … — per-step dirs with `stdout.txt`, `stderr.txt`, `input_snapshot.json`, and any step-produced outputs.
+  - `run_manifest.json` - run metadata, status, step results.  
+  - `steps/0/`, `steps/1/`, … - per-step dirs with `stdout.txt`, `stderr.txt`, `input_snapshot.json`, and any step-produced outputs.
 
 - **Run id**  
   Printed when the run finishes. Use it for report, resume, retry, compare, archive.
@@ -94,8 +94,8 @@ Chains are stored under `data/local/chain_lab/chains/<id>.json`.
   - Eval-oriented: `chain_template_id`, `variant_id`, `final_artifacts`, `duration_seconds`
 
 - **Per-step directory**  
-  - `input_snapshot.json` — step definition and params at run time.  
-  - `stdout.txt`, `stderr.txt` — CLI stdout/stderr.  
+  - `input_snapshot.json` - step definition and params at run time.  
+  - `stdout.txt`, `stderr.txt` - CLI stdout/stderr.  
   - Other files produced by the step (if any).
 
 ---
@@ -120,9 +120,9 @@ Chains are stored under `data/local/chain_lab/chains/<id>.json`.
 
 Chain runs are **eval-ready**: each run’s manifest includes `chain_template_id`, `variant_id`, `final_artifacts`, and `duration_seconds` so the local eval/benchmark layer can consume them without loading chain definitions.
 
-- **Eval API** — Use `list_chain_runs_for_eval(limit, repo_root)` to list runs in eval shape, or `get_chain_run_for_eval(run_id, repo_root)` to load one (e.g. for scoring). Both are in `workflow_dataset.chain_lab.eval_bridge` (and exported from `chain_lab`).
-- **Compare for benchmark** — Use `workflow-dataset chain compare <id_a> <id_b> --benchmark-view` for a concise status/duration/artifact summary suitable for benchmark or review.
-- **Full bridge doc** — See `docs/M23A_F6_CHAIN_EVAL_BRIDGE.md` for manifest fields, API details, and how chain runs feed into evaluation. The chain lab remains internal and advisory; the eval harness stays separate.
+- **Eval API** - Use `list_chain_runs_for_eval(limit, repo_root)` to list runs in eval shape, or `get_chain_run_for_eval(run_id, repo_root)` to load one (e.g. for scoring). Both are in `workflow_dataset.chain_lab.eval_bridge` (and exported from `chain_lab`).
+- **Compare for benchmark** - Use `workflow-dataset chain compare <id_a> <id_b> --benchmark-view` for a concise status/duration/artifact summary suitable for benchmark or review.
+- **Full bridge doc** - See `docs/M23A_F6_CHAIN_EVAL_BRIDGE.md` for manifest fields, API details, and how chain runs feed into evaluation. The chain lab remains internal and advisory; the eval harness stays separate.
 
 ---
 

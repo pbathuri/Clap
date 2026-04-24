@@ -1,4 +1,4 @@
-# M23H — Desktop Bridge Validation + Gated Activation — Read First
+# M23H - Desktop Bridge Validation + Gated Activation - Read First
 
 ## 1. What already exists for M23C–M23F
 
@@ -6,7 +6,7 @@
 |------|-------------|
 | **desktop_adapters** | contracts.py (file_ops, notes_document, browser_open, app_launch); registry.py; simulate.py; execute.py (file_ops: inspect_path, list_directory, snapshot_to_sandbox; notes_document: read_text, summarize_text_for_workflow, propose_status_from_notes); file_runner, notes_runner, sandbox_config, url_validation, app_allowlist. CLI: adapters list, show, simulate, run. |
 | **capability_discovery** | models (CapabilityProfile, ApprovalRegistry); approval_registry (load/save data/local/capability_discovery/approvals.yaml); discovery.run_scan; report.format_profile_report. CLI: capabilities scan, report, approvals; approvals list. |
-| **task_demos** | models (TaskDefinition, TaskStep); store (list_tasks, get_task, save_task); replay (replay_task_simulate — simulate only); report. CLI: tasks define, replay, list, show. |
+| **task_demos** | models (TaskDefinition, TaskStep); store (list_tasks, get_task, save_task); replay (replay_task_simulate - simulate only); report. CLI: tasks define, replay, list, show. |
 | **coordination_graph** | models, build (task_definition_to_graph), report, export. CLI: graph from-task, summary, export, inspect. |
 | **mission_control** | state.py includes coordination_graph_summary (tasks_count, total_nodes, total_edges); report.py shows [Coordination graph] line. next_action.py does not consider desktop bridge. |
 

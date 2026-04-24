@@ -278,10 +278,10 @@ OpenClaw 为 browser、canvas、nodes 和 cron 暴露**一流的智能体工具*
 
 配置文件管理：
 
-- `profiles` — 列出所有浏览器配置文件及其状态
-- `create-profile` — 使用自动分配的端口（或 `cdpUrl`）创建新配置文件
-- `delete-profile` — 停止浏览器，删除用户数据，从配置中移除（仅本地）
-- `reset-profile` — 终止配置文件端口上的孤儿进程（仅本地）
+- `profiles` - 列出所有浏览器配置文件及其状态
+- `create-profile` - 使用自动分配的端口（或 `cdpUrl`）创建新配置文件
+- `delete-profile` - 停止浏览器，删除用户数据，从配置中移除（仅本地）
+- `reset-profile` - 终止配置文件端口上的孤儿进程（仅本地）
 
 常用参数：
 

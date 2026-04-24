@@ -1,4 +1,4 @@
-# C4 — Dashboard action runner stubs + operator macros
+# C4 - Dashboard action runner stubs + operator macros
 
 Lightweight operator macros/shortcuts from the dashboard for common safe actions. Command shortcuts and console triggers only; no hidden automation.
 
@@ -9,7 +9,7 @@ Lightweight operator macros/shortcuts from the dashboard for common safe actions
 | Path | Change |
 |------|--------|
 | `src/workflow_dataset/release/dashboard_data.py` | Added `action_macros` list: each entry has `id`, `label`, `command`. Macros: inspect-workspace (review show-workspace &lt;ref&gt;), open-package (dashboard package), open-cohort-report (cat &lt;path&gt;), staging-board (review staging-board), benchmark-board (eval board). open-package / open-cohort-report only added when data exists. |
-| `src/workflow_dataset/ui/dashboard_view.py` | Rendered "Action shortcuts" panel from `action_macros`. Console: "1-5: Run shortcut" — pressing 1–5 runs the corresponding macro via subprocess and shows output. |
+| `src/workflow_dataset/ui/dashboard_view.py` | Rendered "Action shortcuts" panel from `action_macros`. Console: "1-5: Run shortcut" - pressing 1–5 runs the corresponding macro via subprocess and shows output. |
 | `src/workflow_dataset/cli.py` | Added `dashboard action &lt;macro_id&gt;` command: runs the macro’s command and exits with its return code. |
 | `tests/test_review_queue.py` | `test_dashboard_data_structure` asserts `action_macros`. Added `test_dashboard_action_macros`, `test_dashboard_action_cli`. |
 | **New** `docs/C4_DASHBOARD_ACTION_MACROS.md` | This delivery memo. |
@@ -51,7 +51,7 @@ inspect-workspace and open-package / open-cohort-report appear only when there i
 
 **Panel on main dashboard:**
 ```
-——— Action shortcuts ———
+--- Action shortcuts ---
 ╭──── Action shortcuts (run via: workflow-dataset dashboard action <id>) ────╮
 │  1. Inspect latest workspace                                               │
 │     workflow-dataset review show-workspace weekly_status/2026-03-16_0258__be6ab9e │

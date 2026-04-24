@@ -37,7 +37,7 @@ Hard boundaries for the pack-installable runtime. No exception without explicit 
 
 ## 5. Pack provenance and approval
 
-- **Only approved sources** (from capability intake registry) can be referenced in pack manifests (e.g. source_repo, optional_wrappers). Adoption decision must be reference_only, borrow_patterns, optional_wrapper, or candidate_for_pack—not reject.
+- **Only approved sources** (from capability intake registry) can be referenced in pack manifests (e.g. source_repo, optional_wrappers). Adoption decision must be reference_only, borrow_patterns, optional_wrapper, or candidate_for_pack-not reject.
 - **Provenance** (pack_id, version, source_repo, license) is stored with every installed pack and is inspectable via packs show and runtime status.
 
 ---

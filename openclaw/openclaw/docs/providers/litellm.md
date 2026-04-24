@@ -11,11 +11,11 @@ read_when:
 
 ## Why use LiteLLM with OpenClaw?
 
-- **Cost tracking** — See exactly what OpenClaw spends across all models
-- **Model routing** — Switch between Claude, GPT-4, Gemini, Bedrock without config changes
-- **Virtual keys** — Create keys with spend limits for OpenClaw
-- **Logging** — Full request/response logs for debugging
-- **Fallbacks** — Automatic failover if your primary provider is down
+- **Cost tracking** - See exactly what OpenClaw spends across all models
+- **Model routing** - Switch between Claude, GPT-4, Gemini, Bedrock without config changes
+- **Virtual keys** - Create keys with spend limits for OpenClaw
+- **Logging** - Full request/response logs for debugging
+- **Fallbacks** - Automatic failover if your primary provider is down
 
 ## Quick start
 
@@ -125,7 +125,7 @@ model_list:
       api_key: os.environ/OPENAI_API_KEY
 ```
 
-OpenClaw keeps requesting `claude-opus-4-6` — LiteLLM handles the routing.
+OpenClaw keeps requesting `claude-opus-4-6` - LiteLLM handles the routing.
 
 ## Viewing usage
 
@@ -145,7 +145,7 @@ curl "http://localhost:4000/spend/logs" \
 
 - LiteLLM runs on `http://localhost:4000` by default
 - OpenClaw connects via the OpenAI-compatible `/v1/chat/completions` endpoint
-- All OpenClaw features work through LiteLLM — no limitations
+- All OpenClaw features work through LiteLLM - no limitations
 
 ## See also
 

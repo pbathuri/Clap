@@ -99,7 +99,7 @@ Notes:
 - `color` + per-profile `color` tint the browser UI so you can see which profile is active.
 - Default profile is `openclaw` (OpenClaw-managed standalone browser). Use `defaultProfile: "chrome"` to opt into the Chrome extension relay.
 - Auto-detect order: system default browser if Chromium-based; otherwise Chrome → Brave → Edge → Chromium → Chrome Canary.
-- Local `openclaw` profiles auto-assign `cdpPort`/`cdpUrl` — set those only for remote CDP.
+- Local `openclaw` profiles auto-assign `cdpPort`/`cdpUrl` - set those only for remote CDP.
 
 ## Use Brave (or another Chromium-based browser)
 
@@ -593,7 +593,7 @@ For Linux-specific issues (especially snap Chromium), see
 
 The agent gets **one tool** for browser automation:
 
-- `browser` — status/start/stop/tabs/open/focus/close/snapshot/screenshot/navigate/act
+- `browser` - status/start/stop/tabs/open/focus/close/snapshot/screenshot/navigate/act
 
 How it maps:
 

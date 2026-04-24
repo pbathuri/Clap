@@ -42,20 +42,20 @@ If the config file is missing or invalid, the console exits with an error and do
 | **Project explorer** | List projects from the graph; show domains, style signals, parsed artifact count. Select a project for context. |
 | **Suggestions** | List style-aware suggestions with type, title, confidence; show rationale and supporting signals (evidence-aware). |
 | **Drafts** | List draft structures with type, title, sections; show outline and style signals. |
-| **Materialize** | Choose a draft or suggestion, materialize to sandbox workspace, show preview. **Sandbox only** — no real project writes. |
+| **Materialize** | Choose a draft or suggestion, materialize to sandbox workspace, show preview. **Sandbox only** - no real project writes. |
 | **Apply** | Choose a workspace and target path, build apply plan, view diff preview, then **confirm with `yes`** to execute. Shows rollback token and backup/rollback availability. |
 | **Rollback** | List rollback records, show affected paths, **confirm with `yes`** to restore from backup. |
 | **Chat / explain** | Ask questions about projects, style, suggestions, drafts. Answers are grounded in graph and optional retrieval/LLM. |
 
 ## Safety and confirmation
 
-- **Inspect only**: Setup, projects, suggestions, drafts — no writes.
+- **Inspect only**: Setup, projects, suggestions, drafts - no writes.
 - **Sandbox**: Materialize writes only under `data/local/workspaces`.
 - **Apply plan**: Diff preview is shown **before** any copy; nothing is written until you confirm.
 - **Apply**: Requires typing `yes`; backups are created when enabled; rollback token is shown after apply.
 - **Rollback**: Requires typing `yes`; restores files from the backup recorded at apply time.
 
-The UI labels these clearly (e.g. “Action: SANDBOX”, “Action: APPLY — requires explicit confirmation”) so you always know the impact of the next step.
+The UI labels these clearly (e.g. “Action: SANDBOX”, “Action: APPLY - requires explicit confirmation”) so you always know the impact of the next step.
 
 ## What it does not do (yet)
 

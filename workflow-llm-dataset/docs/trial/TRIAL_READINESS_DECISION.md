@@ -30,11 +30,11 @@ This document answers the five decision questions for the narrow release. Update
 
 In order:
 
-1. **Release verify** — confirm setup (graph, adapter if available).
-2. **Trial start** — create a session with optional alias.
+1. **Release verify** - confirm setup (graph, adapter if available).
+2. **Trial start** - create a session with optional alias.
 3. **First task:** Either `workflow-dataset release demo` (3 prompts) or `workflow-dataset release run` (ops trials).
-4. **Record feedback** — use `trial record-feedback <task_id>` or the console (F → Record quick feedback) with outcome, usefulness, trust, and optional freeform.
-5. **Trial summary** — at end of session run `trial summary`; optionally run `trial aggregate-feedback` to generate the report.
+4. **Record feedback** - use `trial record-feedback <task_id>` or the console (F → Record quick feedback) with outcome, usefulness, trust, and optional freeform.
+5. **Trial summary** - at end of session run `trial summary`; optionally run `trial aggregate-feedback` to generate the report.
 
 Must-try tasks: `ops_summarize_reporting`, `ops_next_steps`, `release_demo`. Nice-to-try: `ops_scaffold_status`, console suggestions.
 
@@ -45,7 +45,7 @@ Must-try tasks: `ops_summarize_reporting`, `ops_next_steps`, `release_demo`. Nic
 - **Out-of-scope workflows:** Spreadsheets, creative/design automation, finance automation, or any domain outside ops reporting.
 - **Uncontrolled apply:** Users must not run apply without explicit preview and confirm; trial docs state apply is opt-in and sandbox-first.
 - **Production data/critical paths:** Trial should use sandbox or non-critical data only.
-- **Promise of support for NOT_YET_SUPPORTED items:** Per docs/NOT_YET_SUPPORTED.md — no promise of full automation, multi-user, or cloud features.
+- **Promise of support for NOT_YET_SUPPORTED items:** Per docs/NOT_YET_SUPPORTED.md - no promise of full automation, multi-user, or cloud features.
 
 ---
 
@@ -71,7 +71,7 @@ Update this section with actual numbers after running `trial aggregate-feedback`
 
 ## Next milestone after M19
 
-**M20 — Internal refinement or narrow private pilot**
+**M20 - Internal refinement or narrow private pilot**
 
 - If criteria above point to refinement: fix friction, improve docs and flows, run another internal/friendly trial before adding users.
 - If criteria point to expansion: add a small number of trusted users (narrow private pilot), still within ops reporting scope; do not broaden product scope yet.

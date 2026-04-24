@@ -1,6 +1,6 @@
 ---
 title: "Node.js"
-summary: "Install and configure Node.js for OpenClaw — version requirements, install options, and PATH troubleshooting"
+summary: "Install and configure Node.js for OpenClaw - version requirements, install options, and PATH troubleshooting"
 read_when:
   - "You need to install Node.js before installing OpenClaw"
   - "You installed OpenClaw but `openclaw` is command not found"
@@ -9,7 +9,7 @@ read_when:
 
 # Node.js
 
-OpenClaw requires **Node 22 or newer**. The [installer script](/install#install-methods) will detect and install Node automatically — this page is for when you want to set up Node yourself and make sure everything is wired up correctly (versions, PATH, global installs).
+OpenClaw requires **Node 22 or newer**. The [installer script](/install#install-methods) will detect and install Node automatically - this page is for when you want to set up Node yourself and make sure everything is wired up correctly (versions, PATH, global installs).
 
 ## Check your version
 
@@ -70,9 +70,9 @@ If this prints `v22.x.x` or higher, you're good. If Node isn't installed or the 
 <Accordion title="Using a version manager (nvm, fnm, mise, asdf)">
   Version managers let you switch between Node versions easily. Popular options:
 
-- [**fnm**](https://github.com/Schniz/fnm) — fast, cross-platform
-- [**nvm**](https://github.com/nvm-sh/nvm) — widely used on macOS/Linux
-- [**mise**](https://mise.jdx.dev/) — polyglot (Node, Python, Ruby, etc.)
+- [**fnm**](https://github.com/Schniz/fnm) - fast, cross-platform
+- [**nvm**](https://github.com/nvm-sh/nvm) - widely used on macOS/Linux
+- [**mise**](https://mise.jdx.dev/) - polyglot (Node, Python, Ruby, etc.)
 
 Example with fnm:
 

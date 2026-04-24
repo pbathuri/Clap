@@ -1,4 +1,4 @@
-# M22E-F5 — Template Testing Harness + Golden Output Fixtures — Delivery
+# M22E-F5 - Template Testing Harness + Golden Output Fixtures - Delivery
 
 ## 1. Files modified
 
@@ -35,9 +35,9 @@ workflow-dataset templates test --id ops_reporting_core --workspace tests/fixtur
 
 **Golden workspace layout** for template `ops_reporting_core`:
 
-- **workspace_manifest.json** — Must include `workflow`, `template_id`, `artifact_list` (order matters).
-- **source_snapshot.md** — First artifact (convention).
-- **status_brief.md**, **action_register.md**, **decision_requests.md** — Template artifact filenames in template order.
+- **workspace_manifest.json** - Must include `workflow`, `template_id`, `artifact_list` (order matters).
+- **source_snapshot.md** - First artifact (convention).
+- **status_brief.md**, **action_register.md**, **decision_requests.md** - Template artifact filenames in template order.
 
 **workspace_manifest.json** (excerpt):
 

@@ -68,7 +68,7 @@ WhatsApp 需要真实手机号码进行验证。VoIP 和虚拟号码通常会被
 
 为 OpenClaw 使用**单独的手机号码**。最佳用户体验，清晰的路由，无自聊天怪异问题。理想设置：**备用/旧 Android 手机 + eSIM**。保持 Wi-Fi 和电源连接，通过二维码关联。
 
-**WhatsApp Business：** 你可以在同一设备上使用不同号码的 WhatsApp Business。非常适合将个人 WhatsApp 分开——安装 WhatsApp Business 并在那里注册 OpenClaw 号码。
+**WhatsApp Business：** 你可以在同一设备上使用不同号码的 WhatsApp Business。非常适合将个人 WhatsApp 分开--安装 WhatsApp Business 并在那里注册 OpenClaw 号码。
 
 **示例配置（专用号码，单用户允许列表）：**
 
@@ -112,10 +112,10 @@ WhatsApp 需要真实手机号码进行验证。VoIP 和虚拟号码通常会被
 
 - **本地 eSIM** 来自你所在国家的移动运营商（最可靠）
   - 奥地利：[hot.at](https://www.hot.at)
-  - 英国：[giffgaff](https://www.giffgaff.com) — 免费 SIM 卡，无合约
-- **预付费 SIM 卡** — 便宜，只需接收一条验证短信
+  - 英国：[giffgaff](https://www.giffgaff.com) - 免费 SIM 卡，无合约
+- **预付费 SIM 卡** - 便宜，只需接收一条验证短信
 
-**避免：** TextNow、Google Voice、大多数"免费短信"服务——WhatsApp 会积极封锁这些。
+**避免：** TextNow、Google Voice、大多数"免费短信"服务--WhatsApp 会积极封锁这些。
 
 **提示：** 该号码只需要接收一条验证短信。之后，WhatsApp Web 会话通过 `creds.json` 持久化。
 

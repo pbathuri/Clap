@@ -236,7 +236,7 @@ channels:
 
 ### 智能体可以更新 HEARTBEAT.md 吗？
 
-可以 — 如果你要求它这样做。
+可以 - 如果你要求它这样做。
 
 `HEARTBEAT.md` 只是智能体工作区中的普通文件，所以你可以在普通聊天中告诉智能体：
 
@@ -245,7 +245,7 @@ channels:
 
 如果你希望这主动发生，你也可以在心跳提示中包含明确的一行，如："If the checklist becomes stale, update HEARTBEAT.md with a better one."
 
-安全提示：不要在 `HEARTBEAT.md` 中放置密钥（API 密钥、电话号码、私有令牌）— 它会成为提示上下文的一部分。
+安全提示：不要在 `HEARTBEAT.md` 中放置密钥（API 密钥、电话号码、私有令牌）- 它会成为提示上下文的一部分。
 
 ## 手动唤醒（按需）
 
@@ -267,7 +267,7 @@ openclaw system event --text "Check for urgent follow-ups" --mode now
 
 - `agents.defaults.heartbeat.includeReasoning: true`
 
-启用后，心跳还会发送一条以 `Reasoning:` 为前缀的单独消息（与 `/reasoning on` 格式相同）。当智能体管理多个会话/代码库并且你想了解它为什么决定联系你时，这很有用 — 但它也可能泄露比你想要的更多内部细节。在群聊中建议保持关闭。
+启用后，心跳还会发送一条以 `Reasoning:` 为前缀的单独消息（与 `/reasoning on` 格式相同）。当智能体管理多个会话/代码库并且你想了解它为什么决定联系你时，这很有用 - 但它也可能泄露比你想要的更多内部细节。在群聊中建议保持关闭。
 
 ## 成本意识
 

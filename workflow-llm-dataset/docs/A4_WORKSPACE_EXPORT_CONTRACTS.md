@@ -1,4 +1,4 @@
-# A4 — Workspace export contracts + downstream handoff spec
+# A4 - Workspace export contracts + downstream handoff spec
 
 Export contracts define a stable structure for saved workspaces so downstream systems inside the repo can rely on required files, optional files, and manifest compatibility.
 
@@ -9,7 +9,7 @@ Export contracts define a stable structure for saved workspaces so downstream sy
 | Path | Change |
 |------|--------|
 | **New** `src/workflow_dataset/release/workspace_export_contract.py` | `WORKSPACE_EXPORT_SCHEMA_VERSION = "1.0"`. `EXPORT_CONTRACTS` per workflow: manifest_file, required_manifest_keys, required_files, optional_files, optional required_at_least_one_of. `get_export_contract(workflow)`, `validate_workspace_export(workspace_path)` → valid, errors, warnings, contract_version, workflow, missing_required, missing_manifest_keys, manifest_compatible. |
-| `src/workflow_dataset/cli.py` | `review validate-workspace <path>` — validate workspace against contract; exit 1 if invalid. `review export-contract [--workflow ops_reporting_workspace]` — print contract (schema version, required/optional files, manifest keys). |
+| `src/workflow_dataset/cli.py` | `review validate-workspace <path>` - validate workspace against contract; exit 1 if invalid. `review export-contract [--workflow ops_reporting_workspace]` - print contract (schema version, required/optional files, manifest keys). |
 | `tests/test_release.py` | `test_get_export_contract`, `test_validate_workspace_export_valid`, `test_validate_workspace_export_missing_required`, `test_validate_workspace_export_missing_manifest_key`, `test_review_validate_workspace_cli`. |
 | `docs/A4_WORKSPACE_EXPORT_CONTRACTS.md` | This file. |
 

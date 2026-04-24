@@ -8,16 +8,16 @@ Future pack system for local and (optionally) cloud-distributed capability packs
 
 A **capability pack** is a curated, versioned bundle that extends the product with:
 
-- **Recommended local model(s)** — e.g. adapter path, base model id, quantization
-- **Prompts** — prompt templates or prompt-pack references
-- **Retrieval config** — corpus filters, top_k, context formatting
-- **Parser config** — document/tabular/creative adapter settings
-- **Workflow templates** — trial scenarios or release task sets
-- **Evaluation tasks** — tasks and criteria for pack quality
-- **Safety policies** — sandbox-only, apply confirm, no network by default
-- **Optional orchestration settings** — e.g. multi-step flow config (future)
-- **Supported output adapters** — ops_handoff, document, etc.
-- **Supported release/pilot modes** — baseline, adapter, retrieval, adapter_retrieval
+- **Recommended local model(s)** - e.g. adapter path, base model id, quantization
+- **Prompts** - prompt templates or prompt-pack references
+- **Retrieval config** - corpus filters, top_k, context formatting
+- **Parser config** - document/tabular/creative adapter settings
+- **Workflow templates** - trial scenarios or release task sets
+- **Evaluation tasks** - tasks and criteria for pack quality
+- **Safety policies** - sandbox-only, apply confirm, no network by default
+- **Optional orchestration settings** - e.g. multi-step flow config (future)
+- **Supported output adapters** - ops_handoff, document, etc.
+- **Supported release/pilot modes** - baseline, adapter, retrieval, adapter_retrieval
 
 Packs are **local-first**: they can be installed from a local path or (future) from a curated registry. They do **not** bypass safety boundaries (adoption flow, apply confirm, sandbox-only).
 
@@ -27,7 +27,7 @@ Packs are **local-first**: they can be installed from a local path or (future) f
 
 - A public marketplace of arbitrary third-party packs.
 - A way to run untrusted code inside the main process without sandbox.
-- A replacement for the current narrow release/pilot scope — packs **extend** within that scope.
+- A replacement for the current narrow release/pilot scope - packs **extend** within that scope.
 
 ---
 

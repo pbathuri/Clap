@@ -20,11 +20,11 @@ How multiple capability packs coexist in one local-first runtime. Explicit and p
 
 Resolution can be driven by:
 
-- **role scope** — e.g. `ops`, `founder`. Primary pack for that role wins template selection for release/trials.
-- **workflow scope** — e.g. `reporting`, `scaffold_status`. Packs matching workflow contribute templates/adapters.
-- **task scope** — e.g. `summarize`, `next_steps`. Task-specific pins can override.
-- **project scope** — (future) project id; pinned pack for project.
-- **session scope** — current session; pinned pack for session overrides default role pack for that session.
+- **role scope** - e.g. `ops`, `founder`. Primary pack for that role wins template selection for release/trials.
+- **workflow scope** - e.g. `reporting`, `scaffold_status`. Packs matching workflow contribute templates/adapters.
+- **task scope** - e.g. `summarize`, `next_steps`. Task-specific pins can override.
+- **project scope** - (future) project id; pinned pack for project.
+- **session scope** - current session; pinned pack for session overrides default role pack for that session.
 
 ---
 
@@ -54,9 +54,9 @@ Resolution can be driven by:
 
 ## State files (local)
 
-- **installed_state.json** — pack_id → { path, version, installed_utc }.
-- **active_role.txt** — (M23) current role for “no --role” flows; kept for backward compatibility.
-- **activation_state.json** (M24) — primary_pack_id, secondary_pack_ids[], pinned { scope: pack_id }, suspended_pack_ids[], current_role, current_workflow, current_task.
+- **installed_state.json** - pack_id → { path, version, installed_utc }.
+- **active_role.txt** - (M23) current role for “no --role” flows; kept for backward compatibility.
+- **activation_state.json** (M24) - primary_pack_id, secondary_pack_ids[], pinned { scope: pack_id }, suspended_pack_ids[], current_role, current_workflow, current_task.
 
 ---
 

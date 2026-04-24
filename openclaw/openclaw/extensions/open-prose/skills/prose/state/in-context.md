@@ -3,7 +3,7 @@ role: in-context-state-management
 summary: |
   In-context state management using the narration protocol with text markers.
   This approach tracks execution state within the conversation history itself.
-  The OpenProse VM "thinks aloud" to persist state—what you say becomes what you remember.
+  The OpenProse VM "thinks aloud" to persist state-what you say becomes what you remember.
 see-also:
   - ../prose.md: VM execution semantics
   - filesystem.md: File-system state management (alternative approach)
@@ -18,7 +18,7 @@ This document describes how the OpenProse VM tracks execution state using **stru
 
 ## Overview
 
-In-context state uses text-prefixed markers to persist state within the conversation. The VM "thinks aloud" about execution—what you say becomes what you remember.
+In-context state uses text-prefixed markers to persist state within the conversation. The VM "thinks aloud" about execution-what you say becomes what you remember.
 
 **Key principle:** Your conversation history IS the VM's working memory.
 
@@ -367,7 +367,7 @@ In-context state and file-based state (`filesystem.md`) are **independent approa
 - **In-context**: State lives in conversation history
 - **File-based**: State lives in `.prose/runs/{id}/`
 
-They are not designed to be complementary—pick the appropriate mode at program start.
+They are not designed to be complementary-pick the appropriate mode at program start.
 
 ---
 

@@ -6,7 +6,7 @@ How to prepare a pilot user, verify readiness, run the narrow pilot flow, diagno
 
 ## 1. Preparing a pilot user
 
-- **Profile:** Per docs/PILOT_SCOPE.md — one person doing recurring reporting/status work (ops); single device; local-first.
+- **Profile:** Per docs/PILOT_SCOPE.md - one person doing recurring reporting/status work (ops); single device; local-first.
 - **Before the session:** Share the trial kit (docs/trial/) and PILOT_SCOPE.md so they know what is in and out of scope.
 - **One-time setup:** Either you (on their machine) or they run: environment + `workflow-dataset pilot verify`. If verify fails, fix blocking issues (graph, setup) before the pilot session.
 
@@ -62,12 +62,12 @@ See **docs/PILOT_RUNBOOK.md** for the exact command sequence and paths.
 
 After saving artifacts with `release demo --save-artifact`, you can inspect, approve, and package them for handoff:
 
-1. **List workspaces:** `workflow-dataset review list-workspaces` — shows recent runs under `data/local/workspaces/` (weekly_status, bundles, ops_reporting_workspace).
-2. **Inspect one:** `workflow-dataset review show-workspace <path-or-id>` — e.g. `review show-workspace ops_reporting_workspace/2025-03-15_1432_abc` or full path. Shows workflow, artifacts, and current review state per artifact.
+1. **List workspaces:** `workflow-dataset review list-workspaces` - shows recent runs under `data/local/workspaces/` (weekly_status, bundles, ops_reporting_workspace).
+2. **Inspect one:** `workflow-dataset review show-workspace <path-or-id>` - e.g. `review show-workspace ops_reporting_workspace/2025-03-15_1432_abc` or full path. Shows workflow, artifacts, and current review state per artifact.
 3. **Approve artifacts:** `workflow-dataset review approve-artifact <workspace> --artifact weekly_status.md` (repeat for each artifact to include). Use `review set-artifact-state <workspace> --artifact x --state needs_revision|excluded` to mark others.
-4. **Build package:** `workflow-dataset review build-package <workspace>` — writes to `data/local/packages/<ts_id>/` with approved artifacts only, plus `package_manifest.json`, `approved_summary.md`, `handoff_readme.md`. No apply; sandbox-only. **Handoff profiles (B3):** `--profile internal_team` (default), `--profile stakeholder` (stakeholder-facing only), or `--profile operator_archive` (full set for audit). List: `workflow-dataset review list-profiles`.
-5. **Package status:** `workflow-dataset review package-status <workspace>` — shows approved count and last built package path.
-6. **Review metrics (B4):** `workflow-dataset review metrics` — read-only summary: pending review count, revision rate, avg approved per workspace/package, common revision reasons. Use `--json` for machine output.
+4. **Build package:** `workflow-dataset review build-package <workspace>` - writes to `data/local/packages/<ts_id>/` with approved artifacts only, plus `package_manifest.json`, `approved_summary.md`, `handoff_readme.md`. No apply; sandbox-only. **Handoff profiles (B3):** `--profile internal_team` (default), `--profile stakeholder` (stakeholder-facing only), or `--profile operator_archive` (full set for audit). List: `workflow-dataset review list-profiles`.
+5. **Package status:** `workflow-dataset review package-status <workspace>` - shows approved count and last built package path.
+6. **Review metrics (B4):** `workflow-dataset review metrics` - read-only summary: pending review count, revision rate, avg approved per workspace/package, common revision reasons. Use `--json` for machine output.
 8. **Apply (optional):** To copy the package to a target dir, use the existing apply flow: `workflow-dataset assist apply-plan <package_dir> <target_path>` then `workflow-dataset assist apply <package_dir> <target_path> --confirm`. No automatic apply.
 
 **Staging board (M21V):** Before apply, you can queue approved packages/artifacts on a staging board, then build an apply-plan preview without applying. Commands: `workflow-dataset review queue-status` (review + staging summary), `review stage-package <package_path>`, `review stage-artifact <workspace> --artifact <name>`, `review staging-board` (list staged items), `review unstage --item <id>`, `review clear-staging`, `review build-apply-plan <target_path>` (preview only; no apply), `review apply-plan-status`. State: `data/local/staging/staging_board.json`; last preview: `data/local/staging/last_apply_plan_preview.md`. Apply still requires explicit `assist apply ... --confirm`.
@@ -78,25 +78,25 @@ Review state is stored under `data/local/review/<workflow>/<run_id>.json`. Packa
 
 One place to see readiness, recent workspaces, review/package queue, cohort, and next actions:
 
-- **CLI:** `workflow-dataset dashboard` — prints the full dashboard (readiness, workspaces, review & package counts, cohort recommendation, recommended next commands with exact paths). No prompt; safe to run from scripts.
-- **Workflow filter (C2):** `workflow-dataset dashboard --workflow <name>` — limit views to one workflow (e.g. `weekly_status`, `status_action_bundle`, `stakeholder_update_bundle`, `ops_reporting_workspace`). Counts and recent workspaces are filtered accordingly.
+- **CLI:** `workflow-dataset dashboard` - prints the full dashboard (readiness, workspaces, review & package counts, cohort recommendation, recommended next commands with exact paths). No prompt; safe to run from scripts.
+- **Workflow filter (C2):** `workflow-dataset dashboard --workflow <name>` - limit views to one workflow (e.g. `weekly_status`, `status_action_bundle`, `stakeholder_update_bundle`, `ops_reporting_workspace`). Counts and recent workspaces are filtered accordingly.
 - **Drill-downs (C2):** From the dashboard you can inspect a single “latest” item:
-  - `workflow-dataset dashboard workspace` — latest workspace detail (path, artifacts, approved, inspect/build commands). Optional `--workflow` to filter.
-  - `workflow-dataset dashboard package` — latest package dir (path, files, open command).
-  - `workflow-dataset dashboard cohort` — latest cohort report (path, excerpt, open command).
-  - `workflow-dataset dashboard apply-plan` — latest apply-plan preview (path, excerpt, open command).
+  - `workflow-dataset dashboard workspace` - latest workspace detail (path, artifacts, approved, inspect/build commands). Optional `--workflow` to filter.
+  - `workflow-dataset dashboard package` - latest package dir (path, files, open command).
+  - `workflow-dataset dashboard cohort` - latest cohort report (path, excerpt, open command).
+  - `workflow-dataset dashboard apply-plan` - latest apply-plan preview (path, excerpt, open command).
 - **Console:** From the operator console home menu, press **D** (Dashboard). Then use **W** (workspace), **P** (package), **C** (cohort), **A** (apply-plan) to open a drill-down, or Enter to return to home.
 - **Action shortcuts (C4):** Run a macro from the dashboard: `workflow-dataset dashboard action <id>` with id `inspect-workspace`, `open-package`, `open-cohort-report`, `staging-board`, or `benchmark-board`. In console, press **1**–**5** to run the 1st–5th shortcut. Commands are shown; no hidden automation.
 
-**Grouping:** Readiness, workspaces & review, packages & staging, cohort state, and next actions are grouped with clear section headers. **Panel 6 — Local sources (provenance):** Exact local paths used: `repo_root`, `workspaces_root`, `pilot_dir`, `packages_root`, `review_root`, `staging_dir`, and when present `pilot_readiness_report`, `release_readiness_report`. Next-action commands use concrete workspace refs and artifact names so you can copy-paste. Sources are local only; no writes.
+**Grouping:** Readiness, workspaces & review, packages & staging, cohort state, and next actions are grouped with clear section headers. **Panel 6 - Local sources (provenance):** Exact local paths used: `repo_root`, `workspaces_root`, `pilot_dir`, `packages_root`, `review_root`, `staging_dir`, and when present `pilot_readiness_report`, `release_readiness_report`. Next-action commands use concrete workspace refs and artifact names so you can copy-paste. Sources are local only; no writes.
 
 ### Trial flow (task-level)
 
 1. **Start trial session:** `workflow-dataset trial start --user <alias>`
 2. **Run flow:** Either:
-   - `workflow-dataset release run` — runs ops trials (adapter or base model)
-   - `workflow-dataset release demo` — 3 prompts (founder demo)
-3. If you see **Degraded mode: no adapter** — expected when LLM has not been trained; base model is used. Note it in feedback.
+   - `workflow-dataset release run` - runs ops trials (adapter or base model)
+   - `workflow-dataset release demo` - 3 prompts (founder demo)
+3. If you see **Degraded mode: no adapter** - expected when LLM has not been trained; base model is used. Note it in feedback.
 4. **Record feedback:** `workflow-dataset trial record-feedback <task_id> --outcome completed|partial|failed --usefulness 1-5 --trust 1-5 -f "notes"`
 5. **End session:** `workflow-dataset trial summary` then optionally `workflow-dataset trial aggregate-feedback`
 6. **Pilot report:** `workflow-dataset pilot latest-report` to refresh pilot_readiness_report.md
@@ -125,7 +125,7 @@ Use **docs/RELIABILITY_TRIAGE.md** and **data/local/pilot/reliability_issues.jso
   1. Run `workflow-dataset pilot record-blocking "short description"` (e.g. `pilot record-blocking "release demo crashed: UnboundLocalError llm_cfg"`). Uses current session; or pass `--session-id` if needed.
   2. Optionally run `pilot capture-feedback` with `--blocker` and `--failure-reason "..."` so feedback reflects the failure.
   3. Run `pilot end-session --disposition fix` or `--disposition pause` so the aggregate and readiness report show the blocking issue and disposition.
-- **Blocking vs friction:** **Blocking** = command crash, flow cannot complete, or critical failure — use `pilot record-blocking` and disposition fix/pause. **Friction** = UX/docs annoyance (e.g. report location unclear) — use `pilot capture-feedback --friction "..."` and disposition can remain continue.
+- **Blocking vs friction:** **Blocking** = command crash, flow cannot complete, or critical failure - use `pilot record-blocking` and disposition fix/pause. **Friction** = UX/docs annoyance (e.g. report location unclear) - use `pilot capture-feedback --friction "..."` and disposition can remain continue.
 - **Run** `pilot aggregate` and `pilot latest-report` so the next decision has evidence.
 
 ---
@@ -156,9 +156,9 @@ To decide whether the narrow pilot should **continue unchanged**, **refine one f
 1. **Aggregate with recent-cohort and graduation:**  
    `workflow-dataset pilot aggregate [--recent 5]`  
    When you have at least 5 sessions (or the number you pass to `--recent`), the report includes:
-   - **All sessions (cumulative)** — full history.
-   - **Recent cohort (last N sessions)** — counts and evidence for the most recent N sessions only.
-   - **Graduation readiness** — criteria pass/fail and recommendation (continue / refine_once / graduate).
+   - **All sessions (cumulative)** - full history.
+   - **Recent cohort (last N sessions)** - counts and evidence for the most recent N sessions only.
+   - **Graduation readiness** - criteria pass/fail and recommendation (continue / refine_once / graduate).
 
 2. **Quick graduation check only:**  
    `workflow-dataset pilot graduation-status [--recent 5]`  
@@ -171,9 +171,9 @@ To decide whether the narrow pilot should **continue unchanged**, **refine one f
 
 ### How to decide
 
-- **Recommendation = graduate** — Recent cohort meets all graduation criteria; consider expanding to a broader controlled pilot cohort.
-- **Recommendation = refine_once** — One criterion failed in the recent cohort; fix that issue, run more sessions, then re-run `pilot aggregate --recent N` or `pilot graduation-status` to re-check.
-- **Recommendation = continue** — Two or more criteria failed; keep running the narrow pilot and re-evaluate with a fresh cohort after more sessions.
+- **Recommendation = graduate** - Recent cohort meets all graduation criteria; consider expanding to a broader controlled pilot cohort.
+- **Recommendation = refine_once** - One criterion failed in the recent cohort; fix that issue, run more sessions, then re-run `pilot aggregate --recent N` or `pilot graduation-status` to re-check.
+- **Recommendation = continue** - Two or more criteria failed; keep running the narrow pilot and re-evaluate with a fresh cohort after more sessions.
 
 Graduation criteria are listed in **docs/M21_PILOT_EXECUTION.md** (Narrow-pilot graduation criteria).
 
@@ -201,12 +201,12 @@ The desktop bridge exposes **adapters** (file_ops, notes_document, browser_open,
 
 Run these from the project root (or with `--repo-root <path>` where needed):
 
-- **Adapters:** `workflow-dataset adapters list` — lists adapters with simulate/real_execution flags.
-- **Capabilities:** `workflow-dataset capabilities scan` — adapter count, approved_paths/apps/scopes (from registry if present).
-- **Approvals:** `workflow-dataset approvals list` — path to `data/local/capability_discovery/approvals.yaml` and current approved_paths / approved_action_scopes.
-- **Tasks:** `workflow-dataset tasks list` — task demo IDs; `workflow-dataset tasks show <id>` for detail.
-- **Graph:** `workflow-dataset graph summary` — coordination graph summary (tasks, nodes, edges).
-- **Mission control:** `workflow-dataset mission-control` (or dashboard) — includes **[Desktop bridge]** (adapters, approvals present/missing, task demos, graph) and may recommend **replay_task** when task demos exist.
+- **Adapters:** `workflow-dataset adapters list` - lists adapters with simulate/real_execution flags.
+- **Capabilities:** `workflow-dataset capabilities scan` - adapter count, approved_paths/apps/scopes (from registry if present).
+- **Approvals:** `workflow-dataset approvals list` - path to `data/local/capability_discovery/approvals.yaml` and current approved_paths / approved_action_scopes.
+- **Tasks:** `workflow-dataset tasks list` - task demo IDs; `workflow-dataset tasks show <id>` for detail.
+- **Graph:** `workflow-dataset graph summary` - coordination graph summary (tasks, nodes, edges).
+- **Mission control:** `workflow-dataset mission-control` (or dashboard) - includes **[Desktop bridge]** (adapters, approvals present/missing, task demos, graph) and may recommend **replay_task** when task demos exist.
 
 ### What is simulate-only vs real execution
 

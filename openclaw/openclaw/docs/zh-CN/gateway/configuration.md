@@ -61,11 +61,11 @@ Gateway 网关通过 `config.schema` 暴露配置的 JSON Schema 表示，供 UI
 
 参数：
 
-- `raw`（字符串）— 整个配置的 JSON5 负载
-- `baseHash`（可选）— 来自 `config.get` 的配置哈希（当配置已存在时为必需）
-- `sessionKey`（可选）— 最后活跃会话的键，用于唤醒 ping
-- `note`（可选）— 包含在重启哨兵中的备注
-- `restartDelayMs`（可选）— 重启前的延迟（默认 2000）
+- `raw`（字符串）- 整个配置的 JSON5 负载
+- `baseHash`（可选）- 来自 `config.get` 的配置哈希（当配置已存在时为必需）
+- `sessionKey`（可选）- 最后活跃会话的键，用于唤醒 ping
+- `note`（可选）- 包含在重启哨兵中的备注
+- `restartDelayMs`（可选）- 重启前的延迟（默认 2000）
 
 示例（通过 `gateway call`）：
 
@@ -92,11 +92,11 @@ openclaw gateway call config.apply --params '{
 
 参数：
 
-- `raw`（字符串）— 仅包含要更改的键的 JSON5 负载
-- `baseHash`（必需）— 来自 `config.get` 的配置哈希
-- `sessionKey`（可选）— 最后活跃会话的键，用于唤醒 ping
-- `note`（可选）— 包含在重启哨兵中的备注
-- `restartDelayMs`（可选）— 重启前的延迟（默认 2000）
+- `raw`（字符串）- 仅包含要更改的键的 JSON5 负载
+- `baseHash`（必需）- 来自 `config.get` 的配置哈希
+- `sessionKey`（可选）- 最后活跃会话的键，用于唤醒 ping
+- `note`（可选）- 包含在重启哨兵中的备注
+- `restartDelayMs`（可选）- 重启前的延迟（默认 2000）
 
 示例：
 
@@ -1641,7 +1641,7 @@ Talk 模式（macOS/iOS/Android）的默认值。语音 ID 在未设置时回退
 - `alias`（可选的模型快捷方式，例如 `/opus`）。
 - `params`（可选的提供商特定 API 参数，传递给模型请求）。
 
-`params` 也应用于流式运行（内置智能体 + 压缩）。目前支持的键：`temperature`、`maxTokens`。这些与调用时选项合并；调用方提供的值优先。`temperature` 是高级旋钮——除非你了解模型的默认值且需要更改，否则不要设置。
+`params` 也应用于流式运行（内置智能体 + 压缩）。目前支持的键：`temperature`、`maxTokens`。这些与调用时选项合并；调用方提供的值优先。`temperature` 是高级旋钮--除非你了解模型的默认值且需要更改，否则不要设置。
 
 示例：
 
@@ -2437,7 +2437,7 @@ pi-ai 内置的 `opencode` 提供商；从 https://opencode.ai/auth 设置 `OPEN
 }
 ```
 
-### Z.AI（GLM-4.7）— 提供商别名支持
+### Z.AI（GLM-4.7）- 提供商别名支持
 
 Z.AI 模型通过内置的 `zai` 提供商提供。在环境中设置 `ZAI_API_KEY`
 并通过 provider/model 引用模型。
@@ -2574,7 +2574,7 @@ Z.AI 模型通过内置的 `zai` 提供商提供。在环境中设置 `ZAI_API_K
 - 模型引用：`synthetic/hf:MiniMaxAI/MiniMax-M2.1`。
 - 基础 URL 应省略 `/v1`，因为 Anthropic 客户端会自动附加。
 
-### 本地模型（LM Studio）— 推荐设置
+### 本地模型（LM Studio）- 推荐设置
 
 参见 [/gateway/local-models](/gateway/local-models) 了解当前本地指南。简而言之：在高性能硬件上通过 LM Studio Responses API 运行 MiniMax M2.1；保留托管模型合并作为回退。
 

@@ -48,6 +48,6 @@ How conflicts between packs are classified and resolved. No silent overwrites; c
 
 ## Reporting
 
-- **conflict_report.md** — List all detected conflicts, class, and how they were resolved (or that they are blocked).
-- **packs conflicts** CLI — Same information in terminal.
-- **packs explain** — Include conflict summary when explaining resolution.
+- **conflict_report.md** - List all detected conflicts, class, and how they were resolved (or that they are blocked).
+- **packs conflicts** CLI - Same information in terminal.
+- **packs explain** - Include conflict summary when explaining resolution.

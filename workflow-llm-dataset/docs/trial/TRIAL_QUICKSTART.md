@@ -23,7 +23,7 @@ workflow-dataset release verify
 You should see:
 
 - **Graph: OK** (or a message that setup is needed).
-- **Setup dir / Parsed artifacts / Style signals** — at least one OK if you’ve run setup before.
+- **Setup dir / Parsed artifacts / Style signals** - at least one OK if you’ve run setup before.
 - **LLM adapter: OK** if a trained model is available (otherwise the system will still run with a baseline).
 
 If something is missing, the command will tell you. For a first trial, having the graph and at least one setup path is enough; the adapter is optional but recommended.
@@ -103,11 +103,11 @@ workflow-dataset console
 
 From the home screen you can:
 
-- **2** — Projects  
-- **3** — Suggestions  
-- **8** — Chat / explain  
-- **R** — Release (scope and commands)  
-- **T** — Trials (tasks and report)
+- **2** - Projects  
+- **3** - Suggestions  
+- **8** - Chat / explain  
+- **R** - Release (scope and commands)  
+- **T** - Trials (tasks and report)
 
 Then run the same trial tasks and record feedback via the CLI as above.
 

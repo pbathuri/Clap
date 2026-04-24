@@ -18,9 +18,9 @@ x-i18n:
 
 OpenClaw 提供两个安装器脚本（托管在 `openclaw.ai`）：
 
-- `https://openclaw.ai/install.sh` — "推荐"安装器（默认全局 npm 安装；也可从 GitHub 检出安装）
-- `https://openclaw.ai/install-cli.sh` — 无需 root 权限的 CLI 安装器（安装到带有独立 Node 的前缀目录）
-- `https://openclaw.ai/install.ps1` — Windows PowerShell 安装器（默认 npm；可选 git 安装）
+- `https://openclaw.ai/install.sh` - "推荐"安装器（默认全局 npm 安装；也可从 GitHub 检出安装）
+- `https://openclaw.ai/install-cli.sh` - 无需 root 权限的 CLI 安装器（安装到带有独立 Node 的前缀目录）
+- `https://openclaw.ai/install.ps1` - Windows PowerShell 安装器（默认 npm；可选 git 安装）
 
 查看当前参数/行为，运行：
 

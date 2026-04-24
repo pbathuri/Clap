@@ -1,4 +1,4 @@
-# M22 — Decision output: OpenClaw-aligned runtime refactor + capability-pack installer
+# M22 - Decision output: OpenClaw-aligned runtime refactor + capability-pack installer
 
 ## 1. Has the repo now become a real pack-installable runtime?
 
@@ -16,7 +16,7 @@ What is **not** yet done: cloud pack registry, signed manifest distribution, or 
 
 ## 2. Which approved external sources actually influence the runtime?
 
-- **OpenClaw**: Influences **design only** — runtime layer model and docs. No imported code; reference metadata in `external_wrappers/openclaw_runtime_reference.py`.
+- **OpenClaw**: Influences **design only** - runtime layer model and docs. No imported code; reference metadata in `external_wrappers/openclaw_runtime_reference.py`.
 - **World Monitor, CLIProxyAPI/Plus, MiroFish**: Reference-only; documented in `external_wrappers/` with approved patterns and rejected/unsafe items. No code imported.
 - **Ollama** (optional_wrapper in M21): Not wired into the pack installer in M22; optional wrapper foundation is in place so a future pack can declare `optional_wrappers: ["ollama_ref"]` and we can gate usage in code. No arbitrary execution.
 
@@ -26,7 +26,7 @@ So **no external repo code is executed at runtime**; only our own runtime and pa
 
 ## 3. What still remains reference-only?
 
-All of: OpenClaw, World Monitor, CLIProxyAPI/Plus, MiroFish. They remain reference-only — no live integration, no imports from those repos. Only Ollama was approved as optional_wrapper in M21, and in M22 we do not yet invoke it from the pack layer; that would be a follow-up (e.g. “use Ollama for inference” gated by config).
+All of: OpenClaw, World Monitor, CLIProxyAPI/Plus, MiroFish. They remain reference-only - no live integration, no imports from those repos. Only Ollama was approved as optional_wrapper in M21, and in M22 we do not yet invoke it from the pack layer; that would be a follow-up (e.g. “use Ollama for inference” gated by config).
 
 ---
 
@@ -60,12 +60,12 @@ So the gap is: **wire the planner (release, pilot, trials) to the resolver outpu
 
 ## 6. Exact next milestone after M22
 
-**M23 — Planner integration with resolved capabilities**
+**M23 - Planner integration with resolved capabilities**
 
 - Inputs: role (and optionally industry/workflow/task) from CLI/console or release config.
 - Flow: Call `resolve_active_capabilities(role=..., packs_dir=...)`; pass `ActiveCapabilities` (prompts, templates, output_adapters, recommended_models, retrieval_profile) into the existing release/pilot/trial execution paths.
 - Outcome: Running release run or pilot verify with `--role ops` (or configured role) uses the resolved ops pack’s prompts, templates, and adapters instead of a single hard-coded path.
-- Constraints: Same as M22 — no cloud APIs for private data, no arbitrary code execution, sandbox and apply gates unchanged.
+- Constraints: Same as M22 - no cloud APIs for private data, no arbitrary code execution, sandbox and apply gates unchanged.
 
 After M23, the repo will have a true end-to-end role-based install flow: install ops pack → set role=ops → run release/pilot using that pack’s capabilities.
 

@@ -1,4 +1,4 @@
-# M23L — Work State Engine + Context-Aware Trigger Policies — Final Output
+# M23L - Work State Engine + Context-Aware Trigger Policies - Final Output
 
 ## 1. Files modified
 

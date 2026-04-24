@@ -1,4 +1,4 @@
-# M23M — Operator Correction Loop + Explicit Learning Updates — Read First
+# M23M - Operator Correction Loop + Explicit Learning Updates - Read First
 
 ## 1. What already exists for recommendations, plans, jobs, trust, and specialization memory
 

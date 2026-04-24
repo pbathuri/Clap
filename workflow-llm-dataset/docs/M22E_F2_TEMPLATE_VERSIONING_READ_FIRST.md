@@ -1,4 +1,4 @@
-# M22E-F2 — Template Versioning + Template Validation Reports — READ FIRST
+# M22E-F2 - Template Versioning + Template Validation Reports - READ FIRST
 
 Inspection and plan before implementation. No code until this is complete.
 
@@ -17,9 +17,9 @@ Inspection and plan before implementation. No code until this is complete.
 
 ### 1.2 CLI surface
 
-- **`workflow-dataset templates list`** — Lists templates (id, name, workflow_id, artifacts, description). No status column.
-- **`workflow-dataset templates show --id <id>`** — Prints template definition; no validation or report.
-- **`workflow-dataset release demo --template <id> [--save-artifact] ...`** — Loads template, sets `workflow` from `template_def["workflow_id"]`; for `ops_reporting_workspace` save, uses `template_artifact_order_and_filenames` to build `artifacts_dict` and write workspace.
+- **`workflow-dataset templates list`** - Lists templates (id, name, workflow_id, artifacts, description). No status column.
+- **`workflow-dataset templates show --id <id>`** - Prints template definition; no validation or report.
+- **`workflow-dataset release demo --template <id> [--save-artifact] ...`** - Loads template, sets `workflow` from `template_def["workflow_id"]`; for `ops_reporting_workspace` save, uses `template_artifact_order_and_filenames` to build `artifacts_dict` and write workspace.
 
 ### 1.3 Workflow and export contracts (reuse)
 

@@ -42,18 +42,18 @@ openclaw plugins install @openclaw/voice-call
 ## 可用插件（官方）
 
 - 从 2026.1.15 起 Microsoft Teams 仅作为插件提供；如果使用 Teams，请安装 `@openclaw/msteams`。
-- Memory (Core) — 捆绑的记忆搜索插件（通过 `plugins.slots.memory` 默认启用）
-- Memory (LanceDB) — 捆绑的长期记忆插件（自动召回/捕获；设置 `plugins.slots.memory = "memory-lancedb"`）
-- [Voice Call](/plugins/voice-call) — `@openclaw/voice-call`
-- [Zalo Personal](/plugins/zalouser) — `@openclaw/zalouser`
-- [Matrix](/channels/matrix) — `@openclaw/matrix`
-- [Nostr](/channels/nostr) — `@openclaw/nostr`
-- [Zalo](/channels/zalo) — `@openclaw/zalo`
-- [Microsoft Teams](/channels/msteams) — `@openclaw/msteams`
-- Google Antigravity OAuth（提供商认证）— 作为 `google-antigravity-auth` 捆绑（默认禁用）
-- Gemini CLI OAuth（提供商认证）— 作为 `google-gemini-cli-auth` 捆绑（默认禁用）
-- Qwen OAuth（提供商认证）— 作为 `qwen-portal-auth` 捆绑（默认禁用）
-- Copilot Proxy（提供商认证）— 本地 VS Code Copilot Proxy 桥接；与内置 `github-copilot` 设备登录不同（捆绑，默认禁用）
+- Memory (Core) - 捆绑的记忆搜索插件（通过 `plugins.slots.memory` 默认启用）
+- Memory (LanceDB) - 捆绑的长期记忆插件（自动召回/捕获；设置 `plugins.slots.memory = "memory-lancedb"`）
+- [Voice Call](/plugins/voice-call) - `@openclaw/voice-call`
+- [Zalo Personal](/plugins/zalouser) - `@openclaw/zalouser`
+- [Matrix](/channels/matrix) - `@openclaw/matrix`
+- [Nostr](/channels/nostr) - `@openclaw/nostr`
+- [Zalo](/channels/zalo) - `@openclaw/zalo`
+- [Microsoft Teams](/channels/msteams) - `@openclaw/msteams`
+- Google Antigravity OAuth（提供商认证）- 作为 `google-antigravity-auth` 捆绑（默认禁用）
+- Gemini CLI OAuth（提供商认证）- 作为 `google-gemini-cli-auth` 捆绑（默认禁用）
+- Qwen OAuth（提供商认证）- 作为 `qwen-portal-auth` 捆绑（默认禁用）
+- Copilot Proxy（提供商认证）- 本地 VS Code Copilot Proxy 桥接；与内置 `github-copilot` 设备登录不同（捆绑，默认禁用）
 
 OpenClaw 插件是通过 jiti 在运行时加载的 **TypeScript 模块**。**配置验证不会执行插件代码**；它使用插件清单和 JSON Schema。参见 [插件清单](/plugins/manifest)。
 

@@ -34,8 +34,8 @@ By default the container is **not** installed as a systemd service, you start it
 
 Optional build-time env vars (set before running `setup-podman.sh`):
 
-- `OPENCLAW_DOCKER_APT_PACKAGES` — install extra apt packages during image build
-- `OPENCLAW_EXTENSIONS` — pre-install extension dependencies (space-separated extension names, e.g. `diagnostics-otel matrix`)
+- `OPENCLAW_DOCKER_APT_PACKAGES` - install extra apt packages during image build
+- `OPENCLAW_EXTENSIONS` - pre-install extension dependencies (space-separated extension names, e.g. `diagnostics-otel matrix`)
 
 **2. Start gateway** (manual, for quick smoke testing):
 
@@ -68,8 +68,8 @@ To add quadlet **after** an initial setup that did not use it, re-run: `./setup-
 
 `setup-podman.sh` creates a dedicated system user `openclaw`:
 
-- **Shell:** `nologin` — no interactive login; reduces attack surface.
-- **Home:** e.g. `/home/openclaw` — holds `~/.openclaw` (config, workspace) and the launch script `run-openclaw-podman.sh`.
+- **Shell:** `nologin` - no interactive login; reduces attack surface.
+- **Home:** e.g. `/home/openclaw` - holds `~/.openclaw` (config, workspace) and the launch script `run-openclaw-podman.sh`.
 - **Rootless Podman:** The user must have a **subuid** and **subgid** range. Many distros assign these automatically when the user is created. If setup prints a warning, add lines to `/etc/subuid` and `/etc/subgid`:
 
   ```text
@@ -106,7 +106,7 @@ To add quadlet **after** an initial setup that did not use it, re-run: `./setup-
 - **Logs:** With quadlet: `sudo journalctl --machine openclaw@ --user -u openclaw.service -f`. With script: `sudo -u openclaw podman logs -f openclaw`
 - **Stop:** With quadlet: `sudo systemctl --machine openclaw@ --user stop openclaw.service`. With script: `sudo -u openclaw podman stop openclaw`
 - **Start again:** With quadlet: `sudo systemctl --machine openclaw@ --user start openclaw.service`. With script: re-run the launch script or `podman start openclaw`
-- **Remove container:** `sudo -u openclaw podman rm -f openclaw` — config and workspace on the host are kept
+- **Remove container:** `sudo -u openclaw podman rm -f openclaw` - config and workspace on the host are kept
 
 ## Troubleshooting
 

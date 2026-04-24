@@ -3,7 +3,7 @@ role: experimental
 summary: |
   Borges-inspired alternative keywords for OpenProse. A "what if" exploration drawing
   from The Library of Babel, Garden of Forking Paths, Circular Ruins, and other works.
-  Not for implementation—just capturing ideas.
+  Not for implementation-just capturing ideas.
 status: draft
 ---
 

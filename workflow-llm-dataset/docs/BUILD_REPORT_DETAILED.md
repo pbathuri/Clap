@@ -1,4 +1,4 @@
-# Detailed Build Report — workflow-llm-dataset (Clap)
+# Detailed Build Report - workflow-llm-dataset (Clap)
 
 **Purpose:** Single detailed report of what was built so far, what was built concurrently across chats, what is achieved, and which prompts were used. This document is extensive and markdown-only.
 
@@ -28,7 +28,7 @@ All of the above stay **local-first**, **sandbox-only**, and **operator-controll
 
 ## 2. What was built so far (by deliverable)
 
-### 2.1 M22B — Local Agent Product Foundry / Mission Control
+### 2.1 M22B - Local Agent Product Foundry / Mission Control
 
 **Objective:** Unify internal development surfaces into one local mission-control layer: product state, benchmark state, pilot/cohort state, proposal/experiment state, incubator state, and a recommended next move.
 
@@ -50,7 +50,7 @@ All of the above stay **local-first**, **sandbox-only**, and **operator-controll
 
 ---
 
-### 2.2 M22C — Team Pilot Workspace + Role-Based Review Lanes
+### 2.2 M22C - Team Pilot Workspace + Role-Based Review Lanes
 
 **Objective:** Local-first team pilot workspace model with role-based review lanes (operator, reviewer, stakeholder-prep, approver) for routing artifacts and keeping review state inspectable.
 
@@ -68,7 +68,7 @@ All of the above stay **local-first**, **sandbox-only**, and **operator-controll
 
 ---
 
-### 2.3 M22D — Local Knowledge Intake Center for User-Owned Inputs
+### 2.3 M22D - Local Knowledge Intake Center for User-Owned Inputs
 
 **Objective:** Local input-ingestion layer: register paths, snapshot into sandbox, parse/extract structure, make intake sets available to workflows, preserve provenance.
 
@@ -86,7 +86,7 @@ All of the above stay **local-first**, **sandbox-only**, and **operator-controll
 
 ---
 
-### 2.4 M22E — Workflow Composer + Template Studio
+### 2.4 M22E - Workflow Composer + Template Studio
 
 **Objective:** Local-first template/composer layer: define reusable workflow templates, control which artifacts are generated and in what order, stay within validated workflows.
 
@@ -103,7 +103,7 @@ All of the above stay **local-first**, **sandbox-only**, and **operator-controll
 
 ---
 
-### 2.5 M23A — Internal Agent Chain Lab (Operator-Controlled)
+### 2.5 M23A - Internal Agent Chain Lab (Operator-Controlled)
 
 **Objective:** Local operator-controlled chain runner: define small step sequences, run them locally, persist intermediate artifacts, compare chain variants, remain operator-started and stoppable.
 
@@ -123,7 +123,7 @@ All of the above stay **local-first**, **sandbox-only**, and **operator-controll
 
 ---
 
-### 2.6 M23B — Edge / Hardware Readiness Layer
+### 2.6 M23B - Edge / Hardware Readiness Layer
 
 **Objective:** Narrow edge-readiness layer: make runtime/dependency assumptions explicit, validate local deployment requirements, define a reproducible local deployment profile, package product state/config for edge-style deployment testing.
 
@@ -189,39 +189,39 @@ This report does **not** have access to other chat transcripts; the above is inf
 
 The user issued the following **task briefs** in this chat (paraphrased; exact wording may vary):
 
-1. **M22B — Local Agent Product Foundry / Mission Control**  
+1. **M22B - Local Agent Product Foundry / Mission Control**  
    - Unify internal development surfaces into one local mission-control layer.  
    - Show product state, benchmark state, pilot/cohort state, proposal/experiment state, incubator state, and recommended next move.  
    - Include: product state summary, evaluation state, development state, workflow incubator state, next-action engine (build, benchmark, cohort-test, promote, hold, rollback).  
    - Surface: e.g. `workflow-dataset mission-control` or a section in the existing console/dashboard.  
    - Constraints: no end-user orchestration, no cloud, no auto-merge, no weakening of local-first/operator-controlled.
 
-2. **M22C — Team Pilot Workspace + Role-Based Review Lanes**  
+2. **M22C - Team Pilot Workspace + Role-Based Review Lanes**  
    - Build local-first team pilot workspace model with role-based review lanes.  
    - Lanes: operator, reviewer, stakeholder-prep, approver.  
    - Support: lane metadata on workspaces/packages, lane-specific queue views, lane-aware package flow, local reports (lane summary, pending by lane).  
    - Surface: e.g. `review lane-status`, `review assign-lane --workspace ... --lane ...`, `review list-lane --lane ...`.  
    - Constraints: no cloud collaboration, no broadening scope, preserve sandbox-only safety.
 
-3. **M22D — Local Knowledge Intake Center for User-Owned Inputs**  
+3. **M22D - Local Knowledge Intake Center for User-Owned Inputs**  
    - Local-first intake: accept user-owned local files/folders, snapshot into sandbox, parse structure, make available to workflows, preserve provenance.  
    - Build: intake registration (register paths, label, classify by type), intake snapshotting (copy/record into sandbox, never mutate originals), intake reports (file inventory, parse summary, workflow associations), workflow compatibility (named intake sets for release demo).  
    - Surface: e.g. `intake add --path ./notes --label sprint_notes`, `intake report --label sprint_notes`, `release demo ... --intake sprint_notes --save-artifact`.  
    - Constraints: no cloud, no silent watch, no auto-ingest.
 
-4. **M22E — Workflow Composer + Template Studio**  
+4. **M22E - Workflow Composer + Template Studio**  
    - Local-first template/composer for ops/reporting: reusable workflow templates, control artifact set and ordering, stay within validated workflows.  
    - Build: template format (workflow id, input expectations, artifacts, ordering, optional wording/style), template registry (list, show, run template), composer behavior (combine artifacts into suite definitions), template-based saving.  
    - Surface: e.g. `templates list`, `templates show --id ops_reporting_core`, `release demo --template ops_reporting_core --save-artifact`.  
    - Constraints: no auto-apply code/files, no broadening to other workflow families, no uncontrolled chains.
 
-5. **M23A — Internal Agent Chain Lab (Operator-Controlled)**  
+5. **M23A - Internal Agent Chain Lab (Operator-Controlled)**  
    - Local operator-controlled chain runner: define small step sequences, run locally, persist step outputs, compare chain variants, operator-started and stoppable.  
    - Build: chain definition (id, ordered steps, expected artifacts, stop conditions), chain runner (run one chain, inspect outputs per step, stop/cancel), chain reports (step outputs, failures, final artifacts, operator notes).  
    - Surface: e.g. `chain list`, `chain run --id ops_reporting_chain_v1`, `chain status --run latest`.  
    - Constraints: no end-user orchestration, no uncontrolled looping, no auto-apply outside sandbox.
 
-6. **M23B — Edge / Hardware Readiness Layer**  
+6. **M23B - Edge / Hardware Readiness Layer**  
    - Local deployment/readiness layer for future appliance/edge packaging.  
    - Build: edge profile (runtime, storage, model, sandbox assumptions), readiness checks (constrained machine, workflows vs components, optional features when unavailable), edge packaging metadata (package configs, workflow availability, local model/runtime deps), operator output (readiness report, missing-dependency report, supported-workflow matrix).  
    - Surface: e.g. `edge readiness`, `edge profile`, `edge package-report`.  

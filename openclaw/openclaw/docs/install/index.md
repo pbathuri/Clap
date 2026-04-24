@@ -1,5 +1,5 @@
 ---
-summary: "Install OpenClaw — installer script, npm/pnpm, from source, Docker, and more"
+summary: "Install OpenClaw - installer script, npm/pnpm, from source, Docker, and more"
 read_when:
   - You need an install method other than the Getting Started quickstart
   - You want to deploy to a cloud platform
@@ -9,7 +9,7 @@ title: "Install"
 
 # Install
 
-Already followed [Getting Started](/start/getting-started)? You're all set — this page is for alternative install methods, platform-specific instructions, and maintenance.
+Already followed [Getting Started](/start/getting-started)? You're all set - this page is for alternative install methods, platform-specific instructions, and maintenance.
 
 ## System requirements
 
@@ -48,7 +48,7 @@ For VPS/cloud hosts, avoid third-party "1-click" marketplace images when possibl
       </Tab>
     </Tabs>
 
-    That's it — the script handles Node detection, installation, and onboarding.
+    That's it - the script handles Node detection, installation, and onboarding.
 
     To skip onboarding and just install the binary:
 
@@ -192,7 +192,7 @@ echo "$PATH"
 
 If `$(npm prefix -g)/bin` (macOS/Linux) or `$(npm prefix -g)` (Windows) is **not** in your `$PATH`, your shell can't find global npm binaries (including `openclaw`).
 
-Fix — add it to your shell startup file (`~/.zshrc` or `~/.bashrc`):
+Fix - add it to your shell startup file (`~/.zshrc` or `~/.bashrc`):
 
 ```bash
 export PATH="$(npm prefix -g)/bin:$PATH"

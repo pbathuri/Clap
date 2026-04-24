@@ -1,11 +1,11 @@
-# M23A — Internal Agent Chain Lab: READ FIRST
+# M23A - Internal Agent Chain Lab: READ FIRST
 
 ## 1. Current repo state for this track
 
 - **Release / ops reporting**: `release/` provides workspace discovery (`reporting_workspaces`), review state (`review_state`), package build (`package_builder`), workspace diff/rerun/timeline (`workspace_rerun_diff`), dashboard data (`dashboard_data`). Workspaces live under `data/local/workspaces/<workflow>/<run_id>/` with `manifest.json` or `workspace_manifest.json`.
 - **Pilot / cohort**: Referenced in CLI (`pilot start-session`, `capture-feedback`, `aggregate`, etc.) and in `dashboard_data` (pilot_dir, cohort reports). Session/feedback/aggregate logic is documented in M21; pilot Python modules may live in parent repo or be optional for this subproject.
 - **Devlab**: `devlab/config.py` (paths), `devlab/experiments.py` (experiment definitions JSON, queue, load/save). Pattern: sandbox root `data/local/devlab`, experiments in `experiments/`, queue in `experiment_queue.json`.
-- **Eval**: `eval/board.py`, `eval/trend.py` — run listing, comparison, scoring. Useful pattern for “compare two runs.”
+- **Eval**: `eval/board.py`, `eval/trend.py` - run listing, comparison, scoring. Useful pattern for “compare two runs.”
 - **Mission control**: `mission_control/state.py` aggregates product/eval/devlab/incubator state from local sources (read-only).
 - **CLI**: `release_group` (verify, run, demo, package, report), `review_group` (list-workspaces, show-workspace, diff-workspaces, approve-artifact, build-package, etc.), `pilot_group`, `dashboard_group`. No chain or sequential-run concept today.
 
@@ -37,14 +37,14 @@
 
 | Module | Path | Responsibility |
 |--------|------|----------------|
-| A — definition + reuse | `chain_lab/definition.py` | Chain schema (id, description, steps, expected inputs/outputs, stop_conditions, workflow_names, variant_label). Load/save under `data/local/chain_lab/chains/`. Reuse map doc in `docs/M23A_CHAIN_LAB_REUSE_MAP.md`. |
-| B — manifest/state | `chain_lab/manifest.py` | Run manifest (chain_id, run_id, variant_label, started_at, ended_at, step_results[], status, failure_summary). Persist under `data/local/chain_lab/runs/<run_id>/`. |
-| C — runner | `chain_lab/runner.py` | Run one chain: execute steps (subprocess CLI or direct API where available), collect step output paths, handle stop/cancel (e.g. stop after first failure), persist manifest and step results. |
-| D — persistence + reporting | `chain_lab/persistence.py` | Per-step: input snapshot, output artifact paths, status, timing. `chain_lab/report.py`: per-step report, final summary, artifact tree. |
-| E — compare/rerun | `chain_lab/compare.py` | Compare two chain runs (by run_id or variant); optional rerun helper. |
+| A - definition + reuse | `chain_lab/definition.py` | Chain schema (id, description, steps, expected inputs/outputs, stop_conditions, workflow_names, variant_label). Load/save under `data/local/chain_lab/chains/`. Reuse map doc in `docs/M23A_CHAIN_LAB_REUSE_MAP.md`. |
+| B - manifest/state | `chain_lab/manifest.py` | Run manifest (chain_id, run_id, variant_label, started_at, ended_at, step_results[], status, failure_summary). Persist under `data/local/chain_lab/runs/<run_id>/`. |
+| C - runner | `chain_lab/runner.py` | Run one chain: execute steps (subprocess CLI or direct API where available), collect step output paths, handle stop/cancel (e.g. stop after first failure), persist manifest and step results. |
+| D - persistence + reporting | `chain_lab/persistence.py` | Per-step: input snapshot, output artifact paths, status, timing. `chain_lab/report.py`: per-step report, final summary, artifact tree. |
+| E - compare/rerun | `chain_lab/compare.py` | Compare two chain runs (by run_id or variant); optional rerun helper. |
 | Config | `chain_lab/config.py` | Sandbox root `data/local/chain_lab`, chains dir, runs dir. |
 | CLI | `cli.py` (one block) | New `chain_group`: `chain define`, `chain run`, `chain report`, `chain compare`, `chain list-runs`. |
-| F — tests/docs | `tests/test_chain_lab.py`, `docs/M23A_CHAIN_LAB_*.md` | Focused tests; sample chain definition, sample report, sample comparison. |
+| F - tests/docs | `tests/test_chain_lab.py`, `docs/M23A_CHAIN_LAB_*.md` | Focused tests; sample chain definition, sample report, sample comparison. |
 
 ## 5. Collision-risk note for shared files (e.g. `cli.py`)
 

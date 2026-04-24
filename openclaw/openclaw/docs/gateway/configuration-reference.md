@@ -11,7 +11,7 @@ read_when:
 
 Every field available in `~/.openclaw/openclaw.json`. For a task-oriented overview, see [Configuration](/gateway/configuration).
 
-Config format is **JSON5** (comments + trailing commas allowed). All fields are optional — OpenClaw uses safe defaults when omitted.
+Config format is **JSON5** (comments + trailing commas allowed). All fields are optional - OpenClaw uses safe defaults when omitted.
 
 ---
 
@@ -990,7 +990,7 @@ Periodic heartbeat runs.
 - `directPolicy`: direct/DM delivery policy. `allow` (default) permits direct-target delivery. `block` suppresses direct-target delivery and emits `reason=dm-blocked`.
 - `lightContext`: when true, heartbeat runs use lightweight bootstrap context and keep only `HEARTBEAT.md` from workspace bootstrap files.
 - Per-agent: set `agents.list[].heartbeat`. When any agent defines `heartbeat`, **only those agents** run heartbeats.
-- Heartbeats run full agent turns — shorter intervals burn more tokens.
+- Heartbeats run full agent turns - shorter intervals burn more tokens.
 
 ### `agents.defaults.compaction`
 
@@ -1204,7 +1204,7 @@ Optional **Docker sandboxing** for the embedded agent. See [Sandboxing](/gateway
 
 **`setupCommand`** runs once after container creation (via `sh -lc`). Needs network egress, writable root, root user.
 
-**Containers default to `network: "none"`** — set to `"bridge"` (or a custom bridge network) if the agent needs outbound access.
+**Containers default to `network: "none"`** - set to `"bridge"` (or a custom bridge network) if the agent needs outbound access.
 `"host"` is blocked. `"container:<id>"` is blocked by default unless you explicitly set
 `sandbox.docker.dangerouslyAllowContainerNamespaceJoin: true` (break-glass).
 

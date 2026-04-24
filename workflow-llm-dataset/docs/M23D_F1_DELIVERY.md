@@ -1,4 +1,4 @@
-# M23D-F1 — Capability Discovery + Approval Registry — Delivery
+# M23D-F1 - Capability Discovery + Approval Registry - Delivery
 
 ## 1. Files modified
 

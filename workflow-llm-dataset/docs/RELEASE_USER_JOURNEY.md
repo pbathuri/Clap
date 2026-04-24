@@ -1,4 +1,4 @@
-# Release user journey — Operations reporting assistant (v1)
+# Release user journey - Operations reporting assistant (v1)
 
 Concrete, minimal steps for the first narrow release. The user should know what to do next at every step.
 
@@ -89,9 +89,9 @@ Concrete, minimal steps for the first narrow release. The user should know what 
 
 For the **first narrow release**, the minimal path is:
 
-1. **Release verify** — `workflow-dataset release verify`
-2. **Release run** — `workflow-dataset release run` (runs ops-focused flow: suggest + trial + optional demo)
-3. **Release demo** — `workflow-dataset release demo` (founder demo script: prompts + outputs to show)
-4. **Release package** — `workflow-dataset release package` (generate + bundle for ops, then report readiness)
+1. **Release verify** - `workflow-dataset release verify`
+2. **Release run** - `workflow-dataset release run` (runs ops-focused flow: suggest + trial + optional demo)
+3. **Release demo** - `workflow-dataset release demo` (founder demo script: prompts + outputs to show)
+4. **Release package** - `workflow-dataset release package` (generate + bundle for ops, then report readiness)
 
 See **docs/FOUNDER_DEMO_FLOW.md** for exact demo steps.

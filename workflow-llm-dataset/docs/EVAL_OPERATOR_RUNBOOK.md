@@ -1,4 +1,4 @@
-# M21X Evaluation Harness + Benchmark Board — Operator Runbook
+# M21X Evaluation Harness + Benchmark Board - Operator Runbook
 
 ## Purpose
 
@@ -10,10 +10,10 @@
 
 ## Paths
 
-- `data/local/eval/` — eval root
-  - `cases/` — case JSON files
-  - `suites/` — suite JSON (list of case_ids) or suite directories
-  - `runs/<run_id>/` — per-run outputs and manifests
+- `data/local/eval/` - eval root
+  - `cases/` - case JSON files
+  - `suites/` - suite JSON (list of case_ids) or suite directories
+  - `runs/<run_id>/` - per-run outputs and manifests
 
 ## Commands
 
@@ -48,9 +48,9 @@ Outputs go to `data/local/eval/runs/<run_id>/` with one dir per case and artifac
 
 Scores are clearly separated in run manifests and reconciliation:
 
-- **heuristic_score** — from `score-run`; 0–1 per dimension, aggregated.
-- **operator_score** — from `operator-rating` per case; overall 1–5 normalized to 0–1.
-- **model_judge_score** — optional; only when model-judge is enabled in config.
+- **heuristic_score** - from `score-run`; 0–1 per dimension, aggregated.
+- **operator_score** - from `operator-rating` per case; overall 1–5 normalized to 0–1.
+- **model_judge_score** - optional; only when model-judge is enabled in config.
 
 ```bash
 # Compute heuristic scores for a run (writes to run_manifest.json per case)
@@ -101,7 +101,7 @@ workflow-dataset eval reconcile <run_id> -o reconciliation.json
   "reasons": [
     "Heuristic score: 0.72 (0–1).",
     "Operator score: 0.75 (0–1).",
-    "Verdict: promote — improvements and no regressions; heuristic (and operator if set) support adoption."
+    "Verdict: promote - improvements and no regressions; heuristic (and operator if set) support adoption."
   ],
   "heuristic_score": 0.72,
   "operator_score": 0.75,
@@ -119,9 +119,9 @@ workflow-dataset eval reconcile <run_id> -o reconciliation.json
 
 Manifest score separation (per case in `run_manifest.json` after `score-run` and operator-rating):
 
-- **scores.artifacts** — heuristic dimensions (e.g. relevance, completeness, blocker_quality) 0–1 per artifact.
-- **scores.operator_rating** — e.g. `{"overall": 4, "notes": "good"}` when set.
-- **scores.model_judge** — present only when model-judge is enabled; keys = artifact names, values = judge scores.
+- **scores.artifacts** - heuristic dimensions (e.g. relevance, completeness, blocker_quality) 0–1 per artifact.
+- **scores.operator_rating** - e.g. `{"overall": 4, "notes": "good"}` when set.
+- **scores.model_judge** - present only when model-judge is enabled; keys = artifact names, values = judge scores.
 
 ### Compare runs and board (E2: latest vs best, thresholds)
 
@@ -219,13 +219,13 @@ Top improvement opportunity: relevance  delta=0.12
 
 ## Case format (JSON)
 
-- `case_id` — unique id
-- `workflow` — weekly_status | status_action_bundle | stakeholder_update_bundle | meeting_brief_bundle | ops_reporting_workspace
-- `task_context` — text context for the run
-- `context_file` — optional path to a file with more context
-- `retrieval` — optional use retrieval
-- `expected_artifact_types` — e.g. ["weekly_status.md"]
-- `rubric_hints` — optional scoring hints
+- `case_id` - unique id
+- `workflow` - weekly_status | status_action_bundle | stakeholder_update_bundle | meeting_brief_bundle | ops_reporting_workspace
+- `task_context` - text context for the run
+- `context_file` - optional path to a file with more context
+- `retrieval` - optional use retrieval
+- `expected_artifact_types` - e.g. ["weekly_status.md"]
+- `rubric_hints` - optional scoring hints
 
 ## Scoring (M21X)
 
@@ -239,10 +239,10 @@ Per-workflow floors (relevance, completeness, specificity, stakeholder_readabili
 
 ## Recommendation (E2: threshold-aware)
 
-- **promote** — thresholds passed; improvements, no regressions
-- **hold** — no clear change, or thresholds not passed
-- **refine** — mixed (some regressions, some improvements)
-- **revert** — regressions only, or thresholds failed with regressions
+- **promote** - thresholds passed; improvements, no regressions
+- **hold** - no clear change, or thresholds not passed
+- **refine** - mixed (some regressions, some improvements)
+- **revert** - regressions only, or thresholds failed with regressions
 
 ## Safety
 

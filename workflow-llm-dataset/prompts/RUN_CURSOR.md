@@ -41,7 +41,7 @@ Then inspect:
 
 ## Execution sequence
 
-### Phase 1 — ingest
+### Phase 1 - ingest
 - ingest ISIC hierarchy
 - ingest NAICS hierarchy
 - ingest SOC hierarchy
@@ -51,19 +51,19 @@ Then inspect:
 - ingest private business documents if present
 - register all sources in Source_Register
 
-### Phase 2 — normalize
+### Phase 2 - normalize
 - normalize titles, IDs, dates, versions
 - build canonical industry table
 - build canonical occupation table
 - preserve original codes and source-system identifiers
 - generate concordance tables
 
-### Phase 3 — map
+### Phase 3 - map
 - map industries to occupations using official matrices and crosswalks first
 - use reviewed inference only where no official mapping exists
 - assign mapping_basis and confidence_score
 
-### Phase 4 — enrich
+### Phase 4 - enrich
 Attach, where available:
 - task statements
 - detailed work activities
@@ -74,7 +74,7 @@ Attach, where available:
 - physicality and environment markers
 - document and system markers
 
-### Phase 5 — workflow inference
+### Phase 5 - workflow inference
 For each occupation:
 - cluster evidence into workflow units
 - produce ordered workflow steps
@@ -85,14 +85,14 @@ For each occupation:
 - justify the classification
 - mark all non-explicit workflow steps as inferred when appropriate
 
-### Phase 6 — QA
+### Phase 6 - QA
 - run taxonomy checks
 - run duplicate checks
 - run missing provenance checks
 - run low-confidence review checks
 - produce QA_Issues and Ambiguities_Review outputs
 
-### Phase 7 — export
+### Phase 7 - export
 Create:
 - outputs/processed/*.parquet
 - outputs/csv/*.csv

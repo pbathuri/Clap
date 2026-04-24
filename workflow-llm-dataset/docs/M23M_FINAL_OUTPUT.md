@@ -1,4 +1,4 @@
-# M23M — Operator Correction Loop + Explicit Learning Updates — Final Output
+# M23M - Operator Correction Loop + Explicit Learning Updates - Final Output
 
 ## 1. Files modified
 
@@ -16,13 +16,13 @@
 | `src/workflow_dataset/corrections/config.py` | get_corrections_root, get_events_dir, get_updates_dir, get_proposed_dir (data/local/corrections). |
 | `src/workflow_dataset/corrections/schema.py` | CorrectionEvent dataclass; SOURCE_TYPES, CORRECTION_CATEGORIES, OPERATOR_ACTIONS, SEVERITY_LEVELS; validate_category_for_source, is_eligible_for_memory_update. |
 | `src/workflow_dataset/corrections/store.py` | save_correction, get_correction, list_corrections (events as JSON). |
-| `src/workflow_dataset/corrections/capture.py` | add_correction(...) — validate, set eligible_for_memory_update, save. |
+| `src/workflow_dataset/corrections/capture.py` | add_correction(...) - validate, set eligible_for_memory_update, save. |
 | `src/workflow_dataset/corrections/rules.py` | LEARNING_RULES (category → target_type), BLOCKED_TARGETS, get_targets_for_category. |
-| `src/workflow_dataset/corrections/propose.py` | ProposedUpdate; propose_updates(repo_root) — scan eligible corrections, build proposed updates. |
+| `src/workflow_dataset/corrections/propose.py` | ProposedUpdate; propose_updates(repo_root) - scan eligible corrections, build proposed updates. |
 | `src/workflow_dataset/corrections/updates.py` | UpdateRecord; save_proposed, load_proposed, save_update_record, load_update_record; preview_update, apply_update, revert_update; list_proposed_updates. |
 | `src/workflow_dataset/corrections/history.py` | list_applied_updates, list_reverted_updates. |
 | `src/workflow_dataset/corrections/report.py` | corrections_report, format_corrections_report. |
-| `src/workflow_dataset/corrections/eval_bridge.py` | advisory_review_for_corrections — review_trust / review_benchmark / review_trigger_policy from repeated corrections. |
+| `src/workflow_dataset/corrections/eval_bridge.py` | advisory_review_for_corrections - review_trust / review_benchmark / review_trigger_policy from repeated corrections. |
 | `docs/M23M_READ_FIRST.md` | Pre-coding analysis. |
 | `docs/M23M_CORRECTION_OPERATOR.md` | Operator guide. |
 | `docs/M23M_FINAL_OUTPUT.md` | This file. |

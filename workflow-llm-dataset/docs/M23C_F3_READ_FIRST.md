@@ -1,4 +1,4 @@
-# M23C-F3 — Browser/URL + App-Launch Simulation Adapter — Read First
+# M23C-F3 - Browser/URL + App-Launch Simulation Adapter - Read First
 
 ## 1. Current adapter layer (post F1/F2)
 

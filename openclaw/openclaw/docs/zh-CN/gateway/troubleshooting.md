@@ -462,7 +462,7 @@ OpenClaw 在内存中保留对话历史。
 
 ## 常见故障排除
 
-### "Gateway won't start — configuration invalid"
+### "Gateway won't start - configuration invalid"
 
 当配置包含未知键、格式错误的值或无效类型时，OpenClaw 现在拒绝启动。
 这是为了安全而故意设计的。
@@ -480,14 +480,14 @@ openclaw doctor --fix
 - `openclaw doctor --fix` 应用迁移/修复并重写配置。
 - 诊断命令如 `openclaw logs`、`openclaw health`、`openclaw status`、`openclaw gateway status` 和 `openclaw gateway probe` 即使配置无效也能运行。
 
-### "All models failed" — 我应该首先检查什么？
+### "All models failed" - 我应该首先检查什么？
 
 - **凭证**存在于正在尝试的提供商（认证配置文件 + 环境变量）。
 - **模型路由**：确认 `agents.defaults.model.primary` 和回退是你可以访问的模型。
 - `/tmp/openclaw/…` 中的 **Gateway 网关日志**以获取确切的提供商错误。
 - **模型状态**：使用 `/model status`（聊天）或 `openclaw models status`（CLI）。
 
-### 我在我的个人 WhatsApp 号码上运行 — 为什么自聊天很奇怪？
+### 我在我的个人 WhatsApp 号码上运行 - 为什么自聊天很奇怪？
 
 启用自聊天模式并将你自己的号码加入白名单：
 
@@ -513,7 +513,7 @@ openclaw doctor --fix
 openclaw channels login
 ```
 
-### `main` 上的构建错误 — 标准修复路径是什么？
+### `main` 上的构建错误 - 标准修复路径是什么？
 
 1. `git pull origin main && pnpm install`
 2. `openclaw doctor`
@@ -741,7 +741,7 @@ openclaw gateway restart           # 或：openclaw gateway
 
 ---
 
-_"你试过关掉再开吗？"_ — 每个 IT 人员都这么说
+_"你试过关掉再开吗？"_ - 每个 IT 人员都这么说
 
 🦞🔧
 

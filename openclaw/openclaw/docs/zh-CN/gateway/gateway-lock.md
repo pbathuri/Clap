@@ -27,7 +27,7 @@ x-i18n:
 
 - Gateway 网关在启动时立即使用独占 TCP 监听器绑定 WebSocket 监听器（默认 `ws://127.0.0.1:18789`）。
 - 如果绑定因 `EADDRINUSE` 失败，启动会抛出 `GatewayLockError("another gateway instance is already listening on ws://127.0.0.1:<port>")`。
-- 操作系统在任何进程退出时（包括崩溃和 SIGKILL）自动释放监听器——不需要单独的锁文件或清理步骤。
+- 操作系统在任何进程退出时（包括崩溃和 SIGKILL）自动释放监听器--不需要单独的锁文件或清理步骤。
 - 关闭时，Gateway 网关关闭 WebSocket 服务器和底层 HTTP 服务器以及时释放端口。
 
 ## 错误表面

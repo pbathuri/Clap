@@ -5,7 +5,7 @@
 Always use sources in this order.
 Higher-tier sources override lower-tier sources for taxonomy, occupation grounding, and task grounding.
 
-### Tier 1 — authoritative structured sources
+### Tier 1 - authoritative structured sources
 Use these first and anchor the dataset to them.
 - UNSD / ISIC hierarchy and explanatory notes
 - U.S. Census / NAICS structure and concordances
@@ -14,7 +14,7 @@ Use these first and anchor the dataset to them.
 - BLS Employment Projections, OEWS, Occupational Outlook Handbook, Industry-Occupation Matrix, skills-related releases
 - ESCO downloadable occupation-skill relationships
 
-### Tier 2 — authoritative operational context sources
+### Tier 2 - authoritative operational context sources
 Use these for workflow enrichment when structured taxonomy/task sources are insufficient.
 - government manuals
 - regulatory guidance
@@ -23,7 +23,7 @@ Use these for workflow enrichment when structured taxonomy/task sources are insu
 - official training material
 - official vendor documentation for tools and software used in work
 
-### Tier 3 — enrichment sources only
+### Tier 3 - enrichment sources only
 Use these only after Tier 1 and Tier 2 are exhausted or to add business realism.
 - high-quality employer job descriptions
 - company SOPs
@@ -33,7 +33,7 @@ Use these only after Tier 1 and Tier 2 are exhausted or to add business realism.
 - industry case studies
 - high-quality public workflow examples
 
-### Tier 4 — weak sources, use sparingly
+### Tier 4 - weak sources, use sparingly
 Use only if no better evidence exists, and never as the sole basis for canonical task definitions.
 - blogs
 - SEO articles

@@ -14,7 +14,7 @@ x-i18n:
 
 # 远程 OpenClaw（macOS ⇄ 远程主机）
 
-此流程让 macOS 应用作为运行在另一台主机（桌面/服务器）上的 OpenClaw Gateway 网关的完整远程控制。这是应用的 **Remote over SSH**（远程运行）功能。所有功能——健康检查、语音唤醒转发和 Web Chat——都重用来自 _Settings → General_ 的相同远程 SSH 配置。
+此流程让 macOS 应用作为运行在另一台主机（桌面/服务器）上的 OpenClaw Gateway 网关的完整远程控制。这是应用的 **Remote over SSH**（远程运行）功能。所有功能--健康检查、语音唤醒转发和 Web Chat--都重用来自 _Settings → General_ 的相同远程 SSH 配置。
 
 ## 模式
 

@@ -201,8 +201,8 @@ htop
 
 所有状态存储在：
 
-- `~/.openclaw/` — 配置、凭证、会话数据
-- `~/.openclaw/workspace/` — 工作区（SOUL.md、记忆等）
+- `~/.openclaw/` - 配置、凭证、会话数据
+- `~/.openclaw/workspace/` - 工作区（SOUL.md、记忆等）
 
 这些在重启后保留。定期备份：
 
@@ -214,7 +214,7 @@ tar -czvf openclaw-backup.tar.gz ~/.openclaw ~/.openclaw/workspace
 
 ## Oracle Cloud 免费替代方案
 
-Oracle Cloud 提供 **Always Free** ARM 实例，比这里任何付费选项都强大得多 — 每月 $0。
+Oracle Cloud 提供 **Always Free** ARM 实例，比这里任何付费选项都强大得多 - 每月 $0。
 
 | 你将获得       | 配置             |
 | -------------- | ---------------- |
@@ -226,7 +226,7 @@ Oracle Cloud 提供 **Always Free** ARM 实例，比这里任何付费选项都�
 **注意事项：**
 
 - 注册可能有点麻烦（失败了就重试）
-- ARM 架构 — 大多数东西都能工作，但有些二进制文件需要 ARM 构建
+- ARM 架构 - 大多数东西都能工作，但有些二进制文件需要 ARM 构建
 
 完整设置指南请参阅 [Oracle Cloud](/platforms/oracle)。关于注册技巧和注册流程故障排除，请参阅此[社区指南](https://gist.github.com/rssnyder/51e3cfedd730e7dd5f4a816143b25dbd)。
 
@@ -263,7 +263,7 @@ free -h
 
 ## 另请参阅
 
-- [Hetzner 指南](/install/hetzner) — 更便宜、更强大
-- [Docker 安装](/install/docker) — 容器化设置
-- [Tailscale](/gateway/tailscale) — 安全远程访问
-- [配置](/gateway/configuration) — 完整配置参考
+- [Hetzner 指南](/install/hetzner) - 更便宜、更强大
+- [Docker 安装](/install/docker) - 容器化设置
+- [Tailscale](/gateway/tailscale) - 安全远程访问
+- [配置](/gateway/configuration) - 完整配置参考

@@ -263,26 +263,26 @@ Note: plugins can add additional top-level commands (for example `openclaw voice
 
 ## Security
 
-- `openclaw security audit` — audit config + local state for common security foot-guns.
-- `openclaw security audit --deep` — best-effort live Gateway probe.
-- `openclaw security audit --fix` — tighten safe defaults and chmod state/config.
+- `openclaw security audit` - audit config + local state for common security foot-guns.
+- `openclaw security audit --deep` - best-effort live Gateway probe.
+- `openclaw security audit --fix` - tighten safe defaults and chmod state/config.
 
 ## Secrets
 
-- `openclaw secrets reload` — re-resolve refs and atomically swap the runtime snapshot.
-- `openclaw secrets audit` — scan for plaintext residues, unresolved refs, and precedence drift.
-- `openclaw secrets configure` — interactive helper for provider setup + SecretRef mapping + preflight/apply.
-- `openclaw secrets apply --from <plan.json>` — apply a previously generated plan (`--dry-run` supported).
+- `openclaw secrets reload` - re-resolve refs and atomically swap the runtime snapshot.
+- `openclaw secrets audit` - scan for plaintext residues, unresolved refs, and precedence drift.
+- `openclaw secrets configure` - interactive helper for provider setup + SecretRef mapping + preflight/apply.
+- `openclaw secrets apply --from <plan.json>` - apply a previously generated plan (`--dry-run` supported).
 
 ## Plugins
 
 Manage extensions and their config:
 
-- `openclaw plugins list` — discover plugins (use `--json` for machine output).
-- `openclaw plugins info <id>` — show details for a plugin.
-- `openclaw plugins install <path|.tgz|npm-spec>` — install a plugin (or add a plugin path to `plugins.load.paths`).
-- `openclaw plugins enable <id>` / `disable <id>` — toggle `plugins.entries.<id>.enabled`.
-- `openclaw plugins doctor` — report plugin load errors.
+- `openclaw plugins list` - discover plugins (use `--json` for machine output).
+- `openclaw plugins info <id>` - show details for a plugin.
+- `openclaw plugins install <path|.tgz|npm-spec>` - install a plugin (or add a plugin path to `plugins.load.paths`).
+- `openclaw plugins enable <id>` / `disable <id>` - toggle `plugins.entries.<id>.enabled`.
+- `openclaw plugins doctor` - report plugin load errors.
 
 Most plugin changes require a gateway restart. See [/plugin](/tools/plugin).
 
@@ -290,9 +290,9 @@ Most plugin changes require a gateway restart. See [/plugin](/tools/plugin).
 
 Vector search over `MEMORY.md` + `memory/*.md`:
 
-- `openclaw memory status` — show index stats.
-- `openclaw memory index` — reindex memory files.
-- `openclaw memory search "<query>"` (or `--query "<query>"`) — semantic search over memory.
+- `openclaw memory status` - show index stats.
+- `openclaw memory index` - reindex memory files.
+- `openclaw memory search "<query>"` (or `--query "<query>"`) - semantic search over memory.
 
 ## Chat slash commands
 

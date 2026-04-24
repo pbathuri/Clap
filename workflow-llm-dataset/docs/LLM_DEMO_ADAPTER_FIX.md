@@ -8,7 +8,7 @@
 | `src/workflow_dataset/cli.py` | **Demo:** Resolve adapter vs base model explicitly. In adapter mode use `backend.run_inference(base_model, prompt, adapter_path=adapter_path_val)` so the adapter dir is never passed as `--model`. In base-model mode use `backend.run_inference(base_model, prompt)`. Print interpreter, mode, base model, adapter (or “(none)”). On inference error print “Inference failed.” plus a concise message (truncated to 400 chars), no raw traceback. Require base_model in config when in adapter mode. |
 | `tests/test_llm_cli.py` | Added `test_llm_demo_base_model_mode_prints_base_and_adapter_none`, `test_llm_demo_adapter_mode_requires_base_model`, `test_llm_demo_adapter_mode_prints_base_and_adapter_path` (mock backend to assert adapter is passed as `adapter_path`, not as model), `test_llm_demo_inference_error_graceful`. Updated `test_llm_demo_reports_mode` to allow “base model” / “Inference failed”. |
 
-## 2. Example demo output — base-model mode
+## 2. Example demo output - base-model mode
 
 ```
 interpreter: /path/to/.venv/bin/python3
@@ -19,7 +19,7 @@ Model output:
 ...
 ```
 
-## 3. Example demo output — adapter-loaded mode
+## 3. Example demo output - adapter-loaded mode
 
 ```
 interpreter: /path/to/.venv/bin/python3
@@ -54,12 +54,12 @@ pytest tests/test_llm_cli.py tests/test_llm_run_summary.py -v
 
 New/updated demo tests:
 
-- `test_llm_demo_reports_mode` — output includes mode / base model / interpreter or error.
-- `test_llm_demo_base_model_mode_prints_base_and_adapter_none` — base-model mode prints base model and adapter (none).
-- `test_llm_demo_adapter_mode_requires_base_model` — with `--adapter` but no base_model in config, exit 1 and clear message.
-- `test_llm_demo_adapter_mode_prints_base_and_adapter_path` — with `--adapter`, backend is called with base model and `adapter_path` (adapter dir not passed as model).
-- `test_llm_demo_inference_error_graceful` — on inference error, output has “Inference failed” and no raw traceback.
-- `test_llm_demo_exits_nonzero_when_no_adapter_no_base_model` — unchanged; still checks exit 1 when neither adapter nor base_model.
+- `test_llm_demo_reports_mode` - output includes mode / base model / interpreter or error.
+- `test_llm_demo_base_model_mode_prints_base_and_adapter_none` - base-model mode prints base model and adapter (none).
+- `test_llm_demo_adapter_mode_requires_base_model` - with `--adapter` but no base_model in config, exit 1 and clear message.
+- `test_llm_demo_adapter_mode_prints_base_and_adapter_path` - with `--adapter`, backend is called with base model and `adapter_path` (adapter dir not passed as model).
+- `test_llm_demo_inference_error_graceful` - on inference error, output has “Inference failed” and no raw traceback.
+- `test_llm_demo_exits_nonzero_when_no_adapter_no_base_model` - unchanged; still checks exit 1 when neither adapter nor base_model.
 
 ## 6. Remaining limitations
 

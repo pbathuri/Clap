@@ -1,4 +1,4 @@
-# M22E-F6 — Template Runs in Cohort/Workspace Flows + Reporting Hooks: READ FIRST
+# M22E-F6 - Template Runs in Cohort/Workspace Flows + Reporting Hooks: READ FIRST
 
 ## 1. Current state
 
@@ -19,7 +19,7 @@
 3. **Dashboard**: In `get_dashboard_data`, add `template_id` (and optionally `template_version`) to each recent_workspaces entry from inv.
 4. **Package**: In `build_package`, copy `template_id`, `template_version` from workspace manifest into package_manifest when present.
 5. **Pilot**: Add `record_workflow_artifact(workflow_type, dir_path, pilot_dir, template_id=None)` in session_log; store artifact path in session and template_id in extra. Surface template in session summaries/cohort when present.
-6. **Usage**: `workflow-dataset templates usage` — scan workspaces (and optionally sessions), aggregate by template_id, print most-used and recent template-driven runs.
+6. **Usage**: `workflow-dataset templates usage` - scan workspaces (and optionally sessions), aggregate by template_id, print most-used and recent template-driven runs.
 
 ## 4. What not to change
 

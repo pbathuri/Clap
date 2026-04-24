@@ -95,16 +95,16 @@ imsg send --to "+14155551212" --text "Hi" --service sms
 
 ## Service Options
 
-- `--service imessage` — Force iMessage (requires recipient has iMessage)
-- `--service sms` — Force SMS (green bubble)
-- `--service auto` — Let Messages.app decide (default)
+- `--service imessage` - Force iMessage (requires recipient has iMessage)
+- `--service sms` - Force SMS (green bubble)
+- `--service auto` - Let Messages.app decide (default)
 
 ## Safety Rules
 
 1. **Always confirm recipient and message content** before sending
 2. **Never send to unknown numbers** without explicit user approval
-3. **Be careful with attachments** — confirm file path exists
-4. **Rate limit yourself** — don't spam
+3. **Be careful with attachments** - confirm file path exists
+4. **Rate limit yourself** - don't spam
 
 ## Example Workflow
 

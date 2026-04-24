@@ -1,4 +1,4 @@
-# M23N — First-Run Onboarding + Capability / Approval Bootstrap
+# M23N - First-Run Onboarding + Capability / Approval Bootstrap
 
 Local-first onboarding wizard and bootstrap layer. No hidden scans, no auto-grant.
 

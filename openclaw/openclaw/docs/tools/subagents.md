@@ -184,7 +184,7 @@ Each level only sees announces from its direct children.
 
 - **Depth 1 (orchestrator, when `maxSpawnDepth >= 2`)**: Gets `sessions_spawn`, `subagents`, `sessions_list`, `sessions_history` so it can manage its children. Other session/system tools remain denied.
 - **Depth 1 (leaf, when `maxSpawnDepth == 1`)**: No session tools (current default behavior).
-- **Depth 2 (leaf worker)**: No session tools — `sessions_spawn` is always denied at depth 2. Cannot spawn further children.
+- **Depth 2 (leaf worker)**: No session tools - `sessions_spawn` is always denied at depth 2. Cannot spawn further children.
 
 ### Per-agent spawn limit
 

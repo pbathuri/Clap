@@ -46,7 +46,7 @@ You will need to create a new application with a bot, add the bot to your server
     Scroll back up on the **Bot** page and click **Reset Token**.
 
     <Note>
-    Despite the name, this generates your first token — nothing is being "reset."
+    Despite the name, this generates your first token - nothing is being "reset."
     </Note>
 
     Copy the token and save it somewhere. This is your **Bot Token** and you will need it shortly.
@@ -81,7 +81,7 @@ You will need to create a new application with a bot, add the bot to your server
     2. Right-click your **server icon** in the sidebar → **Copy Server ID**
     3. Right-click your **own avatar** → **Copy User ID**
 
-    Save your **Server ID** and **User ID** alongside your Bot Token — you'll send all three to OpenClaw in the next step.
+    Save your **Server ID** and **User ID** alongside your Bot Token - you'll send all three to OpenClaw in the next step.
 
   </Step>
 
@@ -249,7 +249,7 @@ Once DMs are working, you can set up your Discord server as a full workspace whe
   </Step>
 </Steps>
 
-Now create some channels on your Discord server and start chatting. Your agent can see the channel name, and each channel gets its own isolated session — so you can set up `#coding`, `#home`, `#research`, or whatever fits your workflow.
+Now create some channels on your Discord server and start chatting. Your agent can see the channel name, and each channel gets its own isolated session - so you can set up `#coding`, `#home`, `#research`, or whatever fits your workflow.
 
 ## Runtime model
 

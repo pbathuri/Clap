@@ -32,8 +32,8 @@ These files live under the workspace (`agents.defaults.workspace`, default
 
 OpenClaw exposes two agent-facing tools for these Markdown files:
 
-- `memory_search` — semantic recall over indexed snippets.
-- `memory_get` — targeted read of a specific Markdown file/line range.
+- `memory_search` - semantic recall over indexed snippets.
+- `memory_get` - targeted read of a specific Markdown file/line range.
 
 `memory_get` now **degrades gracefully when a file doesn't exist** (for example,
 today's daily log before the first write). Both the builtin manager and the QMD
@@ -374,8 +374,8 @@ agents: {
 
 Tools:
 
-- `memory_search` — returns snippets with file + line ranges.
-- `memory_get` — read memory file content by path.
+- `memory_search` - returns snippets with file + line ranges.
+- `memory_get` - read memory file content by path.
 
 Local mode:
 
@@ -481,7 +481,7 @@ The `lambda` parameter controls the trade-off:
 - `lambda = 0.0` → maximum diversity (ignores relevance)
 - Default: `0.7` (balanced, slight relevance bias)
 
-**Example — query: "home network setup"**
+**Example - query: "home network setup"**
 
 Given these memory files:
 
@@ -492,7 +492,7 @@ memory/2026-02-05.md  → "Set up AdGuard DNS on 192.168.10.2"
 memory/network.md     → "Router: Omada ER605, AdGuard: 192.168.10.2, VLAN 10: IoT"
 ```
 
-Without MMR — top 3 results:
+Without MMR - top 3 results:
 
 ```
 1. memory/2026-02-10.md  (score: 0.92)  ← router + VLAN
@@ -500,7 +500,7 @@ Without MMR — top 3 results:
 3. memory/network.md     (score: 0.85)  ← reference doc
 ```
 
-With MMR (λ=0.7) — top 3 results:
+With MMR (λ=0.7) - top 3 results:
 
 ```
 1. memory/2026-02-10.md  (score: 0.92)  ← router + VLAN
@@ -544,7 +544,7 @@ With the default half-life of 30 days:
 **Dated daily files** (`memory/YYYY-MM-DD.md`) use the date extracted from the filename.
 Other sources (e.g., session transcripts) fall back to file modification time (`mtime`).
 
-**Example — query: "what's Rod's work schedule?"**
+**Example - query: "what's Rod's work schedule?"**
 
 Given these memory files (today is Feb 10):
 
@@ -609,9 +609,9 @@ agents: {
 
 You can enable either feature independently:
 
-- **MMR only** — useful when you have many similar notes but age doesn't matter.
-- **Temporal decay only** — useful when recency matters but your results are already diverse.
-- **Both** — recommended for agents with large, long-running daily note histories.
+- **MMR only** - useful when you have many similar notes but age doesn't matter.
+- **Temporal decay only** - useful when recency matters but your results are already diverse.
+- **Both** - recommended for agents with large, long-running daily note histories.
 
 ### Embedding cache
 

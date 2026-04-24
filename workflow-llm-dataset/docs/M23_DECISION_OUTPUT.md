@@ -1,10 +1,10 @@
-# M23 — Decision output: First real role pack implementation
+# M23 - Decision output: First real role pack implementation
 
 ## 1. Is the first real role pack installable and useful?
 
 **Yes.** The **ops_reporting_pack** is a real, installable pack:
 
-- **Manifest:** `packs/ops_reporting_pack/manifest.json` — valid against schema and safety policy; declares role=ops, templates (ops_summarize_reporting, ops_scaffold_status, ops_next_steps), retrieval_profile (top_k: 5), output_adapters (ops_handoff).
+- **Manifest:** `packs/ops_reporting_pack/manifest.json` - valid against schema and safety policy; declares role=ops, templates (ops_summarize_reporting, ops_scaffold_status, ops_next_steps), retrieval_profile (top_k: 5), output_adapters (ops_handoff).
 - **Install:** `workflow-dataset packs install packs/ops_reporting_pack/manifest.json` installs to `data/local/packs/` and updates installed state.
 - **Activate:** `workflow-dataset packs activate ops_reporting_pack` sets active role so `release run` (without `--role`) uses the pack’s templates and retrieval.
 - **Usefulness:** When the pack is active, release run runs the same three ops trials but driven by the pack’s templates and retrieval_top_k; pilot verify and latest-report show **Active pack(s): ops_reporting_pack**. The pack is a single, inspectable unit that materially affects which tasks run and which retrieval profile is used.

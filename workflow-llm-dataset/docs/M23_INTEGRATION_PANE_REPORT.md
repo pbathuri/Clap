@@ -1,4 +1,4 @@
-# M23 Integration Pane Report — M23T + M23U + M23V
+# M23 Integration Pane Report - M23T + M23U + M23V
 
 ## 1. Merge steps executed
 
@@ -67,15 +67,15 @@ High-level groups and representative commands (all under `workflow-dataset`):
 
 | Group / command | Source | Purpose |
 |-----------------|--------|--------|
-| `console` | — | Launch operator TUI |
-| `dashboard` (workspace, package, cohort, apply-plan, action) | — | Command center |
-| `llm` (verify, prepare-corpus, build-sft, train, eval, …) | — | LLM training/eval |
+| `console` | - | Launch operator TUI |
+| `dashboard` (workspace, package, cohort, apply-plan, action) | - | Command center |
+| `llm` (verify, prepare-corpus, build-sft, train, eval, …) | - | LLM training/eval |
 | `profile bootstrap | show | operator-summary` | M23U | User/bootstrap profile |
-| `setup init | run | status | summary | build-corpus | …` | — / M23U | Setup/onboarding |
+| `setup init | run | status | summary | build-corpus | …` | - / M23U | Setup/onboarding |
 | `onboard status | bootstrap | approve` | M23U | Onboarding flow |
-| `assist suggest | draft | materialize | apply | …` | — | Assistive flows |
-| `trials` / `trial` | — | Trials |
-| `release` / `intake` / `templates` / `edge` / `adapters` | — | Release/intake/edge |
+| `assist suggest | draft | materialize | apply | …` | - | Assistive flows |
+| `trials` / `trial` | - | Trials |
+| `release` / `intake` / `templates` / `edge` / `adapters` | - | Release/intake/edge |
 | `jobs` (list, show, run, report, diagnostics, specialization-show) | M23J / M23U | Job packs + specialization |
 | `copilot recommend | plan | run | reminders | explain-recommendation | report` | M23K / M23V | Copilot |
 | `inbox` (default, explain, compare, snapshot) | M23V / M23O | Daily inbox |

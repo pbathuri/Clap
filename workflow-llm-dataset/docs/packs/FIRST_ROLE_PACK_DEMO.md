@@ -54,7 +54,7 @@ workflow-dataset pilot verify
 workflow-dataset pilot latest-report
 ```
 
-Open `data/local/pilot/pilot_readiness_report.md` — it should list **Active pack(s): ops_reporting_pack** when the pack is installed and scope is ops.
+Open `data/local/pilot/pilot_readiness_report.md` - it should list **Active pack(s): ops_reporting_pack** when the pack is installed and scope is ops.
 
 ## 6. Bundle and adoption (optional)
 

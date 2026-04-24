@@ -1,4 +1,4 @@
-# M23J — Personal Job Packs + Specialization Memory — Final Output
+# M23J - Personal Job Packs + Specialization Memory - Final Output
 
 ## 1. Files modified
 

@@ -39,7 +39,7 @@ Oracle 的免费层非常适合 OpenClaw（特别是如果你已经有 OCI 账�
 
 ## 先决条件
 
-- Oracle Cloud 账户（[注册](https://www.oracle.com/cloud/free/)）——如果遇到问题请参阅[社区注册指南](https://gist.github.com/rssnyder/51e3cfedd730e7dd5f4a816143b25dbd)
+- Oracle Cloud 账户（[注册](https://www.oracle.com/cloud/free/)）--如果遇到问题请参阅[社区注册指南](https://gist.github.com/rssnyder/51e3cfedd730e7dd5f4a816143b25dbd)
 - Tailscale 账户（在 [tailscale.com](https://tailscale.com) 免费）
 - 约 30 分钟
 
@@ -93,7 +93,7 @@ curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up --ssh --hostname=openclaw
 ```
 
-这会启用 Tailscale SSH，所以你可以从 tailnet 上的任何设备通过 `ssh openclaw` 连接——不需要公网 IP。
+这会启用 Tailscale SSH，所以你可以从 tailnet 上的任何设备通过 `ssh openclaw` 连接--不需要公网 IP。
 
 验证：
 
@@ -151,7 +151,7 @@ curl http://localhost:18789
 
 ## 8) 锁定 VCN 安全
 
-现在一切正常工作了，锁定 VCN 以阻止除 Tailscale 之外的所有流量。OCI 的虚拟云网络充当网络边缘的防火墙——流量在到达你的实例之前就被阻止。
+现在一切正常工作了，锁定 VCN 以阻止除 Tailscale 之外的所有流量。OCI 的虚拟云网络充当网络边缘的防火墙--流量在到达你的实例之前就被阻止。
 
 1. 在 OCI Console 中转到 **Networking → Virtual Cloud Networks**
 2. 点击你的 VCN → **Security Lists** → Default Security List
@@ -185,7 +185,7 @@ https://openclaw.<tailnet-name>.ts.net/
 
 通过锁定 VCN（仅开放 UDP 41641）并将 Gateway 网关绑定到 loopback，你获得了强大的纵深防御：公共流量在网络边缘被阻止，管理访问通过你的 tailnet 进行。
 
-此设置通常消除了纯粹为了阻止互联网范围的 SSH 暴力破解而需要额外的基于主机的防火墙规则的*需求*——但你仍应保持操作系统更新，运行 `openclaw security audit`，并验证你没有意外地在公共接口上监听。
+此设置通常消除了纯粹为了阻止互联网范围的 SSH 暴力破解而需要额外的基于主机的防火墙规则的*需求*--但你仍应保持操作系统更新，运行 `openclaw security audit`，并验证你没有意外地在公共接口上监听。
 
 ### 已经受保护的内容
 
@@ -290,8 +290,8 @@ uname -m  # 应该显示 aarch64
 
 所有状态存储在：
 
-- `~/.openclaw/` — 配置、凭证、会话数据
-- `~/.openclaw/workspace/` — 工作区（SOUL.md、记忆、产物）
+- `~/.openclaw/` - 配置、凭证、会话数据
+- `~/.openclaw/workspace/` - 工作区（SOUL.md、记忆、产物）
 
 定期备份：
 
@@ -303,8 +303,8 @@ tar -czvf openclaw-backup.tar.gz ~/.openclaw ~/.openclaw/workspace
 
 ## 另请参阅
 
-- [Gateway 网关远程访问](/gateway/remote) — 其他远程访问模式
-- [Tailscale 集成](/gateway/tailscale) — 完整的 Tailscale 文档
-- [Gateway 网关配置](/gateway/configuration) — 所有配置选项
-- [DigitalOcean 指南](/platforms/digitalocean) — 如果你想要付费 + 更容易注册
-- [Hetzner 指南](/install/hetzner) — 基于 Docker 的替代方案
+- [Gateway 网关远程访问](/gateway/remote) - 其他远程访问模式
+- [Tailscale 集成](/gateway/tailscale) - 完整的 Tailscale 文档
+- [Gateway 网关配置](/gateway/configuration) - 所有配置选项
+- [DigitalOcean 指南](/platforms/digitalocean) - 如果你想要付费 + 更容易注册
+- [Hetzner 指南](/install/hetzner) - 基于 Docker 的替代方案

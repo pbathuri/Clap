@@ -1,4 +1,4 @@
-# M22E-F3 — Template Import/Export + Typed Parameters: READ FIRST
+# M22E-F3 - Template Import/Export + Typed Parameters: READ FIRST
 
 ## 1. Current state
 
@@ -9,18 +9,18 @@
 
 ## 2. Reuse
 
-- `load_template`, `validate_template`, `list_templates`, `template_artifact_order_and_filenames` — reuse as-is.
+- `load_template`, `validate_template`, `list_templates`, `template_artifact_order_and_filenames` - reuse as-is.
 - Validation before import: call `validate_template(imported_dict)` and fail import if invalid.
-- Registry `_templates_path`, `_safe_id`, `VALID_WORKFLOW_IDS`, `WORKFLOW_ARTIFACTS`, `ARTIFACT_TO_FILENAME` — reuse for export payload and import target path.
+- Registry `_templates_path`, `_safe_id`, `VALID_WORKFLOW_IDS`, `WORKFLOW_ARTIFACTS`, `ARTIFACT_TO_FILENAME` - reuse for export payload and import target path.
 - Release demo: extend to accept `--param key=value`; validate params against template’s `parameters` when template is used.
 
 ## 3. What F3 adds
 
-1. **Export** — Serialize a registered template to a local file (e.g. `.tmpl.json`). Include: id, version, description, workflow_id, artifacts, versioning fields, compatibility metadata, and `parameters` if present. CLI: `templates export --id X --out path`.
-2. **Import** — Load from file, validate, then write to `data/local/templates/<id>.yaml` (or .json). Collision: reject unless `--overwrite` or `--as-id <new_id>`. CLI: `templates import --file path [--overwrite] [--as-id Y]`.
-3. **Typed parameters** — Template schema may include `parameters: [{name, type, required, default, description}]`. Types: string, integer, boolean, choice (with choices list). Normalize in `load_template`; validate at runtime.
-4. **Parameter substitution** — Use resolved params for: optional run dir suffix (e.g. from `label` or `run_prefix`), and store `template_params` in workspace manifest. No arbitrary code or hidden templating.
-5. **Runtime --param** — `release demo --template X --param owner=Alex --param label=sprint_12 --save-artifact`. Parse `--param k=v`, validate against template parameters, then pass to save/manifest.
+1. **Export** - Serialize a registered template to a local file (e.g. `.tmpl.json`). Include: id, version, description, workflow_id, artifacts, versioning fields, compatibility metadata, and `parameters` if present. CLI: `templates export --id X --out path`.
+2. **Import** - Load from file, validate, then write to `data/local/templates/<id>.yaml` (or .json). Collision: reject unless `--overwrite` or `--as-id <new_id>`. CLI: `templates import --file path [--overwrite] [--as-id Y]`.
+3. **Typed parameters** - Template schema may include `parameters: [{name, type, required, default, description}]`. Types: string, integer, boolean, choice (with choices list). Normalize in `load_template`; validate at runtime.
+4. **Parameter substitution** - Use resolved params for: optional run dir suffix (e.g. from `label` or `run_prefix`), and store `template_params` in workspace manifest. No arbitrary code or hidden templating.
+5. **Runtime --param** - `release demo --template X --param owner=Alex --param label=sprint_12 --save-artifact`. Parse `--param k=v`, validate against template parameters, then pass to save/manifest.
 
 ## 4. What not to change
 

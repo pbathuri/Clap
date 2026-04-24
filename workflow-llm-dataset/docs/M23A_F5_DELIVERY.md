@@ -1,19 +1,19 @@
-# M23A-F5 — Chain Operator Docs + Example Library + Cleanup: Delivery
+# M23A-F5 - Chain Operator Docs + Example Library + Cleanup: Delivery
 
 ## 1. Files modified
 
-- `src/workflow_dataset/cli.py` — Added `chain examples list` / `chain examples install <id>`; `chain runs archive --run <id>`; `chain cleanup --older-than 30d [--dry-run] [--archive]`; `chain list-runs` now shows chain_id, status, started_at (via list_runs_with_meta).
-- `tests/test_chain_lab.py` — Added tests for examples list/install, list_runs_with_meta, list_runs_older_than, archive_run, cleanup_older_runs dry_run.
+- `src/workflow_dataset/cli.py` - Added `chain examples list` / `chain examples install <id>`; `chain runs archive --run <id>`; `chain cleanup --older-than 30d [--dry-run] [--archive]`; `chain list-runs` now shows chain_id, status, started_at (via list_runs_with_meta).
+- `tests/test_chain_lab.py` - Added tests for examples list/install, list_runs_with_meta, list_runs_older_than, archive_run, cleanup_older_runs dry_run.
 
 ## 2. Files created
 
-- `src/workflow_dataset/chain_lab/examples/demo_verify.json` — Example chain: single release verify step.
-- `src/workflow_dataset/chain_lab/examples/ops_reporting_short.json` — Example chain: verify + weekly_status demo with save-artifact.
-- `src/workflow_dataset/chain_lab/examples.py` — list_example_chains(), get_example_path(id), install_example(id, repo_root).
-- `src/workflow_dataset/chain_lab/cleanup.py` — list_runs_with_meta(), list_runs_older_than(days), archive_run(run_id), cleanup_older_runs(older_than_days, dry_run, archive).
-- `docs/M23A_F5_READ_FIRST.md` — File plan and risk note.
-- `docs/M23A_CHAIN_OPERATOR_GUIDE.md` — Operator guide: define, run, resume/retry, inspect, manifests, cleanup/archive.
-- `docs/M23A_F5_DELIVERY.md` — This file.
+- `src/workflow_dataset/chain_lab/examples/demo_verify.json` - Example chain: single release verify step.
+- `src/workflow_dataset/chain_lab/examples/ops_reporting_short.json` - Example chain: verify + weekly_status demo with save-artifact.
+- `src/workflow_dataset/chain_lab/examples.py` - list_example_chains(), get_example_path(id), install_example(id, repo_root).
+- `src/workflow_dataset/chain_lab/cleanup.py` - list_runs_with_meta(), list_runs_older_than(days), archive_run(run_id), cleanup_older_runs(older_than_days, dry_run, archive).
+- `docs/M23A_F5_READ_FIRST.md` - File plan and risk note.
+- `docs/M23A_CHAIN_OPERATOR_GUIDE.md` - Operator guide: define, run, resume/retry, inspect, manifests, cleanup/archive.
+- `docs/M23A_F5_DELIVERY.md` - This file.
 
 ## 3. Example / cleanup CLI usage
 

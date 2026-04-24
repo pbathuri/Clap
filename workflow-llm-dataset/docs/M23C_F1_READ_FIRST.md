@@ -1,13 +1,13 @@
-# M23C-F1 — Desktop Action Adapter Contracts + Registry — Read First
+# M23C-F1 - Desktop Action Adapter Contracts + Registry - Read First
 
 ## 1. Current state summary
 
 - **Product:** Local-first, operator-controlled ops/reporting: templates, chain lab, intake, mission control, dashboard, review/package/staging, edge readiness. Build report confirms the system is not yet a general desktop operator.
 - **README:** Long-term vision = plug-and-play personal edge AI / desktop work operator; observation and execution layers are largely scaffolding/interfaces today.
-- **Execution:** `agent/execution_modes.py` — Observe, Simulate, Assist, Automate; default **Simulate**. `agent/sandbox_runner.py` — stub (not implemented). `agent/action_policy.py` — may_propose, may_execute_locally, check_boundary (not implemented).
-- **Apply:** `apply/apply_executor.py` — copy from sandbox to target only after explicit confirmation; backups on overwrite.
-- **Output adapters:** `output_adapters/adapter_registry.py` — for **output bundles** (spreadsheet, creative, design, ops handoff); not desktop actions.
-- **Config:** `configs/settings.yaml` — `agent.execution_mode: simulate`, `sandbox_enabled: true`.
+- **Execution:** `agent/execution_modes.py` - Observe, Simulate, Assist, Automate; default **Simulate**. `agent/sandbox_runner.py` - stub (not implemented). `agent/action_policy.py` - may_propose, may_execute_locally, check_boundary (not implemented).
+- **Apply:** `apply/apply_executor.py` - copy from sandbox to target only after explicit confirmation; backups on overwrite.
+- **Output adapters:** `output_adapters/adapter_registry.py` - for **output bundles** (spreadsheet, creative, design, ops handoff); not desktop actions.
+- **Config:** `configs/settings.yaml` - `agent.execution_mode: simulate`, `sandbox_enabled: true`.
 
 ## 2. Exact reusable modules
 
@@ -21,9 +21,9 @@
 
 ## 3. Gap between current repo and desktop-operator goal
 
-- **No typed desktop action adapter contracts** — file/folder, notes/document, browser/open-url, app-launch are not defined as adapters with capability, actions, approvals, simulate/real flags, inputs/outputs, failure modes.
-- **No adapter registry for desktop actions** — only output bundle adapters exist.
-- **No simulate/dry-run runner** for adapter actions — sandbox_runner is a stub; no “run this action in simulate mode” for a given adapter/action/params.
+- **No typed desktop action adapter contracts** - file/folder, notes/document, browser/open-url, app-launch are not defined as adapters with capability, actions, approvals, simulate/real flags, inputs/outputs, failure modes.
+- **No adapter registry for desktop actions** - only output bundle adapters exist.
+- **No simulate/dry-run runner** for adapter actions - sandbox_runner is a stub; no “run this action in simulate mode” for a given adapter/action/params.
 - **No CLI** for listing/inspecting/simulating desktop action adapters.
 
 ## 4. File plan

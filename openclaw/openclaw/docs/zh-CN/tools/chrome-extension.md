@@ -105,11 +105,11 @@ openclaw browser create-profile \
 
 ## 远程 Gateway 网关（使用节点主机）
 
-### 本地 Gateway 网关（与 Chrome 在同一台机器上）——通常**无需额外步骤**
+### 本地 Gateway 网关（与 Chrome 在同一台机器上）--通常**无需额外步骤**
 
 如果 Gateway 网关运行在与 Chrome 相同的机器上，它会在 loopback 上启动浏览器控制服务并自动启动中继服务器。扩展与本地中继通信；CLI/工具调用发送到 Gateway 网关。
 
-### 远程 Gateway 网关（Gateway 网关运行在其他地方）——**运行节点主机**
+### 远程 Gateway 网关（Gateway 网关运行在其他地方）--**运行节点主机**
 
 如果你的 Gateway 网关运行在另一台机器上，在运行 Chrome 的机器上启动一个节点主机。Gateway 网关将把浏览器操作代理到该节点；扩展 + 中继保持在浏览器机器本地。
 

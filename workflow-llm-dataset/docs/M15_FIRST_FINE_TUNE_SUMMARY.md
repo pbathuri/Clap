@@ -1,4 +1,4 @@
-# M15 — First Successful Personal LLM Fine-Tune + Real-Model Eval
+# M15 - First Successful Personal LLM Fine-Tune + Real-Model Eval
 
 ## 1. Files modified
 

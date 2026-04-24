@@ -32,7 +32,7 @@ Note, selecting 'chromium-browser' instead of 'chromium'
 chromium-browser is already the newest version (2:1snap1-0ubuntu2).
 ```
 
-这不是真正的浏览器——它只是一个包装器。
+这不是真正的浏览器--它只是一个包装器。
 
 ### 解决方案 1：安装 Google Chrome（推荐）
 

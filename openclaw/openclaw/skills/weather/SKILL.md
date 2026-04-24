@@ -76,13 +76,13 @@ curl "wttr.in/London.png"
 
 ### Format Codes
 
-- `%c` — Weather condition emoji
-- `%t` — Temperature
-- `%f` — "Feels like"
-- `%w` — Wind
-- `%h` — Humidity
-- `%p` — Precipitation
-- `%l` — Location
+- `%c` - Weather condition emoji
+- `%t` - Temperature
+- `%f` - "Feels like"
+- `%w` - Wind
+- `%h` - Humidity
+- `%p` - Precipitation
+- `%l` - Location
 
 ## Quick Responses
 

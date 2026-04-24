@@ -52,16 +52,16 @@ openclaw nodes rename --node <id|name|ip> --name "Living Room iPad"
 
 事件：
 
-- `node.pair.requested` — 创建新的待处理请求时发出。
-- `node.pair.resolved` — 请求被批准/拒绝/过期时发出。
+- `node.pair.requested` - 创建新的待处理请求时发出。
+- `node.pair.resolved` - 请求被批准/拒绝/过期时发出。
 
 方法：
 
-- `node.pair.request` — 创建或复用待处理请求。
-- `node.pair.list` — 列出待处理 + 已配对的节点。
-- `node.pair.approve` — 批准待处理请求（颁发令牌）。
-- `node.pair.reject` — 拒绝待处理请求。
-- `node.pair.verify` — 验证 `{ nodeId, token }`。
+- `node.pair.request` - 创建或复用待处理请求。
+- `node.pair.list` - 列出待处理 + 已配对的节点。
+- `node.pair.approve` - 批准待处理请求（颁发令牌）。
+- `node.pair.reject` - 拒绝待处理请求。
+- `node.pair.verify` - 验证 `{ nodeId, token }`。
 
 注意事项：
 

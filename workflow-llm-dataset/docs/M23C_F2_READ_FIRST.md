@@ -1,45 +1,45 @@
-# M23C-F2 — Local File/Folder + Notes Adapter — Read First
+# M23C-F2 - Local File/Folder + Notes Adapter - Read First
 
 ## 1. What exists (from F1)
 
 - **desktop_adapters package:** `contracts.py` (ActionSpec, AdapterContract, BUILTIN_ADAPTERS), `registry.py` (register/list/get/check_availability), `simulate.py` (run_simulate → SimulateResult, preview-only; no real I/O).
-- **file_ops adapter:** Contract only — actions read_file, list_dir, write_file; simulate prints "Would read/list/write"; no real execution.
-- **notes_document adapter:** Contract only — actions create_note, append_to_note; simulate preview only.
+- **file_ops adapter:** Contract only - actions read_file, list_dir, write_file; simulate prints "Would read/list/write"; no real execution.
+- **notes_document adapter:** Contract only - actions create_note, append_to_note; simulate preview only.
 - **CLI:** `adapters list`, `adapters show --id`, `adapters simulate --id --action --param`.
 - **Tests:** test_desktop_adapters.py (registry, simulate success/fail).
 
 ## 2. What is reusable
 
-- **AdapterContract / ActionSpec** — Extend file_ops and notes_document with new F2 actions; keep existing F1 actions for backward compatibility.
-- **Registry** — No change; same list/get/register.
-- **run_simulate()** — Keep as-is for preview; extend preview strings for new actions. Simulate remains the default; real read-only execution is explicit via a new path (run_execute).
-- **Sandbox pattern** — `data/local/...` (edge/profile.py SANDBOX_PATHS, chain_lab, devlab); add `data/local/desktop_adapters/sandbox` for snapshot_to_sandbox.
-- **Settings** — paths, agent.sandbox_enabled; optional repo_root for sandbox resolution.
-- **Apply pattern** — Copy only after confirm; we do copy only into sandbox (no apply to user paths) and never mutate originals.
+- **AdapterContract / ActionSpec** - Extend file_ops and notes_document with new F2 actions; keep existing F1 actions for backward compatibility.
+- **Registry** - No change; same list/get/register.
+- **run_simulate()** - Keep as-is for preview; extend preview strings for new actions. Simulate remains the default; real read-only execution is explicit via a new path (run_execute).
+- **Sandbox pattern** - `data/local/...` (edge/profile.py SANDBOX_PATHS, chain_lab, devlab); add `data/local/desktop_adapters/sandbox` for snapshot_to_sandbox.
+- **Settings** - paths, agent.sandbox_enabled; optional repo_root for sandbox resolution.
+- **Apply pattern** - Copy only after confirm; we do copy only into sandbox (no apply to user paths) and never mutate originals.
 
 ## 3. What F2 adds
 
 - **File/folder adapter (file_ops):** New actions with real read-only/sandbox-only execution:
-  - **inspect_path** — Read metadata (exists, is_file, is_dir, size, mtime); no content read.
-  - **list_directory** — List directory entries (names + basic type); no recursion by default.
-  - **snapshot_to_sandbox** — Copy file or directory from source path into sandbox; originals unchanged.
+  - **inspect_path** - Read metadata (exists, is_file, is_dir, size, mtime); no content read.
+  - **list_directory** - List directory entries (names + basic type); no recursion by default.
+  - **snapshot_to_sandbox** - Copy file or directory from source path into sandbox; originals unchanged.
 - **Notes/text adapter (notes_document):** New actions with real read-only execution:
-  - **read_text** — Read text file content (UTF-8); return content string.
-  - **summarize_text_for_workflow** — Read and produce a short summary (e.g. first/last lines or length); for workflow context.
-  - **propose_status_from_notes** — Read notes and return suggested status lines (e.g. bullet points); simulate-first “suggested actions”, no write.
-- **Provenance/report hooks** — Structured result from execute (adapter_id, action_id, path, timestamp, outcome) for reporting/audit.
-- **Execute layer** — run_execute(adapter_id, action_id, params, sandbox_root) for file_ops and notes_document only; returns result + provenance; no writes to originals.
-- **CLI** — `adapters run` (or `adapters execute`) with --id, --action, --param, optional --sandbox; prints result and provenance.
-- **Tests and docs** — Tests for file/notes runners and run_execute; delivery doc with samples and CLI usage.
+  - **read_text** - Read text file content (UTF-8); return content string.
+  - **summarize_text_for_workflow** - Read and produce a short summary (e.g. first/last lines or length); for workflow context.
+  - **propose_status_from_notes** - Read notes and return suggested status lines (e.g. bullet points); simulate-first “suggested actions”, no write.
+- **Provenance/report hooks** - Structured result from execute (adapter_id, action_id, path, timestamp, outcome) for reporting/audit.
+- **Execute layer** - run_execute(adapter_id, action_id, params, sandbox_root) for file_ops and notes_document only; returns result + provenance; no writes to originals.
+- **CLI** - `adapters run` (or `adapters execute`) with --id, --action, --param, optional --sandbox; prints result and provenance.
+- **Tests and docs** - Tests for file/notes runners and run_execute; delivery doc with samples and CLI usage.
 
 ## 4. What must not change
 
-- **No real file edits to originals** — Only read and copy-into-sandbox; no write, move, or delete on user paths.
-- **No broad filesystem watcher** — No continuous scanning or watcher process.
-- **No hidden ingestion** — All reads explicit (inspect, list, read, snapshot) via adapter actions and CLI/API.
-- **browser_open and app_launch** — Remain simulate-only; no new execution in F2.
-- **F1 simulate behavior** — run_simulate unchanged for unknown adapters/actions; new actions get preview text only in simulate.
-- **Existing execution_modes and apply confirmation** — Unchanged.
+- **No real file edits to originals** - Only read and copy-into-sandbox; no write, move, or delete on user paths.
+- **No broad filesystem watcher** - No continuous scanning or watcher process.
+- **No hidden ingestion** - All reads explicit (inspect, list, read, snapshot) via adapter actions and CLI/API.
+- **browser_open and app_launch** - Remain simulate-only; no new execution in F2.
+- **F1 simulate behavior** - run_simulate unchanged for unknown adapters/actions; new actions get preview text only in simulate.
+- **Existing execution_modes and apply confirmation** - Unchanged.
 
 ## 5. File plan
 

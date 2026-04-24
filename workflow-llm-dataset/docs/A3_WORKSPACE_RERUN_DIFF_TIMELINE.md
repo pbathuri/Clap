@@ -1,4 +1,4 @@
-# A3 — Workspace rerun/diff + provenance timeline
+# A3 - Workspace rerun/diff + provenance timeline
 
 Rerun a workspace from the same inputs/config, compare two runs, and show a simple provenance timeline. Local-only; no mutation of existing workspaces.
 
@@ -8,8 +8,8 @@ Rerun a workspace from the same inputs/config, compare two runs, and show a simp
 
 | Path | Change |
 |------|--------|
-| **New** `src/workflow_dataset/release/workspace_rerun_diff.py` | `infer_rerun_args(manifest)` — infer context_file, input_pack, retrieval, workflow from manifest. `diff_workspaces(path_a, path_b)` — inventory diff, manifest metadata diff, artifact deltas (unified diff). `workspace_timeline(root, workflow, limit)` — list runs newest first with timestamp, run_id, grounding, artifact_count. |
-| `src/workflow_dataset/cli.py` | `release demo --rerun-from <path>` — load manifest from path, infer args, run demo with same inputs, save to new dir (original unchanged). `review diff-workspaces <path_a> <path_b>` — compare two runs. `review workspace-timeline [--workflow] [--limit]` — provenance timeline. |
+| **New** `src/workflow_dataset/release/workspace_rerun_diff.py` | `infer_rerun_args(manifest)` - infer context_file, input_pack, retrieval, workflow from manifest. `diff_workspaces(path_a, path_b)` - inventory diff, manifest metadata diff, artifact deltas (unified diff). `workspace_timeline(root, workflow, limit)` - list runs newest first with timestamp, run_id, grounding, artifact_count. |
+| `src/workflow_dataset/cli.py` | `release demo --rerun-from <path>` - load manifest from path, infer args, run demo with same inputs, save to new dir (original unchanged). `review diff-workspaces <path_a> <path_b>` - compare two runs. `review workspace-timeline [--workflow] [--limit]` - provenance timeline. |
 | `tests/test_release.py` | `test_infer_rerun_args`, `test_diff_workspaces`, `test_workspace_timeline`. |
 | `docs/A3_WORKSPACE_RERUN_DIFF_TIMELINE.md` | This file. |
 

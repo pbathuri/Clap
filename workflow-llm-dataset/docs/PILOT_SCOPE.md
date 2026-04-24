@@ -15,7 +15,7 @@ Operational definition of who may use the pilot, what is supported, and what is 
 
 ## Supported workflow category
 
-**Operations / office admin — reporting and status only.**
+**Operations / office admin - reporting and status only.**
 
 - Recurring reporting workflow summarization.
 - Weekly status / report package scaffolding.

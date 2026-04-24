@@ -1,4 +1,4 @@
-# M21W Development Lab — Operator Runbook
+# M21W Development Lab - Operator Runbook
 
 ## Purpose
 
@@ -18,13 +18,13 @@
 All devlab data lives under:
 
 - `data/local/devlab/` (or `--devlab-root` if set)
-  - `registry.json` — registered candidate repos
-  - `repos/<repo_id>/` — cloned repos (sandbox only)
-  - `reports/` — per-repo intake reports (`repo_intake_report_<id>.json`)
-  - `model_compare/` — `model_compare_report.json`
-  - `experiments/` — experiment definitions (`<id>.json`)
-  - `experiment_queue.json` — D4 run history and queue (queued, running, done, failed, cancelled)
-  - `proposals/` — patch proposals per run
+  - `registry.json` - registered candidate repos
+  - `repos/<repo_id>/` - cloned repos (sandbox only)
+  - `reports/` - per-repo intake reports (`repo_intake_report_<id>.json`)
+  - `model_compare/` - `model_compare_report.json`
+  - `experiments/` - experiment definitions (`<id>.json`)
+  - `experiment_queue.json` - D4 run history and queue (queued, running, done, failed, cancelled)
+  - `proposals/` - patch proposals per run
   - `devlab_report.md`, `next_patch_plan.md`, `loop_status.json`
 
 ## Commands

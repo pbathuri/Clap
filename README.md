@@ -2,7 +2,7 @@
 
 # Clap
 
-**Workflow-LLM dataset + OpenClaw gateway — the data-and-infrastructure layer beneath OpsPilot.**
+**Workflow-LLM dataset + OpenClaw gateway - the data-and-infrastructure layer beneath OpsPilot.**
 
 <br/>
 
@@ -16,7 +16,7 @@
 
 ## TL;DR
 
-Clap is the workspace that feeds **OpsPilot** — a privacy-first workflow-automation agent. It holds the training dataset, the gateway layer that brokers local ↔ cloud inference, and the program dashboard for tracking what's being built.
+Clap is the workspace that feeds **OpsPilot** - a privacy-first workflow-automation agent. It holds the training dataset, the gateway layer that brokers local ↔ cloud inference, and the program dashboard for tracking what's being built.
 
 The consolidated, actively-maintained workspace is **[Clap_OpsPilot](https://github.com/pbathuri/Clap_OpsPilot)**. This repo is the dataset + gateway slice.
 
@@ -27,14 +27,14 @@ The consolidated, actively-maintained workspace is **[Clap_OpsPilot](https://git
 | Path | Purpose |
 |------|---------|
 | `workflow-llm-dataset/` | Python dataset + scaffolding for the local workflow-capture agent |
-| `openclaw/` | OpenClaw gateway — nested service for routing inference |
+| `openclaw/` | OpenClaw gateway - nested service for routing inference |
 | `clap_program_dashboard.xlsx` | Program-level tracking spreadsheet |
 
 ---
 
 ## Context
 
-OpsPilot is a **two-agent system** — a local capture agent (privacy-preserving) and a cloud reasoning agent (QLoRA-fine-tuned on workflow traces). Clap supplies the dataset + transport glue. See [`Clap_OpsPilot`](https://github.com/pbathuri/Clap_OpsPilot) for the full architecture and build-status reference.
+OpsPilot is a **two-agent system** - a local capture agent (privacy-preserving) and a cloud reasoning agent (QLoRA-fine-tuned on workflow traces). Clap supplies the dataset + transport glue. See [`Clap_OpsPilot`](https://github.com/pbathuri/Clap_OpsPilot) for the full architecture and build-status reference.
 
 ---
 

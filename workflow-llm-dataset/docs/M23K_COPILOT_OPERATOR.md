@@ -1,4 +1,4 @@
-# M23K — Workday copilot operator guide
+# M23K - Workday copilot operator guide
 
 What the copilot is, what it is not, how recommendations are formed, how routines work, how approvals are enforced, and how to use reminders without enabling uncontrolled automation.
 
@@ -31,10 +31,10 @@ Everything is **local** (data/local/copilot) and **inspectable**.
 
 Recommendations use **only local, inspectable data**:
 
-- **recent_successful_run** — Job has a recent successful run in specialization memory.
-- **trusted_for_real** — Job is in the trusted-for-real set (trust_level and real_mode_eligibility).
-- **approval_blocked** — Job could run real but is blocked by missing approval registry or scope; reason is stored.
-- **simulate_only_available** — Job is simulate-only and available.
+- **recent_successful_run** - Job has a recent successful run in specialization memory.
+- **trusted_for_real** - Job is in the trusted-for-real set (trust_level and real_mode_eligibility).
+- **approval_blocked** - Job could run real but is blocked by missing approval registry or scope; reason is stored.
+- **simulate_only_available** - Job is simulate-only and available.
 
 Each recommendation includes: `job_pack_id`, `reason`, `trust_level`, `mode_allowed` (simulate_only | trusted_real_eligible), `blocking_issues`, `recommended_timing_context`. There is no opaque ranking; reasons are explicit.
 

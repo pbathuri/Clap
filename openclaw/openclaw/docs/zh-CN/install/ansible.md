@@ -16,7 +16,7 @@ x-i18n:
 
 # Ansible 安装
 
-将 OpenClaw 部署到生产服务器的推荐方式是通过 **[openclaw-ansible](https://github.com/openclaw/openclaw-ansible)** — 一个安全优先架构的自动化安装程序。
+将 OpenClaw 部署到生产服务器的推荐方式是通过 **[openclaw-ansible](https://github.com/openclaw/openclaw-ansible)** - 一个安全优先架构的自动化安装程序。
 
 ## 快速开始
 
@@ -209,7 +209,7 @@ openclaw channels login
 
 ## 相关内容
 
-- [openclaw-ansible](https://github.com/openclaw/openclaw-ansible) — 完整部署指南
-- [Docker](/install/docker) — 容器化 Gateway 网关设置
-- [沙箱隔离](/gateway/sandboxing) — 智能体沙箱配置
-- [多智能体沙箱与工具](/tools/multi-agent-sandbox-tools) — 每个智能体的隔离
+- [openclaw-ansible](https://github.com/openclaw/openclaw-ansible) - 完整部署指南
+- [Docker](/install/docker) - 容器化 Gateway 网关设置
+- [沙箱隔离](/gateway/sandboxing) - 智能体沙箱配置
+- [多智能体沙箱与工具](/tools/multi-agent-sandbox-tools) - 每个智能体的隔离

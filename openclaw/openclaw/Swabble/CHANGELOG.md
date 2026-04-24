@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 — 2025-12-23
+## 0.2.0 - 2025-12-23
 
 ### Highlights
 - Added `SwabbleKit` (multi-platform wake-word gate utilities with segment-aware gap detection).

@@ -27,7 +27,7 @@ x-i18n:
 
 - Node `>=22`
 - `pnpm`
-- Docker（可选；仅用于容器化设置/e2e — 参阅 [Docker](/install/docker)）
+- Docker（可选；仅用于容器化设置/e2e - 参阅 [Docker](/install/docker)）
 
 ## 个性化策略（让更新不会造成问题）
 

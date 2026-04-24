@@ -1,4 +1,4 @@
-# M23B — Edge / Hardware Readiness Layer — Validation
+# M23B - Edge / Hardware Readiness Layer - Validation
 
 ## Summary
 
@@ -11,10 +11,10 @@
 | Action | Path |
 |--------|------|
 | Added | `src/workflow_dataset/edge/__init__.py` |
-| Added | `src/workflow_dataset/edge/profile.py` — build_edge_profile, SANDBOX_PATHS, SUPPORTED_WORKFLOWS |
-| Added | `src/workflow_dataset/edge/checks.py` — run_readiness_checks, checks_summary |
-| Added | `src/workflow_dataset/edge/report.py` — generate_edge_readiness_report, generate_missing_dependency_report, generate_workflow_matrix_report, generate_package_report |
-| Modified | `src/workflow_dataset/cli.py` — edge readiness, edge package-report |
+| Added | `src/workflow_dataset/edge/profile.py` - build_edge_profile, SANDBOX_PATHS, SUPPORTED_WORKFLOWS |
+| Added | `src/workflow_dataset/edge/checks.py` - run_readiness_checks, checks_summary |
+| Added | `src/workflow_dataset/edge/report.py` - generate_edge_readiness_report, generate_missing_dependency_report, generate_workflow_matrix_report, generate_package_report |
+| Modified | `src/workflow_dataset/cli.py` - edge readiness, edge package-report |
 | Added | `tests/test_edge.py` |
 | Added | `docs/M23B_EDGE_READINESS_VALIDATION.md` |
 
@@ -71,16 +71,16 @@ Local deployment profile and readiness checks. No cloud; no hardware specs.
 
 ## Sandbox paths
 
-- `data/local/workspaces` — exists
-- `data/local/packages` — exists
-- `data/local/review` — exists
+- `data/local/workspaces` - exists
+- `data/local/packages` - exists
+- `data/local/review` - exists
 - ...
 
 ## Readiness checks
 
-- **python_version** — ok: Python 3.13 (min 3.10)
-- **config_exists** — ok: configs/settings.yaml
-- **sandbox_data_local_workspaces** — ok (optional): data/local/workspaces exists
+- **python_version** - ok: Python 3.13 (min 3.10)
+- **config_exists** - ok: configs/settings.yaml
+- **sandbox_data_local_workspaces** - ok (optional): data/local/workspaces exists
 - ...
 
 ## Supported workflows

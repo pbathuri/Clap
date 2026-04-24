@@ -227,7 +227,7 @@ Claude Code 发现并确认了净化器控制，然后 OpenClaw 接管来管理�
 <Card title="美丽天空相机拍摄" icon="camera" href="https://x.com/signalgaining/status/2010523120604746151">
   **@signalgaining** • `automation` `camera` `skill` `images`
 
-由屋顶摄像头触发：让 OpenClaw 在天空看起来很美的时候拍一张照片——它设计了一个 skill 并拍摄了照片。
+由屋顶摄像头触发：让 OpenClaw 在天空看起来很美的时候拍一张照片--它设计了一个 skill 并拍摄了照片。
 
   <img src="/assets/showcase/roof-camera-sky.jpg" alt="Roof camera sky snapshot captured by OpenClaw" />
 </Card>
@@ -255,7 +255,7 @@ Claude Code 发现并确认了净化器控制，然后 OpenClaw 接管来管理�
 <Card title="沙发土豆开发模式" icon="couch" href="https://davekiss.com">
   **@davekiss** • `telegram` `website` `migration` `astro`
 
-一边看 Netflix 一边通过 Telegram 重建整个个人网站——Notion → Astro，迁移了 18 篇文章，DNS 转到 Cloudflare。从未打开笔记本电脑。
+一边看 Netflix 一边通过 Telegram 重建整个个人网站--Notion → Astro，迁移了 18 篇文章，DNS 转到 Cloudflare。从未打开笔记本电脑。
 </Card>
 
 <Card title="求职智能体" icon="briefcase">
@@ -279,7 +279,7 @@ OpenClaw 连接到 Jira，然后即时生成一个新的 skill（在它出现在
 <Card title="TradingView 分析" icon="chart-line">
   **@bheem1798** • `finance` `browser` `automation`
 
-通过浏览器自动化登录 TradingView，截取图表屏幕截图，并按需执行技术分析。无需 API——只需浏览器控制。
+通过浏览器自动化登录 TradingView，截取图表屏幕截图，并按需执行技术分析。无需 API--只需浏览器控制。
 </Card>
 
 <Card title="Slack 自动支持" icon="slack">

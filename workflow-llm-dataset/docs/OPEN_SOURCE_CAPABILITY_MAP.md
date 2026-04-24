@@ -6,16 +6,16 @@ Maps each registered candidate to current product layers. Use for adoption decis
 
 ## Product layers (current repo)
 
-- **Local observation layer** — file observer, event log, setup scan
-- **Personal work graph layer** — work graph, routines, projects, style signals
-- **Retrieval layer** — corpus, retrieval context for prompts
-- **LLM/model layer** — training, adapter, inference (MLX today)
-- **Workflow trial layer** — trials, scenarios, comparison, trial report
-- **Release/pilot layer** — release verify/run/demo, pilot verify/status, narrow scope
-- **Generation/review layer** — generation workspace, draft structures, style packs
-- **Bundle/adoption/apply layer** — bundles, adoption candidates, apply preview/confirm
-- **UI/console/dashboard layer** — operator console, home, pilot, release, trial views
-- **Optional cloud capability-pack distribution layer** — future; not implemented
+- **Local observation layer** - file observer, event log, setup scan
+- **Personal work graph layer** - work graph, routines, projects, style signals
+- **Retrieval layer** - corpus, retrieval context for prompts
+- **LLM/model layer** - training, adapter, inference (MLX today)
+- **Workflow trial layer** - trials, scenarios, comparison, trial report
+- **Release/pilot layer** - release verify/run/demo, pilot verify/status, narrow scope
+- **Generation/review layer** - generation workspace, draft structures, style packs
+- **Bundle/adoption/apply layer** - bundles, adoption candidates, apply preview/confirm
+- **UI/console/dashboard layer** - operator console, home, pilot, release, trial views
+- **Optional cloud capability-pack distribution layer** - future; not implemented
 
 ---
 

@@ -1,4 +1,4 @@
-# M23B — Edge / Hardware Readiness Layer
+# M23B - Edge / Hardware Readiness Layer
 
 Local deployment/readiness layer that prepares the product for future appliance/edge packaging. No hardware device specs; deployment assumptions and readiness only.
 
@@ -65,11 +65,11 @@ workflow-dataset edge workflow-matrix --format json --output data/local/edge/mat
 
 ## Outputs
 
-1. **Edge readiness report** — Profile summary, readiness checks, supported workflows.
-2. **Missing dependency report** — Required/optional dependency reference, path status, warnings.
-3. **Supported workflow matrix** — Per-workflow: description, required/optional components.
-4. **Tier workflow matrix** (`edge matrix`) — Per-tier: workflow status (supported/degraded/unavailable), reason, missing functionality, fallback.
-5. **Tier comparison** (`edge compare`) — LLM requirement diff, workflow status diff, paths only in A vs B.
+1. **Edge readiness report** - Profile summary, readiness checks, supported workflows.
+2. **Missing dependency report** - Required/optional dependency reference, path status, warnings.
+3. **Supported workflow matrix** - Per-workflow: description, required/optional components.
+4. **Tier workflow matrix** (`edge matrix`) - Per-tier: workflow status (supported/degraded/unavailable), reason, missing functionality, fallback.
+5. **Tier comparison** (`edge compare`) - LLM requirement diff, workflow status diff, paths only in A vs B.
 
 All outputs are local and inspectable (markdown or JSON under `data/local/edge/` by default).
 

@@ -29,7 +29,7 @@ x-i18n:
     />
 </p>
 
-> _"去壳！去壳！"_ — 大概是一只太空龙虾说的
+> _"去壳！去壳！"_ - 大概是一只太空龙虾说的
 
 <p align="center">
   <strong>适用于任何操作系统的 AI 智能体 Gateway 网关，支持 WhatsApp、Telegram、Discord、iMessage 等。</strong><br />

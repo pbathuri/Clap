@@ -1,4 +1,4 @@
-# Ops reporting pack — trial mapping
+# Ops reporting pack - trial mapping
 
 This pack activates the following workflow trials (defined in the repo's trial_registry):
 

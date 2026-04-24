@@ -1,4 +1,4 @@
-# M23J — Job packs operator guide
+# M23J - Job packs operator guide
 
 What a job pack is, how it differs from a task demo, how specialization memory works, what is still simulate-only, how trust is earned, and how this stays local-first and approval-gated.
 
@@ -8,9 +8,9 @@ What a job pack is, how it differs from a task demo, how specialization memory w
 
 A **job pack** is a reusable, named workflow that points at a **source** (a task demo or a desktop benchmark case) and adds:
 
-- **Parameter schema** — which parameters the job accepts and their defaults
-- **Trust policy** — simulate_only, trusted_for_real, approval_required_every_run, experimental, benchmark_only
-- **Local specialization memory** — preferred params, last successful run, operator notes (updated only through explicit actions)
+- **Parameter schema** - which parameters the job accepts and their defaults
+- **Trust policy** - simulate_only, trusted_for_real, approval_required_every_run, experimental, benchmark_only
+- **Local specialization memory** - preferred params, last successful run, operator notes (updated only through explicit actions)
 
 Job packs are stored under `data/local/job_packs/*.yaml`. They are inspectable and editable.
 

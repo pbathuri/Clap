@@ -6,11 +6,11 @@ metadata:
   { "openclaw": { "requires": { "bins": ["curl", "git", "gh"] }, "primaryEnv": "GH_TOKEN" } }
 ---
 
-# gh-issues — Auto-fix GitHub Issues with Parallel Sub-agents
+# gh-issues - Auto-fix GitHub Issues with Parallel Sub-agents
 
 You are an orchestrator. Follow these 6 phases exactly. Do not skip phases.
 
-IMPORTANT — No `gh` CLI dependency. This skill uses curl + the GitHub REST API exclusively. The GH_TOKEN env var is already injected by OpenClaw. Pass it as a Bearer token in all API calls:
+IMPORTANT - No `gh` CLI dependency. This skill uses curl + the GitHub REST API exclusively. The GH_TOKEN env var is already injected by OpenClaw. Pass it as a Bearer token in all API calls:
 
 ```
 curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" ...
@@ -18,13 +18,13 @@ curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+
 
 ---
 
-## Phase 1 — Parse Arguments
+## Phase 1 - Parse Arguments
 
 Parse the arguments string provided after /gh-issues.
 
 Positional:
 
-- owner/repo — optional. This is the source repo to fetch issues from. If omitted, detect from the current git remote:
+- owner/repo - optional. This is the source repo to fetch issues from. If omitted, detect from the current git remote:
   `git remote get-url origin`
   Extract owner/repo from the URL (handles both HTTPS and SSH formats).
   - HTTPS: https://github.com/owner/repo.git → owner/repo
@@ -42,9 +42,9 @@ Flags (all optional):
 | --fork | _(none)_ | Your fork (`user/repo`) to push branches and open PRs from. Issues are fetched from the source repo; code is pushed to the fork; PRs are opened from the fork to the source repo. |
 | --watch | false | Keep polling for new issues and PR reviews after each batch |
 | --interval | 5 | Minutes between polls (only with `--watch`) |
-| --dry-run | false | Fetch and display only — no sub-agents |
+| --dry-run | false | Fetch and display only - no sub-agents |
 | --yes | false | Skip confirmation and auto-process all filtered issues |
-| --reviews-only | false | Skip issue processing (Phases 2-5). Only run Phase 6 — check open PRs for review comments and address them. |
+| --reviews-only | false | Skip issue processing (Phases 2-5). Only run Phase 6 - check open PRs for review comments and address them. |
 | --cron | false | Cron-safe mode: fetch issues and spawn sub-agents, exit without waiting for results. |
 | --model | _(none)_ | Model to use for sub-agents (e.g. `glm-5`, `zai/glm-5`). If not specified, uses the agent's default model. |
 | --notify-channel | _(none)_ | Telegram channel ID to send final PR summary to (e.g. -1002381931352). Only the final result with PR links is sent, not status updates. |
@@ -67,7 +67,7 @@ Derived values:
 
 ---
 
-## Phase 2 — Fetch Issues
+## Phase 2 - Fetch Issues
 
 **Token Resolution:**
 First, ensure GH_TOKEN is available. Check environment:
@@ -107,7 +107,7 @@ Where {query_params} is built from:
 - milestone={milestone} if --milestone was provided (note: API expects milestone _number_, so if user provides a title, first resolve it via GET /repos/{SOURCE_REPO}/milestones and match by title)
 - assignee={assignee} if --assignee was provided (if @me, first resolve your username via `GET /user`)
 
-IMPORTANT: The GitHub Issues API also returns pull requests. Filter them out — exclude any item where pull_request key exists in the response object.
+IMPORTANT: The GitHub Issues API also returns pull requests. Filter them out - exclude any item where pull_request key exists in the response object.
 
 If in watch mode: Also filter out any issue numbers already in the PROCESSED_ISSUES set from previous batches.
 
@@ -122,7 +122,7 @@ Parse the JSON response. For each issue, extract: number, title, body, labels (a
 
 ---
 
-## Phase 3 — Present & Confirm
+## Phase 3 - Present & Confirm
 
 Display a markdown table of fetched issues:
 
@@ -148,9 +148,9 @@ If `--yes` is active:
 Otherwise:
 Ask the user to confirm which issues to process:
 
-- "all" — process every listed issue
-- Comma-separated numbers (e.g. `42, 37`) — process only those
-- "cancel" — abort entirely
+- "all" - process every listed issue
+- Comma-separated numbers (e.g. `42, 37`) - process only those
+- "cancel" - abort entirely
 
 Wait for user response before proceeding.
 
@@ -158,7 +158,7 @@ Watch mode note: On the first poll, always confirm with the user (unless --yes i
 
 ---
 
-## Phase 4 — Pre-flight Checks
+## Phase 4 - Pre-flight Checks
 
 Run these checks sequentially via exec:
 
@@ -170,7 +170,7 @@ Run these checks sequentially via exec:
 
    If output is non-empty, warn the user:
 
-   > "Working tree has uncommitted changes. Sub-agents will create branches from HEAD — uncommitted changes will NOT be included. Continue?"
+   > "Working tree has uncommitted changes. Sub-agents will create branches from HEAD - uncommitted changes will NOT be included. Continue?"
    > Wait for confirmation. If declined, stop.
 
 2. **Record base branch:**
@@ -225,7 +225,7 @@ Run these checks sequentially via exec:
    (Where PUSH_REPO_OWNER is the owner portion of `PUSH_REPO`)
    If the response array is non-empty, remove that issue from the processing list and report:
 
-   > "Skipping #{N} — PR already exists: {html_url}"
+   > "Skipping #{N} - PR already exists: {html_url}"
 
    If all issues are skipped, report and stop (or loop back if in watch mode).
 
@@ -240,7 +240,7 @@ Run these checks sequentially via exec:
 
    If HTTP 200 → the branch exists on the push repo but no open PR was found for it in step 5. Skip that issue:
 
-   > "Skipping #{N} — branch fix/issue-{N} exists on {PUSH_REPO}, fix likely in progress"
+   > "Skipping #{N} - branch fix/issue-{N} exists on {PUSH_REPO}, fix likely in progress"
 
    This check uses the GitHub API instead of `git ls-remote` so it works correctly in fork mode (where branches are pushed to the fork, not origin).
 
@@ -259,7 +259,7 @@ Run these checks sequentially via exec:
    fi
    ```
 
-   Parse the claims file. For each entry, check if the claim timestamp is older than 2 hours. If so, remove it (expired — the sub-agent likely finished or failed silently). Write back the cleaned file:
+   Parse the claims file. For each entry, check if the claim timestamp is older than 2 hours. If so, remove it (expired - the sub-agent likely finished or failed silently). Write back the cleaned file:
 
    ```
    CLAIMS=$(cat "$CLAIMS_FILE")
@@ -272,7 +272,7 @@ Run these checks sequentially via exec:
 
    If claimed and not expired → skip:
 
-   > "Skipping #{N} — sub-agent claimed this issue {minutes}m ago, still within timeout window"
+   > "Skipping #{N} - sub-agent claimed this issue {minutes}m ago, still within timeout window"
 
    Where `{minutes}` is calculated from the claim timestamp to now.
 
@@ -280,7 +280,7 @@ Run these checks sequentially via exec:
 
 ---
 
-## Phase 5 — Spawn Sub-agents (Parallel)
+## Phase 5 - Spawn Sub-agents (Parallel)
 
 **Cron mode (`--cron` is active):**
 
@@ -314,15 +314,15 @@ Run these checks sequentially via exec:
   2. Spawn a single sub-agent for that one issue with `cleanup: "keep"` and `runTimeoutSeconds: 3600`
   3. If `--model` was provided, include `model: "{MODEL}"` in the spawn config
   4. If `--notify-channel` was provided, include the channel in the task so the sub-agent can notify
-  5. Do NOT await the sub-agent result — fire and forget
+  5. Do NOT await the sub-agent result - fire and forget
   6. **Write claim:** After spawning, read the claims file, add `{SOURCE_REPO}#{N}` with the current ISO timestamp, and write it back
-  7. Immediately report: "Spawned fix agent for #{N} — will create PR when complete"
+  7. Immediately report: "Spawned fix agent for #{N} - will create PR when complete"
   8. Exit the skill. Do not proceed to Results Collection or Phase 6.
 
-- If no eligible issue is found (all issues either have PRs, have branches, or are in progress), report "No eligible issues to process — all issues have PRs/branches or are in progress" and exit.
+- If no eligible issue is found (all issues either have PRs, have branches, or are in progress), report "No eligible issues to process - all issues have PRs/branches or are in progress" and exit.
 
 **Normal mode (`--cron` is NOT active):**
-For each confirmed issue, spawn a sub-agent using sessions_spawn. Launch up to 8 concurrently (matching `subagents.maxConcurrent: 8`). If more than 8 issues, batch them — launch the next agent as each completes.
+For each confirmed issue, spawn a sub-agent using sessions_spawn. Launch up to 8 concurrently (matching `subagents.maxConcurrent: 8`). If more than 8 issues, batch them - launch the next agent as each completes.
 
 **Write claims:** After spawning each sub-agent, read the claims file, add `{SOURCE_REPO}#{N}` with the current ISO timestamp, and write it back (same procedure as cron mode above). This covers interactive usage where watch mode might overlap with cron runs.
 
@@ -330,20 +330,20 @@ For each confirmed issue, spawn a sub-agent using sessions_spawn. Launch up to 8
 
 For each issue, construct the following prompt and pass it to sessions_spawn. Variables to inject into the template:
 
-- {SOURCE_REPO} — upstream repo where the issue lives
-- {PUSH_REPO} — repo to push branches to (same as SOURCE_REPO unless fork mode)
-- {FORK_MODE} — true/false
-- {PUSH_REMOTE} — `fork` if FORK_MODE, otherwise `origin`
-- {number}, {title}, {url}, {labels}, {body} — from the issue
-- {BASE_BRANCH} — from Phase 4
-- {notify_channel} — Telegram channel ID for notifications (empty if not set). Replace {notify_channel} in the template below with the value of `--notify-channel` flag (or leave as empty string if not provided).
+- {SOURCE_REPO} - upstream repo where the issue lives
+- {PUSH_REPO} - repo to push branches to (same as SOURCE_REPO unless fork mode)
+- {FORK_MODE} - true/false
+- {PUSH_REMOTE} - `fork` if FORK_MODE, otherwise `origin`
+- {number}, {title}, {url}, {labels}, {body} - from the issue
+- {BASE_BRANCH} - from Phase 4
+- {notify_channel} - Telegram channel ID for notifications (empty if not set). Replace {notify_channel} in the template below with the value of `--notify-channel` flag (or leave as empty string if not provided).
 
 When constructing the task, replace all template variables including {notify_channel} with actual values.
 
 ```
 You are a focused code-fix agent. Your task is to fix a single GitHub issue and open a PR.
 
-IMPORTANT: Do NOT use the gh CLI — it is not installed. Use curl with the GitHub REST API for all GitHub operations.
+IMPORTANT: Do NOT use the gh CLI - it is not installed. Use curl with the GitHub REST API for all GitHub operations.
 
 First, ensure GH_TOKEN is set. Check: `echo $GH_TOKEN`. If empty, read from config:
 GH_TOKEN=$(cat ~/.openclaw/openclaw.json 2>/dev/null | jq -r '.skills.entries["gh-issues"].apiKey // empty') || GH_TOKEN=$(cat /data/.clawdbot/openclaw.json 2>/dev/null | jq -r '.skills.entries["gh-issues"].apiKey // empty')
@@ -372,7 +372,7 @@ Body: {body}
 <instructions>
 Follow these steps in order. If any step fails, report the failure and stop.
 
-0. SETUP — Ensure GH_TOKEN is available:
+0. SETUP - Ensure GH_TOKEN is available:
 ```
 
 export GH_TOKEN=$(node -e "const fs=require('fs'); const c=JSON.parse(fs.readFileSync('/data/.clawdbot/openclaw.json','utf8')); console.log(c.skills?.entries?.['gh-issues']?.apiKey || '')")
@@ -386,52 +386,52 @@ export GH_TOKEN=$(cat ~/.openclaw/openclaw.json 2>/dev/null | node -e "const fs=
 ```
 Verify: echo "Token: ${GH_TOKEN:0:10}..."
 
-1. CONFIDENCE CHECK — Before implementing, assess whether this issue is actionable:
+1. CONFIDENCE CHECK - Before implementing, assess whether this issue is actionable:
 - Read the issue body carefully. Is the problem clearly described?
 - Search the codebase (grep/find) for the relevant code. Can you locate it?
 - Is the scope reasonable? (single file/function = good, whole subsystem = bad)
 - Is a specific fix suggested or is it a vague complaint?
 
 Rate your confidence (1-10). If confidence < 7, STOP and report:
-> "Skipping #{number}: Low confidence (score: N/10) — [reason: vague requirements | cannot locate code | scope too large | no clear fix suggested]"
+> "Skipping #{number}: Low confidence (score: N/10) - [reason: vague requirements | cannot locate code | scope too large | no clear fix suggested]"
 
 Only proceed if confidence >= 7.
 
-1. UNDERSTAND — Read the issue carefully. Identify what needs to change and where.
+1. UNDERSTAND - Read the issue carefully. Identify what needs to change and where.
 
-2. BRANCH — Create a feature branch from the base branch:
+2. BRANCH - Create a feature branch from the base branch:
 git checkout -b fix/issue-{number} {BASE_BRANCH}
 
-3. ANALYZE — Search the codebase to find relevant files:
+3. ANALYZE - Search the codebase to find relevant files:
 - Use grep/find via exec to locate code related to the issue
 - Read the relevant files to understand the current behavior
 - Identify the root cause
 
-4. IMPLEMENT — Make the minimal, focused fix:
+4. IMPLEMENT - Make the minimal, focused fix:
 - Follow existing code style and conventions
 - Change only what is necessary to fix the issue
 - Do not add unrelated changes or new dependencies without justification
 
-5. TEST — Discover and run the existing test suite if one exists:
+5. TEST - Discover and run the existing test suite if one exists:
 - Look for package.json scripts, Makefile targets, pytest, cargo test, etc.
 - Run the relevant tests
 - If tests fail after your fix, attempt ONE retry with a corrected approach
 - If tests still fail, report the failure
 
-6. COMMIT — Stage and commit your changes:
+6. COMMIT - Stage and commit your changes:
 git add {changed_files}
 git commit -m "fix: {short_description}
 
 Fixes {SOURCE_REPO}#{number}"
 
-7. PUSH — Push the branch:
+7. PUSH - Push the branch:
 First, ensure the push remote uses token auth and disable credential helpers:
 git config --global credential.helper ""
 git remote set-url {PUSH_REMOTE} https://x-access-token:$GH_TOKEN@github.com/{PUSH_REPO}.git
 Then push:
 GIT_ASKPASS=true git push -u {PUSH_REMOTE} fix/issue-{number}
 
-8. PR — Create a pull request using the GitHub API:
+8. PR - Create a pull request using the GitHub API:
 
 If FORK_MODE is true, the PR goes from your fork to the source repo:
 - head = "{PUSH_REPO_OWNER}:fix/issue-{number}"
@@ -454,15 +454,15 @@ curl -s -X POST \
     "body": "## Summary\n\n{one_paragraph_description_of_fix}\n\n## Changes\n\n{bullet_list_of_changes}\n\n## Testing\n\n{what_was_tested_and_results}\n\nFixes {SOURCE_REPO}#{number}"
   }'
 
-Extract the `html_url` from the response — this is the PR link.
+Extract the `html_url` from the response - this is the PR link.
 
-9. REPORT — Send back a summary:
+9. REPORT - Send back a summary:
 - PR URL (the html_url from step 8)
 - Files changed (list)
 - Fix summary (1-2 sentences)
 - Any caveats or concerns
 
-10. NOTIFY (if notify_channel is set) — If {notify_channel} is not empty, send a notification to the Telegram channel:
+10. NOTIFY (if notify_channel is set) - If {notify_channel} is not empty, send a notification to the Telegram channel:
 ```
 
 Use the message tool with:
@@ -486,9 +486,9 @@ Files changed: {files_changed_list}"
 - No unrelated changes or gratuitous refactoring
 - No new dependencies without strong justification
 - If the issue is unclear or too complex to fix confidently, report your analysis instead of guessing
-- Do NOT use the gh CLI — it is not available. Use curl + GitHub REST API for all GitHub operations.
-- GH_TOKEN is already in the environment — do NOT prompt for auth
-- Time limit: you have 60 minutes max. Be thorough — analyze properly, test your fix, don't rush.
+- Do NOT use the gh CLI - it is not available. Use curl + GitHub REST API for all GitHub operations.
+- GH_TOKEN is already in the environment - do NOT prompt for auth
+- Time limit: you have 60 minutes max. Be thorough - analyze properly, test your fix, don't rush.
 </constraints>
 ```
 
@@ -502,13 +502,13 @@ Files changed: {files_changed_list}"
 
 If a sub-agent exceeds 60 minutes, record it as:
 
-> "#{N} — Timed out (issue may be too complex for auto-fix)"
+> "#{N} - Timed out (issue may be too complex for auto-fix)"
 
 ---
 
 ## Results Collection
 
-**If `--cron` is active:** Skip this section entirely — the orchestrator already exited after spawning in Phase 5.
+**If `--cron` is active:** Skip this section entirely - the orchestrator already exited after spawning in Phase 5.
 
 After ALL sub-agents complete (or timeout), collect their results. Store the list of successfully opened PRs in `OPEN_PRS` (PR number, branch name, issue number, PR URL) for use in Phase 6.
 
@@ -523,10 +523,10 @@ Present a summary table:
 
 **Status values:**
 
-- **PR opened** — success, link to PR
-- **Failed** — sub-agent could not complete (include reason in Notes)
-- **Timed out** — exceeded 60-minute limit
-- **Skipped** — existing PR detected in pre-flight
+- **PR opened** - success, link to PR
+- **Failed** - sub-agent could not complete (include reason in Notes)
+- **Timed out** - exceeded 60-minute limit
+- **Skipped** - existing PR detected in pre-flight
 
 End with a one-line summary:
 
@@ -554,15 +554,15 @@ Then proceed to Phase 6.
 
 ---
 
-## Phase 6 — PR Review Handler
+## Phase 6 - PR Review Handler
 
 This phase monitors open PRs (created by this skill or pre-existing `fix/issue-*` PRs) for review comments and spawns sub-agents to address them.
 
 **When this phase runs:**
 
-- After Results Collection (Phases 2-5 completed) — checks PRs that were just opened
-- When `--reviews-only` flag is set — skips Phases 2-5 entirely, runs only this phase
-- In watch mode — runs every poll cycle after checking for new issues
+- After Results Collection (Phases 2-5 completed) - checks PRs that were just opened
+- When `--reviews-only` flag is set - skips Phases 2-5 entirely, runs only this phase
+- In watch mode - runs every poll cycle after checking for new issues
 
 **Cron review mode (`--cron --reviews-only`):**
 When both `--cron` and `--reviews-only` are set:
@@ -571,17 +571,17 @@ When both `--cron` and `--reviews-only` are set:
 2. Discover open `fix/issue-*` PRs (Step 6.1)
 3. Fetch review comments (Step 6.2)
 4. **Analyze comment content for actionability** (Step 6.3)
-5. If actionable comments are found, spawn ONE review-fix sub-agent for the first PR with unaddressed comments — fire-and-forget (do NOT await result)
+5. If actionable comments are found, spawn ONE review-fix sub-agent for the first PR with unaddressed comments - fire-and-forget (do NOT await result)
    - Use `cleanup: "keep"` and `runTimeoutSeconds: 3600`
    - If `--model` was provided, include `model: "{MODEL}"` in the spawn config
-6. Report: "Spawned review handler for PR #{N} — will push fixes when complete"
+6. Report: "Spawned review handler for PR #{N} - will push fixes when complete"
 7. Exit the skill immediately. Do not proceed to Step 6.5 (Review Results).
 
 If no actionable comments found, report "No actionable review comments found" and exit.
 
 **Normal mode (non-cron) continues below:**
 
-### Step 6.1 — Discover PRs to Monitor
+### Step 6.1 - Discover PRs to Monitor
 
 Collect PRs to check for review comments:
 
@@ -600,7 +600,7 @@ For each PR, extract: `number` (PR number), `head.ref` (branch name), `html_url`
 
 If no PRs found, report "No open fix/ PRs to monitor" and stop (or loop back if in watch mode).
 
-### Step 6.2 — Fetch All Review Sources
+### Step 6.2 - Fetch All Review Sources
 
 For each PR, fetch reviews from multiple sources:
 
@@ -638,7 +638,7 @@ curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+
 
 Extract the `body` field and parse for embedded review content.
 
-### Step 6.3 — Analyze Comments for Actionability
+### Step 6.3 - Analyze Comments for Actionability
 
 **Determine the bot's own username** for filtering:
 
@@ -689,7 +689,7 @@ Look for sections marked with `<!-- greptile_comment -->` or similar. Extract:
 
 If no actionable comments found across any PR, report "No actionable review comments found" and stop (or loop back if in watch mode).
 
-### Step 6.4 — Present Review Comments
+### Step 6.4 - Present Review Comments
 
 Display a table of PRs with pending actionable comments:
 
@@ -702,7 +702,7 @@ Display a table of PRs with pending actionable comments:
 
 If `--yes` is NOT set and this is not a subsequent watch poll: ask the user to confirm which PRs to address ("all", comma-separated PR numbers, or "skip").
 
-### Step 6.5 — Spawn Review Fix Sub-agents (Parallel)
+### Step 6.5 - Spawn Review Fix Sub-agents (Parallel)
 
 For each PR with actionable comments, spawn a sub-agent. Launch up to 8 concurrently.
 
@@ -711,7 +711,7 @@ For each PR with actionable comments, spawn a sub-agent. Launch up to 8 concurre
 ```
 You are a PR review handler agent. Your task is to address review comments on a pull request by making the requested changes, pushing updates, and replying to each comment.
 
-IMPORTANT: Do NOT use the gh CLI — it is not installed. Use curl with the GitHub REST API for all GitHub operations.
+IMPORTANT: Do NOT use the gh CLI - it is not installed. Use curl with the GitHub REST API for all GitHub operations.
 
 First, ensure GH_TOKEN is set. Check: echo $GH_TOKEN. If empty, read from config:
 GH_TOKEN=$(cat ~/.openclaw/openclaw.json 2>/dev/null | jq -r '.skills.entries["gh-issues"].apiKey // empty') || GH_TOKEN=$(cat /data/.clawdbot/openclaw.json 2>/dev/null | jq -r '.skills.entries["gh-issues"].apiKey // empty')
@@ -742,7 +742,7 @@ Each comment has:
 <instructions>
 Follow these steps in order:
 
-0. SETUP — Ensure GH_TOKEN is available:
+0. SETUP - Ensure GH_TOKEN is available:
 ```
 
 export GH_TOKEN=$(node -e "const fs=require('fs'); const c=JSON.parse(fs.readFileSync('/data/.clawdbot/openclaw.json','utf8')); console.log(c.skills?.entries?.['gh-issues']?.apiKey || '')")
@@ -750,42 +750,42 @@ export GH_TOKEN=$(node -e "const fs=require('fs'); const c=JSON.parse(fs.readFil
 ```
 Verify: echo "Token: ${GH_TOKEN:0:10}..."
 
-1. CHECKOUT — Switch to the PR branch:
+1. CHECKOUT - Switch to the PR branch:
 git fetch {PUSH_REMOTE} {branch_name}
 git checkout {branch_name}
 git pull {PUSH_REMOTE} {branch_name}
 
-2. UNDERSTAND — Read ALL review comments carefully. Group them by file. Understand what each reviewer is asking for.
+2. UNDERSTAND - Read ALL review comments carefully. Group them by file. Understand what each reviewer is asking for.
 
-3. IMPLEMENT — For each comment, make the requested change:
+3. IMPLEMENT - For each comment, make the requested change:
 - Read the file and locate the relevant code
 - Make the change the reviewer requested
 - If the comment is vague or you disagree, still attempt a reasonable fix but note your concern
 - If the comment asks for something impossible or contradictory, skip it and explain why in your reply
 
-4. TEST — Run existing tests to make sure your changes don't break anything:
+4. TEST - Run existing tests to make sure your changes don't break anything:
 - If tests fail, fix the issue or revert the problematic change
 - Note any test failures in your replies
 
-5. COMMIT — Stage and commit all changes in a single commit:
+5. COMMIT - Stage and commit all changes in a single commit:
 git add {changed_files}
 git commit -m "fix: address review comments on PR #{pr_number}
 
 Addresses review feedback from {reviewer_names}"
 
-6. PUSH — Push the updated branch:
+6. PUSH - Push the updated branch:
 git config --global credential.helper ""
 git remote set-url {PUSH_REMOTE} https://x-access-token:$GH_TOKEN@github.com/{PUSH_REPO}.git
 GIT_ASKPASS=true git push {PUSH_REMOTE} {branch_name}
 
-7. REPLY — For each addressed comment, post a reply:
+7. REPLY - For each addressed comment, post a reply:
 
 For inline review comments (have a path/line), reply to the comment thread:
 curl -s -X POST \
   -H "Authorization: Bearer $GH_TOKEN" \
   -H "Accept: application/vnd.github+json" \
   https://api.github.com/repos/{SOURCE_REPO}/pulls/{pr_number}/comments/{comment_id}/replies \
-  -d '{"body": "Addressed in commit {short_sha} — {brief_description_of_change}"}'
+  -d '{"body": "Addressed in commit {short_sha} - {brief_description_of_change}"}'
 
 For general PR comments (issue comments), reply on the PR:
 curl -s -X POST \
@@ -797,7 +797,7 @@ curl -s -X POST \
 For comments you could NOT address, reply explaining why:
 "Unable to address this comment: {reason}. This may need manual review."
 
-8. REPORT — Send back a summary:
+8. REPORT - Send back a summary:
 - PR URL
 - Number of comments addressed vs skipped
 - Commit SHA
@@ -808,10 +808,10 @@ For comments you could NOT address, reply explaining why:
 <constraints>
 - Only modify files relevant to the review comments
 - Do not make unrelated changes
-- Do not force-push — always regular push
+- Do not force-push - always regular push
 - If a comment contradicts another comment, address the most recent one and flag the conflict
-- Do NOT use the gh CLI — use curl + GitHub REST API
-- GH_TOKEN is already in the environment — do not prompt for auth
+- Do NOT use the gh CLI - use curl + GitHub REST API
+- GH_TOKEN is already in the environment - do not prompt for auth
 - Time limit: 60 minutes max
 </constraints>
 ```
@@ -822,7 +822,7 @@ For comments you could NOT address, reply explaining why:
 - cleanup: "keep" (preserve transcripts for review)
 - If `--model` was provided, include `model: "{MODEL}"` in the spawn config
 
-### Step 6.6 — Review Results
+### Step 6.6 - Review Results
 
 After all review sub-agents complete, present a summary:
 
@@ -846,14 +846,14 @@ After presenting results from the current batch:
 3. Tell the user:
    > "Next poll in {interval} minutes... (say 'stop' to end watch mode)"
 4. Sleep for {interval} minutes.
-5. Go back to **Phase 2 — Fetch Issues**. The fetch will automatically filter out:
+5. Go back to **Phase 2 - Fetch Issues**. The fetch will automatically filter out:
    - Issues already in PROCESSED_ISSUES
    - Issues that have existing fix/issue-{N} PRs (caught in Phase 4 pre-flight)
 6. After Phases 2-5 (or if no new issues), run **Phase 6** to check for new review comments on ALL tracked PRs (both newly created and previously opened).
 7. If no new issues AND no new actionable review comments → report "No new activity. Polling again in {interval} minutes..." and loop back to step 4.
-8. The user can say "stop" at any time to exit watch mode. When stopping, present a final cumulative summary of ALL batches — issues processed AND review comments addressed.
+8. The user can say "stop" at any time to exit watch mode. When stopping, present a final cumulative summary of ALL batches - issues processed AND review comments addressed.
 
-**Context hygiene between polls — IMPORTANT:**
+**Context hygiene between polls - IMPORTANT:**
 Only retain between poll cycles:
 
 - PROCESSED_ISSUES (set of issue numbers)

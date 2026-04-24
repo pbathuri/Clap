@@ -1,4 +1,4 @@
-# M23T — Ollama Runtime Mesh + Integration Registry
+# M23T - Ollama Runtime Mesh + Integration Registry
 
 ## Objective
 
@@ -71,8 +71,8 @@ This phase provides the **control plane** for model/tool/runtime selection. It d
 
 To override built-in defaults, create under `data/local/runtime/`:
 
-- `backend_profiles.json` — list of backend profile objects
-- `model_catalog.json` — list of model entries (or `{"models": [...]}`)
-- `integration_manifests.json` — list of integration manifests (or `{"integrations": [...]}`)
+- `backend_profiles.json` - list of backend profile objects
+- `model_catalog.json` - list of model entries (or `{"models": [...]}`)
+- `integration_manifests.json` - list of integration manifests (or `{"integrations": [...]}`)
 
 User-provided Ollama model lists can be merged into `model_catalog.json` as the seed catalog.

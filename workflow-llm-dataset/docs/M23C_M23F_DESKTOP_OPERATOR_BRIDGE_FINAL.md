@@ -1,4 +1,4 @@
-# M23C–M23F — Desktop Operator Bridge — Final Pane Summary
+# M23C–M23F - Desktop Operator Bridge - Final Pane Summary
 
 This document summarizes the completed sequential build (M23C-F1 through M23F-F1) that bridges the current local ops/reporting operator product toward the personal desktop/work operator vision.
 
@@ -63,11 +63,11 @@ workflow-dataset graph inspect --task-id demo1
 ## 3. How this advances the product toward the personal desktop/work operator goal
 
 - **Safe adapter layer:** Typed contracts (file, notes, browser, app) with explicit simulate vs real-execution flags, expected inputs/outputs, failure modes, and approval requirements. The product can now *describe* desktop actions in a uniform way without executing them unsafely.
-- **First useful execution (read-only/sandbox):** File and notes adapters support real read-only actions and sandbox-only snapshot. Operators can inspect paths, list directories, snapshot to sandbox, read/summarize notes, and propose status—all local and inspectable.
+- **First useful execution (read-only/sandbox):** File and notes adapters support real read-only actions and sandbox-only snapshot. Operators can inspect paths, list directories, snapshot to sandbox, read/summarize notes, and propose status-all local and inspectable.
 - **Simulate-only browser/app:** URL validation and approved-app resolution give a clear “what would open/launch” preview without any browser automation or app launch. Keeps the door open for future gated execution without adding risk now.
 - **Capability and approval visibility:** Capability scan and approval registry make it explicit which adapters, paths, apps, and action scopes are available and approved. Supports operator decisions and future gating.
 - **User task capture and replay:** Tasks can be defined (from file or CLI), stored locally, and replayed in simulate-only mode. This is the first user-specific task-learning scaffold and feeds the coordination graph.
-- **Advisory coordination graph:** Task steps are mapped to a cross-app graph (file, notes, browser, app, artifact). Mission control can show a coordination summary. No autonomous execution or hidden scheduling—purely advisory.
+- **Advisory coordination graph:** Task steps are mapped to a cross-app graph (file, notes, browser, app, artifact). Mission control can show a coordination summary. No autonomous execution or hidden scheduling-purely advisory.
 
 The existing ops/reporting surface (dashboard, mission control, templates, chain lab, intake, edge readiness) is unchanged. The bridge is additive: adapters, capability discovery, task demos, and graph sit alongside current workflows and can later feed a desktop work operator without replacing or weakening them.
 

@@ -1,22 +1,22 @@
-# M22E-F6 — Template Runs in Cohort/Workspace Flows + Reporting Hooks: Delivery
+# M22E-F6 - Template Runs in Cohort/Workspace Flows + Reporting Hooks: Delivery
 
 ## 1. Files modified
 
-- `src/workflow_dataset/cli.py` — Added `template_version` to ws_manifest; call `record_workflow_artifact` for ops_reporting_workspace with `template_id`; added `templates usage` command.
-- `src/workflow_dataset/release/reporting_workspaces.py` — `get_workspace_inventory` now includes `template_id` and `template_version` from manifest.
-- `src/workflow_dataset/release/dashboard_data.py` — `recent_workspaces` entries now include `template_id` and `template_version`.
-- `src/workflow_dataset/release/package_builder.py` — `package_manifest` now copies `template_id` and `template_version` from workspace manifest when present.
-- `src/workflow_dataset/pilot/session_log.py` — Added `record_workflow_artifact(workflow_type, dir_path, pilot_dir, template_id=None)`.
-- `src/workflow_dataset/pilot/aggregate.py` — `session_summaries` now include `template_id` from `s.extra.get("template_id")` when present.
-- `tests/test_review_queue.py` — Added `test_get_workspace_inventory_includes_template_fields`.
-- `tests/test_templates.py` — Added `test_template_usage_summary_empty`, `test_template_usage_summary_with_template_runs`.
-- `tests/test_pilot.py` — Added `test_record_workflow_artifact_stores_template_id`.
+- `src/workflow_dataset/cli.py` - Added `template_version` to ws_manifest; call `record_workflow_artifact` for ops_reporting_workspace with `template_id`; added `templates usage` command.
+- `src/workflow_dataset/release/reporting_workspaces.py` - `get_workspace_inventory` now includes `template_id` and `template_version` from manifest.
+- `src/workflow_dataset/release/dashboard_data.py` - `recent_workspaces` entries now include `template_id` and `template_version`.
+- `src/workflow_dataset/release/package_builder.py` - `package_manifest` now copies `template_id` and `template_version` from workspace manifest when present.
+- `src/workflow_dataset/pilot/session_log.py` - Added `record_workflow_artifact(workflow_type, dir_path, pilot_dir, template_id=None)`.
+- `src/workflow_dataset/pilot/aggregate.py` - `session_summaries` now include `template_id` from `s.extra.get("template_id")` when present.
+- `tests/test_review_queue.py` - Added `test_get_workspace_inventory_includes_template_fields`.
+- `tests/test_templates.py` - Added `test_template_usage_summary_empty`, `test_template_usage_summary_with_template_runs`.
+- `tests/test_pilot.py` - Added `test_record_workflow_artifact_stores_template_id`.
 
 ## 2. Files created
 
-- `src/workflow_dataset/templates/usage.py` — `template_usage_summary(workspaces_root, repo_root, limit)`.
-- `docs/M22E_F6_READ_FIRST.md` — Reuse map, file plan, risk note.
-- `docs/M22E_F6_DELIVERY.md` — This file.
+- `src/workflow_dataset/templates/usage.py` - `template_usage_summary(workspaces_root, repo_root, limit)`.
+- `docs/M22E_F6_READ_FIRST.md` - Reuse map, file plan, risk note.
+- `docs/M22E_F6_DELIVERY.md` - This file.
 
 ## 3. Manifest / reporting changes
 
@@ -81,8 +81,8 @@ assert inv.get('template_id') == 'ops_reporting_core'
 "  # OK
 ```
 
-- `test_get_workspace_inventory_includes_template_fields` — in `test_review_queue.py` (imports cli; requires `yaml`).
-- `test_record_workflow_artifact_stores_template_id` — in `test_pilot.py` (imports pilot package; requires `yaml`).
+- `test_get_workspace_inventory_includes_template_fields` - in `test_review_queue.py` (imports cli; requires `yaml`).
+- `test_record_workflow_artifact_stores_template_id` - in `test_pilot.py` (imports pilot package; requires `yaml`).
 
 With `pyyaml` installed, run:
 

@@ -89,7 +89,7 @@ Gateway 网关 WS 端口（默认 `18789`）默认绑定到 loopback。对于局
 
 ## 服务类型
 
-- `_openclaw-gw._tcp` — Gateway 网关传输信标（被 macOS/iOS/Android 节点使用）。
+- `_openclaw-gw._tcp` - Gateway 网关传输信标（被 macOS/iOS/Android 节点使用）。
 
 ## TXT 键（非机密提示）
 

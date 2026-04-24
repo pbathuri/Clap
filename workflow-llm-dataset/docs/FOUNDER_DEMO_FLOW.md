@@ -1,4 +1,4 @@
-# Founder demo flow — Operations reporting assistant (v1)
+# Founder demo flow - Operations reporting assistant (v1)
 
 How to demo the product in a clean, credible way. Pre-demo setup, exact commands, what to show, and where to be honest about limitations.
 
@@ -6,9 +6,9 @@ How to demo the product in a clean, credible way. Pre-demo setup, exact commands
 
 ## Grounded vs ungrounded demo
 
-- **Ungrounded (generic):** `release demo` with no retrieval and no task context — outputs are generic. The CLI prints `[Ungrounded: no retrieval or task context; outputs may be generic]`.
+- **Ungrounded (generic):** `release demo` with no retrieval and no task context - outputs are generic. The CLI prints `[Ungrounded: no retrieval or task context; outputs may be generic]`.
 - **Grounded by task context:** Pass explicit task-scoped context so the model stays on ops/reporting. Use `--context-file path/to/context.txt` (local file, resolved from project root) and/or `--context-text "weekly ops reporting for project delivery"`. The CLI prints `[Grounded: task context used]`. Context is capped at 2000 characters; local-only.
-- **Grounded by retrieval:** Run `setup init` and `setup run`, prepare corpus (`llm prepare-corpus`), and use `release demo --retrieval` when `data/local/llm/corpus/corpus.jsonl` exists. The CLI prints `[Grounded: retrieval context used]`. For each prompt the CLI shows **Retrieval relevance: high | mixed | weak** — use this to recognize weak grounding. When relevance is weak or mixed, the model is instructed to say so and give only a qualified answer.
+- **Grounded by retrieval:** Run `setup init` and `setup run`, prepare corpus (`llm prepare-corpus`), and use `release demo --retrieval` when `data/local/llm/corpus/corpus.jsonl` exists. The CLI prints `[Grounded: retrieval context used]`. For each prompt the CLI shows **Retrieval relevance: high | mixed | weak** - use this to recognize weak grounding. When relevance is weak or mixed, the model is instructed to say so and give only a qualified answer.
 - **Grounded by both:** Use `--context-file` or `--context-text` together with `--retrieval`. The CLI prints `[Grounded: task context + retrieval]`. If retrieval is weak or mixed, the model is instructed to prioritize the task context and not overstate from retrieved snippets.
 
 **When to use which:** Use `--retrieval` when you have a populated corpus and want answers grounded in it. Use `--context-file` or `--context-text` when you want to pin the demo to a specific ops/reporting scenario without relying on corpus, or to anchor the run when retrieval is often weak/mixed. Use both when you have both and want task context to dominate when retrieval is noisy.
@@ -17,9 +17,9 @@ How to demo the product in a clean, credible way. Pre-demo setup, exact commands
 
 Retrieval is scoped to reporting, status, blockers, wins, next steps, project updates, and operations; workflow_step, work_context, and task sources are preferred over occupation/industry.
 
-**Output shape (weekly status):** The third demo prompt produces a **send-ready weekly status artifact** (minimal editing to share): Summary (headline), Wins, Blockers, Risks, Next steps. **Blockers:** operational form—*Blocked by X* / *Waiting on Y* / *Needs decision on Z* / *Dependency unresolved: [what]*—then what would unblock; no vague filler. **Risks:** short, concrete operational risks (e.g. schedule, dependency, approval, quality, resource) with one line each; avoid generic “there are risks”. **Next steps:** operational, concrete (who/what/when); avoid generic-only “follow up” unless unsupported. Owner/timing only when context supports it. When context is weak or mixed, the model labels sections as [Well-supported] vs [Uncertain—limited context] or [Inferred—low confidence] for blockers/risks.
+**Output shape (weekly status):** The third demo prompt produces a **send-ready weekly status artifact** (minimal editing to share): Summary (headline), Wins, Blockers, Risks, Next steps. **Blockers:** operational form-*Blocked by X* / *Waiting on Y* / *Needs decision on Z* / *Dependency unresolved: [what]*-then what would unblock; no vague filler. **Risks:** short, concrete operational risks (e.g. schedule, dependency, approval, quality, resource) with one line each; avoid generic “there are risks”. **Next steps:** operational, concrete (who/what/when); avoid generic-only “follow up” unless unsupported. Owner/timing only when context supports it. When context is weak or mixed, the model labels sections as [Well-supported] vs [Uncertain-limited context] or [Inferred-low confidence] for blockers/risks.
 
-**Artifact handoff:** Without `--save-artifact`, the artifact is terminal-only (prompt 3 text). With `--save-artifact`, the weekly status is written to a sandbox under **data/local/workspaces/weekly_status/** as `weekly_status.md` plus a **manifest.json** (grounding, task_context_used, retrieval_used, retrieval_relevance, timestamp). The CLI prints the exact path; no apply is performed—use the existing M8 apply flow to copy to project if desired. Preview with `cat <path>` or list the directory.
+**Artifact handoff:** Without `--save-artifact`, the artifact is terminal-only (prompt 3 text). With `--save-artifact`, the weekly status is written to a sandbox under **data/local/workspaces/weekly_status/** as `weekly_status.md` plus a **manifest.json** (grounding, task_context_used, retrieval_used, retrieval_relevance, timestamp). The CLI prints the exact path; no apply is performed-use the existing M8 apply flow to copy to project if desired. Preview with `cat <path>` or list the directory.
 
 ---
 
@@ -49,7 +49,7 @@ workflow-dataset release verify
 workflow-dataset llm verify
 ```
 
-- **Show:** Corpus path, SFT, adapter path (or “adapter missing — we’ll show baseline”). Emphasize: everything runs locally; no cloud.
+- **Show:** Corpus path, SFT, adapter path (or “adapter missing - we’ll show baseline”). Emphasize: everything runs locally; no cloud.
 
 ### 3. Run ops workflow trial (one clear task)
 
@@ -136,4 +136,4 @@ Use these in `llm demo` or `llm demo-suite` or as the trial goal.
 - **Narrow scope:** v1 is operations/reporting only; we’re not claiming spreadsheet, creative, or multi-user.
 - **No production SLA:** This is a first-draft internal/friendly-user demo, not a shipped product.
 
-Say: “This is the first narrow release — we’re showing what we can do today and what we’re explicitly not doing yet.”
+Say: “This is the first narrow release - we’re showing what we can do today and what we’re explicitly not doing yet.”

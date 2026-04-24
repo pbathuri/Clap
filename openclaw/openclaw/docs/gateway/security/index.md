@@ -393,7 +393,7 @@ People who message you can:
 
 ## Core concept: access control before intelligence
 
-Most failures here are not fancy exploits — they’re “someone messaged the bot and the bot did what they asked.”
+Most failures here are not fancy exploits - they’re “someone messaged the bot and the bot did what they asked.”
 
 OpenClaw’s stance:
 
@@ -487,7 +487,7 @@ Treat the snippet above as **secure DM mode**:
 
 If you run multiple accounts on the same channel, use `per-account-channel-peer` instead. If the same person contacts you on multiple channels, use `session.identityLinks` to collapse those DM sessions into one canonical identity. See [Session Management](/concepts/session) and [Configuration](/gateway/configuration).
 
-## Allowlists (DM + groups) — terminology
+## Allowlists (DM + groups) - terminology
 
 OpenClaw has two separate “who can trigger me?” layers:
 

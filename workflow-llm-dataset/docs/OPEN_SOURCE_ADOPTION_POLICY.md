@@ -90,10 +90,10 @@ First-class policy for when and how we adopt external repos. All intake must com
 
 ## 10. Adoption decision flow
 
-1. **Identify** — Exact canonical URL and license.
-2. **Classify** — Role, risk, local/cloud fit (source_risk, source_fit, repo_classifier).
-3. **Policy check** — Does it violate rejection criteria? If yes → reject or reference-only.
-4. **Decide** — reference_only | borrow_patterns | optional_wrapper | candidate_for_pack | core_candidate | reject.
-5. **Record** — Update source_registry.json and docs (capability map, decision output).
+1. **Identify** - Exact canonical URL and license.
+2. **Classify** - Role, risk, local/cloud fit (source_risk, source_fit, repo_classifier).
+3. **Policy check** - Does it violate rejection criteria? If yes → reject or reference-only.
+4. **Decide** - reference_only | borrow_patterns | optional_wrapper | candidate_for_pack | core_candidate | reject.
+5. **Record** - Update source_registry.json and docs (capability map, decision output).
 
 All adoption decisions are explicit and reviewable in the registry and docs.

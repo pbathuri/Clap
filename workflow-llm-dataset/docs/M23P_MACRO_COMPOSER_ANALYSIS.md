@@ -1,4 +1,4 @@
-# M23P — Macro Composer + Checkpointed Multi-App Execution (pre-coding)
+# M23P - Macro Composer + Checkpointed Multi-App Execution (pre-coding)
 
 ## 1. Existing chain/routine/job structures to reuse
 
@@ -23,15 +23,15 @@
 
 | Action | Path |
 |--------|------|
-| Modify | `src/workflow_dataset/macros/schema.py` — Add MacroStep (job_pack_id, step_type, trust_requirement, approval_requirement, checkpoint_before, expected_outputs). Extend Macro with steps (optional), checkpoint_after_step_indices, stop_conditions; keep routine_id 1:1 compat. |
-| Create | `src/workflow_dataset/macros/step_classifier.py` — classify_step(job, mode, repo_root) → step_type (safe_inspect \| sandbox_write \| trusted_real \| blocked \| human_checkpoint). |
-| Create | `src/workflow_dataset/macros/run_state.py` — MacroRunState (run_id, macro_id, status, current_step_index, executed, blocked, paused_at_checkpoint, approval_required_before_step). save_run_state, load_run_state, list_paused_runs, list_awaiting_approval. |
-| Modify | `src/workflow_dataset/macros/runner.py` — Checkpointed run: run until checkpoint or blocked; persist state; resume_run(run_id). Preview includes step classification. |
-| Modify | `src/workflow_dataset/macros/report.py` — Format preview with step types; format run state (paused/resume hint). |
-| Modify | `src/workflow_dataset/cli.py` — macro run --stop-at-checkpoints; macro resume --run-id; macro status. |
-| Modify | `src/workflow_dataset/mission_control/state.py` — Add macros summary (available, last_run, paused, awaiting_approval, blocked). |
-| Create | `tests/test_macros_m23p.py` — Macro definition, preview, checkpoint handling, simulate run, pause/resume, blocked step. |
-| Create | `docs/M23P_MACRO_COMPOSER.md` — Usage, sample macro, preview, checkpoint flow, tests. |
+| Modify | `src/workflow_dataset/macros/schema.py` - Add MacroStep (job_pack_id, step_type, trust_requirement, approval_requirement, checkpoint_before, expected_outputs). Extend Macro with steps (optional), checkpoint_after_step_indices, stop_conditions; keep routine_id 1:1 compat. |
+| Create | `src/workflow_dataset/macros/step_classifier.py` - classify_step(job, mode, repo_root) → step_type (safe_inspect \| sandbox_write \| trusted_real \| blocked \| human_checkpoint). |
+| Create | `src/workflow_dataset/macros/run_state.py` - MacroRunState (run_id, macro_id, status, current_step_index, executed, blocked, paused_at_checkpoint, approval_required_before_step). save_run_state, load_run_state, list_paused_runs, list_awaiting_approval. |
+| Modify | `src/workflow_dataset/macros/runner.py` - Checkpointed run: run until checkpoint or blocked; persist state; resume_run(run_id). Preview includes step classification. |
+| Modify | `src/workflow_dataset/macros/report.py` - Format preview with step types; format run state (paused/resume hint). |
+| Modify | `src/workflow_dataset/cli.py` - macro run --stop-at-checkpoints; macro resume --run-id; macro status. |
+| Modify | `src/workflow_dataset/mission_control/state.py` - Add macros summary (available, last_run, paused, awaiting_approval, blocked). |
+| Create | `tests/test_macros_m23p.py` - Macro definition, preview, checkpoint handling, simulate run, pause/resume, blocked step. |
+| Create | `docs/M23P_MACRO_COMPOSER.md` - Usage, sample macro, preview, checkpoint flow, tests. |
 
 ## 4. Safety/risk note
 

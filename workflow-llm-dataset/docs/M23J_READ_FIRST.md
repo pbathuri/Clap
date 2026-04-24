@@ -1,4 +1,4 @@
-# M23J — Personal Job Packs + Specialization Memory — Read First
+# M23J - Personal Job Packs + Specialization Memory - Read First
 
 ## 1. What already exists for task replay, trust, and approvals
 
@@ -27,14 +27,14 @@
 
 | Module | Files | Purpose |
 |--------|-------|--------|
-| B — Schema | job_packs/schema.py, job_packs/config.py | JobPack model (job_pack_id, title, description, category, source: task_id | benchmark_id, required_adapters, required_approvals, simulate_support, real_mode_eligibility, parameter_schema, expected_outputs, trust_level, trust_notes, created_at, updated_at, version). Config: data/local/job_packs. |
-| C — Specialization | job_packs/specialization.py | SpecializationMemory (preferred_params, preferred_paths, preferred_apps, last_successful_run, recurring_failure_notes, operator_notes, updated_at). load/save per job; update only via explicit functions (from_successful_run, from_operator_override, save_as_preferred). |
-| D — Execution | job_packs/execute.py | resolve_params(job, specialization, cli_params) → validated params; run_job(job_id, mode, params, repo_root) → run via task replay or benchmark harness; policy check before run; preview. |
-| E — Policy | job_packs/policy.py | Job trust policy: simulate_only, trusted_for_real, approval_required_every_run, approval_valid_for_scope, experimental. check_job_policy(job, mode, params, repo_root) → (allowed, message). |
-| F — Store + report | job_packs/store.py, job_packs/report.py | list_jobs, get_job, save_job; report (most-used, most-trusted, simulate-only, approval-blocked, failures, ready for benchmark); diagnostics(job_id). |
+| B - Schema | job_packs/schema.py, job_packs/config.py | JobPack model (job_pack_id, title, description, category, source: task_id | benchmark_id, required_adapters, required_approvals, simulate_support, real_mode_eligibility, parameter_schema, expected_outputs, trust_level, trust_notes, created_at, updated_at, version). Config: data/local/job_packs. |
+| C - Specialization | job_packs/specialization.py | SpecializationMemory (preferred_params, preferred_paths, preferred_apps, last_successful_run, recurring_failure_notes, operator_notes, updated_at). load/save per job; update only via explicit functions (from_successful_run, from_operator_override, save_as_preferred). |
+| D - Execution | job_packs/execute.py | resolve_params(job, specialization, cli_params) → validated params; run_job(job_id, mode, params, repo_root) → run via task replay or benchmark harness; policy check before run; preview. |
+| E - Policy | job_packs/policy.py | Job trust policy: simulate_only, trusted_for_real, approval_required_every_run, approval_valid_for_scope, experimental. check_job_policy(job, mode, params, repo_root) → (allowed, message). |
+| F - Store + report | job_packs/store.py, job_packs/report.py | list_jobs, get_job, save_job; report (most-used, most-trusted, simulate-only, approval-blocked, failures, ready for benchmark); diagnostics(job_id). |
 | Mission control | mission_control/state.py, report.py | Add job_packs summary (count, recent_successful, needing_approval_refresh); optional next_action branch. |
 | CLI | cli.py | jobs list, show, run (--id, --mode, --param), report, diagnostics, specialization show/save-as-preferred. |
-| G — Docs + tests | docs/M23J_JOB_PACKS_OPERATOR.md, tests/test_job_packs.py | What is a job pack, how it differs from task demo, specialization rules, trust, tests. |
+| G - Docs + tests | docs/M23J_JOB_PACKS_OPERATOR.md, tests/test_job_packs.py | What is a job pack, how it differs from task demo, specialization rules, trust, tests. |
 
 ## 5. Safety/risk note
 

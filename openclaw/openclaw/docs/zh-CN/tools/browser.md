@@ -90,7 +90,7 @@ openclaw browser --browser-profile openclaw snapshot
 - `color` + 每个配置文件的 `color` 为浏览器 UI 着色，以便你能看到哪个配置文件处于活动状态。
 - 默认配置文件是 `chrome`（扩展中继）。使用 `defaultProfile: "openclaw"` 来使用托管浏览器。
 - 自动检测顺序：如果系统默认浏览器是基于 Chromium 的则使用它；否则 Chrome → Brave → Edge → Chromium → Chrome Canary。
-- 本地 `openclaw` 配置文件会自动分配 `cdpPort`/`cdpUrl` — 仅为远程 CDP 设置这些。
+- 本地 `openclaw` 配置文件会自动分配 `cdpPort`/`cdpUrl` - 仅为远程 CDP 设置这些。
 
 ## 使用 Brave（或其他基于 Chromium 的浏览器）
 
@@ -536,7 +536,7 @@ JSON 格式的角色快照包含 `refs` 加上一个小的 `stats` 块（lines/c
 
 智能体获得**一个工具**用于浏览器自动化：
 
-- `browser` — status/start/stop/tabs/open/focus/close/snapshot/screenshot/navigate/act
+- `browser` - status/start/stop/tabs/open/focus/close/snapshot/screenshot/navigate/act
 
 映射方式：
 

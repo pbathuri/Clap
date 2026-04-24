@@ -10,7 +10,7 @@ title: "Venice AI"
 
 **Venice** is our highlight Venice setup for privacy-first inference with optional anonymized access to proprietary models.
 
-Venice AI provides privacy-focused AI inference with support for uncensored models and access to major proprietary models through their anonymized proxy. All inference is private by default—no training on your data, no logging.
+Venice AI provides privacy-focused AI inference with support for uncensored models and access to major proprietary models through their anonymized proxy. All inference is private by default-no training on your data, no logging.
 
 ## Why Venice in OpenClaw
 
@@ -21,7 +21,7 @@ Venice AI provides privacy-focused AI inference with support for uncensored mode
 
 ## Privacy Modes
 
-Venice offers two privacy levels — understanding this is key to choosing your model:
+Venice offers two privacy levels - understanding this is key to choosing your model:
 
 | Mode           | Description                                                                                                                       | Models                                                        |
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
@@ -124,7 +124,7 @@ openclaw models list | grep venice
 
 ## Available Models (41 Total)
 
-### Private Models (26) — Fully Private, No Logging
+### Private Models (26) - Fully Private, No Logging
 
 | Model ID                               | Name                                | Context | Features                   |
 | -------------------------------------- | ----------------------------------- | ------- | -------------------------- |
@@ -155,7 +155,7 @@ openclaw models list | grep venice
 | `minimax-m21`                          | MiniMax M2.1                        | 198k    | Reasoning                  |
 | `minimax-m25`                          | MiniMax M2.5                        | 198k    | Reasoning                  |
 
-### Anonymized Models (15) — Via Venice Proxy
+### Anonymized Models (15) - Via Venice Proxy
 
 | Model ID                        | Name                           | Context | Features                  |
 | ------------------------------- | ------------------------------ | ------- | ------------------------- |

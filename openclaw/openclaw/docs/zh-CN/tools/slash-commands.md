@@ -126,7 +126,7 @@ x-i18n:
   - `/skill <name> [input]` 按名称运行 Skill（当原生命令限制阻止每个 Skill 命令时有用）。
   - 默认情况下，Skill 命令作为普通请求转发给模型。
   - Skills 可以选择声明 `command-dispatch: tool` 将命令直接路由到工具（确定性，无模型）。
-  - 示例：`/prose`（OpenProse 插件）— 参见 [OpenProse](/prose)。
+  - 示例：`/prose`（OpenProse 插件）- 参见 [OpenProse](/prose)。
 - **原生命令参数：** Discord 使用自动完成进行动态选项（以及当你省略必需参数时的按钮菜单）。当命令支持选择且你省略参数时，Telegram 和 Slack 显示按钮菜单。
 
 ## 使用量显示（什么显示在哪里）

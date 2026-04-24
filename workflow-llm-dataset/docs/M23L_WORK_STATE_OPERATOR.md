@@ -1,4 +1,4 @@
-# M23L — Work state engine operator guide
+# M23L - Work state engine operator guide
 
 What the work-state engine is, what inputs it uses, how recommendations become context-aware, what stays manual, and how privacy/local-first is preserved.
 

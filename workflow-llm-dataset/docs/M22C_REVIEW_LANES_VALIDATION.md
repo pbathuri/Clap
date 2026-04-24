@@ -1,4 +1,4 @@
-# M22C — Team Pilot Workspace + Role-Based Review Lanes — Validation
+# M22C - Team Pilot Workspace + Role-Based Review Lanes - Validation
 
 ## Summary
 
@@ -10,18 +10,18 @@
 
 | Action | Path |
 |--------|------|
-| Modified | `src/workflow_dataset/release/review_state.py` — LANES, load/save lane, set_workspace_lane |
-| Added | `src/workflow_dataset/release/lane_views.py` — lane summary, list by lane, set_package_lane |
-| Modified | `src/workflow_dataset/release/package_builder.py` — write workspace lane into package_manifest |
-| Modified | `src/workflow_dataset/cli.py` — review lane-status, assign-lane, list-lane; package-status shows lane |
+| Modified | `src/workflow_dataset/release/review_state.py` - LANES, load/save lane, set_workspace_lane |
+| Added | `src/workflow_dataset/release/lane_views.py` - lane summary, list by lane, set_package_lane |
+| Modified | `src/workflow_dataset/release/package_builder.py` - write workspace lane into package_manifest |
+| Modified | `src/workflow_dataset/cli.py` - review lane-status, assign-lane, list-lane; package-status shows lane |
 | Added | `tests/test_review_lanes.py` |
 | Added | `docs/M22C_REVIEW_LANES_VALIDATION.md` |
 
 If your repo was missing supporting modules, these may also have been added so tests and CLI run:
 
-- `src/workflow_dataset/release/reporting_workspaces.py` — workspace inventory/list
-- `src/workflow_dataset/utils/dates.py` — utc_now_iso
-- `src/workflow_dataset/utils/hashes.py` — stable_id
+- `src/workflow_dataset/release/reporting_workspaces.py` - workspace inventory/list
+- `src/workflow_dataset/utils/dates.py` - utc_now_iso
+- `src/workflow_dataset/utils/hashes.py` - stable_id
 
 ## Lane-Aware CLI Usage
 

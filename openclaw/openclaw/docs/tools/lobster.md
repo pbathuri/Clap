@@ -1,7 +1,7 @@
 ---
 title: Lobster
 summary: "Typed workflow runtime for OpenClaw with resumable approval gates."
-description: Typed workflow runtime for OpenClaw — composable pipelines with approval gates.
+description: Typed workflow runtime for OpenClaw - composable pipelines with approval gates.
 read_when:
   - You want deterministic multi-step workflows with explicit approvals
   - You need to resume a workflow without re-running earlier steps
@@ -40,7 +40,7 @@ If the pipeline pauses for approval, the tool returns a `resumeToken` so you can
 
 ## Pattern: small CLI + JSON pipes + approvals
 
-Build tiny commands that speak JSON, then chain them into a single Lobster call. (Example command names below — swap in your own.)
+Build tiny commands that speak JSON, then chain them into a single Lobster call. (Example command names below - swap in your own.)
 
 ```bash
 inbox list --json
@@ -315,10 +315,10 @@ OpenProse pairs well with Lobster: use `/prose` to orchestrate multi-agent prep,
 
 ## Safety
 
-- **Local subprocess only** — no network calls from the plugin itself.
-- **No secrets** — Lobster doesn't manage OAuth; it calls OpenClaw tools that do.
-- **Sandbox-aware** — disabled when the tool context is sandboxed.
-- **Hardened** — fixed executable name (`lobster`) on `PATH`; timeouts and output caps enforced.
+- **Local subprocess only** - no network calls from the plugin itself.
+- **No secrets** - Lobster doesn't manage OAuth; it calls OpenClaw tools that do.
+- **Sandbox-aware** - disabled when the tool context is sandboxed.
+- **Hardened** - fixed executable name (`lobster`) on `PATH`; timeouts and output caps enforced.
 
 ## Troubleshooting
 

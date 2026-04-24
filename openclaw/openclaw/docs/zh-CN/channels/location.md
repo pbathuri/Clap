@@ -33,7 +33,7 @@ OpenClaw 将聊天渠道中分享的位置标准化为：
 - 图钉：
   - `📍 48.858844, 2.294351 ±12m`
 - 命名地点：
-  - `📍 Eiffel Tower — Champ de Mars, Paris (48.858844, 2.294351 ±12m)`
+  - `📍 Eiffel Tower - Champ de Mars, Paris (48.858844, 2.294351 ±12m)`
 - 实时分享：
   - `🛰 Live location: 48.858844, 2.294351 ±12m`
 

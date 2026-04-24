@@ -193,7 +193,7 @@ node openclaw.mjs gateway --port 18789 --verbose
 openclaw message send --target +15555550123 --message "Hello from OpenClaw"
 ```
 
-如果 `openclaw health` 显示"未配置认证"，回到向导设置 OAuth/密钥认证——没有它智能体将无法响应。
+如果 `openclaw health` 显示"未配置认证"，回到向导设置 OAuth/密钥认证--没有它智能体将无法响应。
 
 提示：`openclaw status --all` 是最佳的可粘贴、只读调试报告。
 健康探测：`openclaw health`（或 `openclaw status --deep`）向运行中的 Gateway 网关请求健康快照。

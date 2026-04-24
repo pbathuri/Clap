@@ -1,4 +1,4 @@
-# M22B Mission Control — Validation
+# M22B Mission Control - Validation
 
 ## Summary
 
@@ -20,16 +20,16 @@
 
 ## Usage
 
-- `workflow-dataset mission-control` — print dashboard to stdout
-- `workflow-dataset mission-control --output path` — write report to file
-- `workflow-dataset mission-control --repo-root /path` — override repo root for aggregation
+- `workflow-dataset mission-control` - print dashboard to stdout
+- `workflow-dataset mission-control --output path` - write report to file
+- `workflow-dataset mission-control --repo-root /path` - override repo root for aggregation
 
 ## Aggregated sources
 
 - **Product state:** `get_dashboard_data` (validated_workflows from REPORTING_WORKFLOWS, cohort, review_package, staging), `local_sources` (pilot_dir, workspaces_root).
-- **Evaluation state:** `board_report`, `list_runs` (eval) — latest_run_id, recommendation, best_run_id, comparison regressions/improvements, workflows_tested.
-- **Development state:** `get_queue_status` (devlab experiments), `proposal_queue_summary`, `list_proposals` — queued/running/done, pending/accepted/rejected proposals.
-- **Incubator state:** `list_candidates` — candidates_by_stage, promoted_count, rejected_count, hold_count.
+- **Evaluation state:** `board_report`, `list_runs` (eval) - latest_run_id, recommendation, best_run_id, comparison regressions/improvements, workflows_tested.
+- **Development state:** `get_queue_status` (devlab experiments), `proposal_queue_summary`, `list_proposals` - queued/running/done, pending/accepted/rejected proposals.
+- **Incubator state:** `list_candidates` - candidates_by_stage, promoted_count, rejected_count, hold_count.
 
 ## Next-action logic
 
@@ -92,5 +92,5 @@ PYTHONPATH=src python3 -m pytest tests/test_mission_control.py -v
 
 1. **Persist snapshot (optional):** Add `workflow-dataset mission-control --output path` to a nightly or pre-release script so the team has a timestamped report artifact (e.g. `mission_control_YYYYMMDD.txt`) for history.
 2. **Dashboard section (optional):** If the repo has a web or TUI dashboard, add a "Mission Control" tab that calls `format_mission_control_report(repo_root)` and renders the same sections plus the recommended action.
-3. **Planner shortlist:** Have the product evolution planner (or "recommend-next") consume `recommend_next_action(get_mission_control_state())` so its shortlist is aligned with the same evidence (e.g. "Next: build — 1 pending proposal").
+3. **Planner shortlist:** Have the product evolution planner (or "recommend-next") consume `recommend_next_action(get_mission_control_state())` so its shortlist is aligned with the same evidence (e.g. "Next: build - 1 pending proposal").
 4. **No change to scope:** Keep mission-control as an internal development control plane; do not expose it as an end-user orchestration surface or add cloud/auto-apply.

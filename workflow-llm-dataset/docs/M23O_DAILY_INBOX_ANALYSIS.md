@@ -1,4 +1,4 @@
-# M23O — Daily Work Inbox + Context Digest (pre-coding)
+# M23O - Daily Work Inbox + Context Digest (pre-coding)
 
 ## 1. What already exists (work state, context, routines, reminders)
 
@@ -27,12 +27,12 @@
 
 | Action | Path |
 |--------|------|
-| Modify | `src/workflow_dataset/daily/inbox.py` — Extend DailyDigest: created_at, work_state_snapshot_id, what_changed (list[str] or drift summary), inbox_items (list of {id, kind, reason, trust_level, mode_available, blockers, expected_outcome}), top_next_recommended_action (dict with label, reason, command). Build inbox_items from recommend_jobs + get_job_pack title/description for expected_outcome. Optionally refresh work-state snapshot and compute drift. |
-| Modify | `src/workflow_dataset/daily/inbox_report.py` — Add "What changed" section when what_changed present; add "Inbox items (why now)" with reason, trust, mode, blockers, expected outcome per item; add format_explain_why_now(digest). |
-| Create | `src/workflow_dataset/daily/digest_history.py` — save_digest_snapshot(digest, repo_root), load_digest_snapshot(snapshot_id), list_digest_snapshots(limit), compare_digests(older, newer) → DigestCompare (newly_appeared, dropped, escalated). Persist under data/local/context/digests/ or data/local/daily/. |
-| Modify | `src/workflow_dataset/cli.py` — inbox: add --explain; add `inbox compare` (latest vs previous); add `inbox snapshot` to persist current digest. |
-| Create | `tests/test_daily_inbox_m23o.py` — digest with inbox_items, blocked-state reporting, explain output, digest compare, no-data/partial-data. |
-| Create | `docs/M23O_DAILY_INBOX.md` — CLI usage, sample digest, sample explain, sample compare, tests. |
+| Modify | `src/workflow_dataset/daily/inbox.py` - Extend DailyDigest: created_at, work_state_snapshot_id, what_changed (list[str] or drift summary), inbox_items (list of {id, kind, reason, trust_level, mode_available, blockers, expected_outcome}), top_next_recommended_action (dict with label, reason, command). Build inbox_items from recommend_jobs + get_job_pack title/description for expected_outcome. Optionally refresh work-state snapshot and compute drift. |
+| Modify | `src/workflow_dataset/daily/inbox_report.py` - Add "What changed" section when what_changed present; add "Inbox items (why now)" with reason, trust, mode, blockers, expected outcome per item; add format_explain_why_now(digest). |
+| Create | `src/workflow_dataset/daily/digest_history.py` - save_digest_snapshot(digest, repo_root), load_digest_snapshot(snapshot_id), list_digest_snapshots(limit), compare_digests(older, newer) → DigestCompare (newly_appeared, dropped, escalated). Persist under data/local/context/digests/ or data/local/daily/. |
+| Modify | `src/workflow_dataset/cli.py` - inbox: add --explain; add `inbox compare` (latest vs previous); add `inbox snapshot` to persist current digest. |
+| Create | `tests/test_daily_inbox_m23o.py` - digest with inbox_items, blocked-state reporting, explain output, digest compare, no-data/partial-data. |
+| Create | `docs/M23O_DAILY_INBOX.md` - CLI usage, sample digest, sample explain, sample compare, tests. |
 
 ## 4. Safety/risk note
 

@@ -125,7 +125,7 @@ macOS 菜单栏应用可以端到端驱动相同的设置（远程状态检查�
 
 - **Loopback + SSH/Tailscale Serve** 是最安全的默认设置（无公开暴露）。
 - **非 loopback 绑定**（`lan`/`tailnet`/`custom`，或当 loopback 不可用时的 `auto`）必须使用身份验证令牌/密码。
-- `gateway.remote.token` **仅**用于远程 CLI 调用——它**不**启用本地身份验证。
+- `gateway.remote.token` **仅**用于远程 CLI 调用--它**不**启用本地身份验证。
 - `gateway.remote.tlsFingerprint` 在使用 `wss://` 时固定远程 TLS 证书。
 - 当 `gateway.auth.allowTailscale: true` 时，**Tailscale Serve** 可以通过身份标头进行身份验证。如果你想使用令牌/密码，请将其设置为 `false`。
 - 将浏览器控制视为操作员访问：仅限 tailnet + 有意的节点配对。

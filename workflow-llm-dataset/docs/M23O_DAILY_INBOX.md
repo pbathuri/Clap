@@ -1,4 +1,4 @@
-# M23O — Daily Work Inbox + Context Digest
+# M23O - Daily Work Inbox + Context Digest
 
 Daily “start here” view: work state summary, what changed, relevant jobs/routines, blocked items (with reason/trust/mode/blockers/outcome), reminders, top next action. Local-only; no autonomous execution.
 
@@ -35,9 +35,9 @@ workflow-dataset inbox snapshot
 
 [Relevant work]
   Jobs: weekly_status_from_notes, replay_cli_demo
-  Routines: —
+  Routines: -
 
-[Inbox items — reason, trust, mode, blockers, expected outcome]
+[Inbox items - reason, trust, mode, blockers, expected outcome]
   job weekly_status_from_notes
     reason: approval_blocked  trust: experimental  mode: simulate_only
     blockers: Real mode requires approval registry at data/local/capability_discovery/approvals.yaml.
@@ -92,7 +92,7 @@ workflow-dataset inbox snapshot
 │ ## Newly appeared                                                            │
 │ job_b                                                                        │
 │ ## Dropped                                                                   │
-│ —                                                                            │
+│ -                                                                            │
 │ ## No longer blocked (escalated)                                             │
 │ job_a                                                                        │
 │ ## Summary                                                                   │

@@ -39,7 +39,7 @@ x-i18n:
 
 ## 设备配对（首次连接）
 
-当你从新浏览器或设备连接到控制 UI 时，Gateway 网关需要**一次性配对批准** — 即使你在同一个 Tailnet 上且 `gateway.auth.allowTailscale: true`。这是防止未授权访问的安全措施。
+当你从新浏览器或设备连接到控制 UI 时，Gateway 网关需要**一次性配对批准** - 即使你在同一个 Tailnet 上且 `gateway.auth.allowTailscale: true`。这是防止未授权访问的安全措施。
 
 **你会看到：** "disconnected (1008): pairing required"
 

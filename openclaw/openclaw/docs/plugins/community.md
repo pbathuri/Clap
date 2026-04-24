@@ -38,14 +38,14 @@ Low-effort wrappers, unclear ownership, or unmaintained packages may be declined
 
 Use this format when adding entries:
 
-- **Plugin Name** — short description
+- **Plugin Name** - short description
   npm: `@scope/package`
   repo: `https://github.com/org/repo`
   install: `openclaw plugins install @scope/package`
 
 ## Listed plugins
 
-- **WeChat** — Connect OpenClaw to WeChat personal accounts via WeChatPadPro (iPad protocol). Supports text, image, and file exchange with keyword-triggered conversations.
+- **WeChat** - Connect OpenClaw to WeChat personal accounts via WeChatPadPro (iPad protocol). Supports text, image, and file exchange with keyword-triggered conversations.
   npm: `@icesword760/openclaw-wechat`
   repo: `https://github.com/icesword0760/openclaw-wechat`
   install: `openclaw plugins install @icesword760/openclaw-wechat`

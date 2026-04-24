@@ -71,7 +71,7 @@ Format: `{YYYYMMDD}-{HHMMSS}-{random6}`
 
 Example: `20260115-143052-a7b3c9`
 
-No "run-" prefix needed—the directory name makes context obvious.
+No "run-" prefix needed-the directory name makes context obvious.
 
 ### Segment Numbering
 
@@ -264,8 +264,8 @@ When a binding is created inside a block invocation, it's scoped to that executi
 
 Examples:
 
-- `bindings/result__43.md` — binding `result` in execution_id 43
-- `bindings/parts__44.md` — binding `parts` in execution_id 44
+- `bindings/result__43.md` - binding `result` in execution_id 43
+- `bindings/parts__44.md` - binding `parts` in execution_id 44
 
 **File format with execution scope:**
 
@@ -367,7 +367,7 @@ prompt: "Review the research findings"
 | `agents/{name}/memory.md`     | Persistent agent |
 | `agents/{name}/{name}-NNN.md` | Persistent agent |
 
-The VM orchestrates; subagents write their own outputs directly to the filesystem. **The VM never holds full binding values—it tracks file paths.**
+The VM orchestrates; subagents write their own outputs directly to the filesystem. **The VM never holds full binding values-it tracks file paths.**
 
 ---
 
@@ -415,7 +415,7 @@ Also write your segment record to:
 
 ### What Subagents Return to the VM
 
-After writing output, the subagent returns a **confirmation message**—not the full content:
+After writing output, the subagent returns a **confirmation message**-not the full content:
 
 **Root scope (outside block invocations):**
 ```
@@ -436,7 +436,7 @@ Summary: Processed chunk into 3 sub-parts for recursive processing.
 
 ```
 
-The VM records the location and continues. It does NOT read the file—it passes the reference to subsequent sessions that need the context.
+The VM records the location and continues. It does NOT read the file-it passes the reference to subsequent sessions that need the context.
 
 ---
 
@@ -482,7 +482,7 @@ After each statement completes, the VM:
 2. **Updates** `state.md` with new position and annotations
 3. **Continues** to next statement
 
-The VM never does compaction—that's the subagent's responsibility.
+The VM never does compaction-that's the subagent's responsibility.
 
 ---
 

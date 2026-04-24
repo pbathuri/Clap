@@ -77,15 +77,15 @@ When validation fails:
   <Accordion title="Set up a channel (WhatsApp, Telegram, Discord, etc.)">
     Each channel has its own config section under `channels.<provider>`. See the dedicated channel page for setup steps:
 
-    - [WhatsApp](/channels/whatsapp) — `channels.whatsapp`
-    - [Telegram](/channels/telegram) — `channels.telegram`
-    - [Discord](/channels/discord) — `channels.discord`
-    - [Slack](/channels/slack) — `channels.slack`
-    - [Signal](/channels/signal) — `channels.signal`
-    - [iMessage](/channels/imessage) — `channels.imessage`
-    - [Google Chat](/channels/googlechat) — `channels.googlechat`
-    - [Mattermost](/channels/mattermost) — `channels.mattermost`
-    - [MS Teams](/channels/msteams) — `channels.msteams`
+    - [WhatsApp](/channels/whatsapp) - `channels.whatsapp`
+    - [Telegram](/channels/telegram) - `channels.telegram`
+    - [Discord](/channels/discord) - `channels.discord`
+    - [Slack](/channels/slack) - `channels.slack`
+    - [Signal](/channels/signal) - `channels.signal`
+    - [iMessage](/channels/imessage) - `channels.imessage`
+    - [Google Chat](/channels/googlechat) - `channels.googlechat`
+    - [Mattermost](/channels/mattermost) - `channels.mattermost`
+    - [MS Teams](/channels/msteams) - `channels.msteams`
 
     All channels share the same DM policy pattern:
 
@@ -348,14 +348,14 @@ When validation fails:
 
 ## Config hot reload
 
-The Gateway watches `~/.openclaw/openclaw.json` and applies changes automatically — no manual restart needed for most settings.
+The Gateway watches `~/.openclaw/openclaw.json` and applies changes automatically - no manual restart needed for most settings.
 
 ### Reload modes
 
 | Mode                   | Behavior                                                                                |
 | ---------------------- | --------------------------------------------------------------------------------------- |
 | **`hybrid`** (default) | Hot-applies safe changes instantly. Automatically restarts for critical ones.           |
-| **`hot`**              | Hot-applies safe changes only. Logs a warning when a restart is needed — you handle it. |
+| **`hot`**              | Hot-applies safe changes only. Logs a warning when a restart is needed - you handle it. |
 | **`restart`**          | Restarts the Gateway on any config change, safe or not.                                 |
 | **`off`**              | Disables file watching. Changes take effect on the next manual restart.                 |
 
@@ -373,7 +373,7 @@ Most fields hot-apply without downtime. In `hybrid` mode, restart-required chang
 
 | Category            | Fields                                                               | Restart needed? |
 | ------------------- | -------------------------------------------------------------------- | --------------- |
-| Channels            | `channels.*`, `web` (WhatsApp) — all built-in and extension channels | No              |
+| Channels            | `channels.*`, `web` (WhatsApp) - all built-in and extension channels | No              |
 | Agent & models      | `agent`, `agents`, `models`, `routing`                               | No              |
 | Automation          | `hooks`, `cron`, `agent.heartbeat`                                   | No              |
 | Sessions & messages | `session`, `messages`                                                | No              |
@@ -383,7 +383,7 @@ Most fields hot-apply without downtime. In `hybrid` mode, restart-required chang
 | Infrastructure      | `discovery`, `canvasHost`, `plugins`                                 | **Yes**         |
 
 <Note>
-`gateway.reload` and `gateway.remote` are exceptions — changing them does **not** trigger a restart.
+`gateway.reload` and `gateway.remote` are exceptions - changing them does **not** trigger a restart.
 </Note>
 
 ## Config RPC (programmatic updates)
@@ -402,11 +402,11 @@ Control-plane write RPCs (`config.apply`, `config.patch`, `update.run`) are rate
 
     Params:
 
-    - `raw` (string) — JSON5 payload for the entire config
-    - `baseHash` (optional) — config hash from `config.get` (required when config exists)
-    - `sessionKey` (optional) — session key for the post-restart wake-up ping
-    - `note` (optional) — note for the restart sentinel
-    - `restartDelayMs` (optional) — delay before restart (default 2000)
+    - `raw` (string) - JSON5 payload for the entire config
+    - `baseHash` (optional) - config hash from `config.get` (required when config exists)
+    - `sessionKey` (optional) - session key for the post-restart wake-up ping
+    - `note` (optional) - note for the restart sentinel
+    - `restartDelayMs` (optional) - delay before restart (default 2000)
 
     Restart requests are coalesced while one is already pending/in-flight, and a 30-second cooldown applies between restart cycles.
 
@@ -430,9 +430,9 @@ Control-plane write RPCs (`config.apply`, `config.patch`, `update.run`) are rate
 
     Params:
 
-    - `raw` (string) — JSON5 with just the keys to change
-    - `baseHash` (required) — config hash from `config.get`
-    - `sessionKey`, `note`, `restartDelayMs` — same as `config.apply`
+    - `raw` (string) - JSON5 with just the keys to change
+    - `baseHash` (required) - config hash from `config.get`
+    - `sessionKey`, `note`, `restartDelayMs` - same as `config.apply`
 
     Restart behavior matches `config.apply`: coalesced pending restarts plus a 30-second cooldown between restart cycles.
 

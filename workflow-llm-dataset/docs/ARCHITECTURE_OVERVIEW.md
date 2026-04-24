@@ -6,11 +6,11 @@ This document describes the layered architecture for the personal edge work-agen
 
 | Layer | Purpose | Status |
 |-------|---------|--------|
-| **A — Global Work Priors** | Occupational dataset: industries, occupations, tasks, DWAs, tools, workflow/KPI/automation priors. Used to interpret what the user is doing. | Implemented (dataset pipeline). |
-| **B — Personal Observation** | Local-first capture of file, app, browser, terminal, calendar, and manual-teaching events. Phased by edge feasibility. | Schema + scaffolding only. |
-| **C — Personal Work Graph** | Private graph: profile, projects, routines, workflows, preferences, approval boundaries, device-local memory. | Schema + scaffolding only. |
-| **D — Agent Execution** | Modes: observe → simulate → assist → automate. Default is **simulate** (no changes to real system without approval). | Schema + scaffolding only. |
-| **E — Device Runtime** | Edge device (e.g. Raspberry Pi 5 + AI module), local model routing, vector store, event log, privacy/sync boundaries, safe updates. | Design only. |
+| **A - Global Work Priors** | Occupational dataset: industries, occupations, tasks, DWAs, tools, workflow/KPI/automation priors. Used to interpret what the user is doing. | Implemented (dataset pipeline). |
+| **B - Personal Observation** | Local-first capture of file, app, browser, terminal, calendar, and manual-teaching events. Phased by edge feasibility. | Schema + scaffolding only. |
+| **C - Personal Work Graph** | Private graph: profile, projects, routines, workflows, preferences, approval boundaries, device-local memory. | Schema + scaffolding only. |
+| **D - Agent Execution** | Modes: observe → simulate → assist → automate. Default is **simulate** (no changes to real system without approval). | Schema + scaffolding only. |
+| **E - Device Runtime** | Edge device (e.g. Raspberry Pi 5 + AI module), local model routing, vector store, event log, privacy/sync boundaries, safe updates. | Design only. |
 
 ## Data flow (target state)
 
@@ -29,7 +29,7 @@ This document describes the layered architecture for the personal edge work-agen
 
 ## References
 
-- [Personal Agent Vision](PERSONAL_AGENT_VISION.md) — product vision and constraints.
-- [Edge Device Plan](EDGE_DEVICE_PLAN.md) — hardware, model tiers, storage, updates.
-- [Privacy and Local-First Model](PRIVACY_AND_LOCAL_FIRST_MODEL.md) — data residency and sync rules.
-- [Observation Phases](OBSERVATION_PHASES.md) — tiered observation capabilities.
+- [Personal Agent Vision](PERSONAL_AGENT_VISION.md) - product vision and constraints.
+- [Edge Device Plan](EDGE_DEVICE_PLAN.md) - hardware, model tiers, storage, updates.
+- [Privacy and Local-First Model](PRIVACY_AND_LOCAL_FIRST_MODEL.md) - data residency and sync rules.
+- [Observation Phases](OBSERVATION_PHASES.md) - tiered observation capabilities.

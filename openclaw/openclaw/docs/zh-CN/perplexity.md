@@ -77,8 +77,8 @@ OpenClaw 可以使用 Perplexity Sonar 作为 `web_search` 工具。你可以通
 
 ## 模型
 
-- `perplexity/sonar` — 带网络搜索的快速问答
-- `perplexity/sonar-pro`（默认） — 多步推理 + 网络搜索
-- `perplexity/sonar-reasoning-pro` — 深度研究
+- `perplexity/sonar` - 带网络搜索的快速问答
+- `perplexity/sonar-pro`（默认） - 多步推理 + 网络搜索
+- `perplexity/sonar-reasoning-pro` - 深度研究
 
 请参阅 [Web 工具](/tools/web) 了解 web_search 配置详情。

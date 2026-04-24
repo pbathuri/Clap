@@ -1,4 +1,4 @@
-# Integration Report — feat/ops-product-next-integration
+# Integration Report - feat/ops-product-next-integration
 
 **Date:** 2026-03-15  
 **Target branch:** `feat/ops-product-next-integration`  
@@ -22,7 +22,7 @@
 
 - Confirmed only `main` and `remotes/origin/main` exist (`git branch -a` after `git fetch origin`).
 - Created **`feat/ops-product-next-integration`** from current `main` so the integration branch exists for when the pane branches are available.
-- Ran the requested test suite (and a subset that does not require full app deps) on the current tree — see §4.
+- Ran the requested test suite (and a subset that does not require full app deps) on the current tree - see §4.
 
 **Intended merge order** (when branches exist):
 
@@ -36,7 +36,7 @@
 
 ## 2. Conflicts encountered
 
-**None** — no merges were performed.
+**None** - no merges were performed.
 
 ---
 
@@ -76,7 +76,7 @@ cd workflow-llm-dataset && PYTHONPATH=src python3 -m pytest -q \
 **Result:**
 
 - **70 passed**
-- **5 failed** — all due to missing `pydantic` when tests tried to import `workflow_dataset.cli` (CLI help tests in test_templates and test_chain_lab).
+- **5 failed** - all due to missing `pydantic` when tests tried to import `workflow_dataset.cli` (CLI help tests in test_templates and test_chain_lab).
 
 So:
 
@@ -95,13 +95,13 @@ The following reflects the **current codebase** (build report + `cli.py` and rel
 
 **Top-level / console**
 
-- `workflow-dataset console` — Launch operator console.
-- `workflow-dataset build` / `qa` / `observe` — Build/QA/observe.
-- `workflow-dataset mission-control` — Mission control report (M22B).
+- `workflow-dataset console` - Launch operator console.
+- `workflow-dataset build` / `qa` / `observe` - Build/QA/observe.
+- `workflow-dataset mission-control` - Mission control report (M22B).
 
 **Dashboard**
 
-- `dashboard`, `dashboard workspace`, `dashboard package`, `dashboard cohort`, `dashboard apply-plan`, `dashboard action` — Command center and drill-downs (M21U, C2, C4).
+- `dashboard`, `dashboard workspace`, `dashboard package`, `dashboard cohort`, `dashboard apply-plan`, `dashboard action` - Command center and drill-downs (M21U, C2, C4).
 
 **Setup**
 
@@ -158,11 +158,11 @@ All of the above are **local-first**, **sandbox-only**, and **operator-controlle
 
 4. **Conflict hotspots when branches exist**  
    When merges are actually run, likely collision points are:
-   - **`src/workflow_dataset/cli.py`** — All panes add or touch commands; merge order helps but conflicts are still likely.
-   - **Shared manifest / provenance** — e.g. `workspace_manifest.json`, `artifact_list`, `template_id`, release/review state.
-   - **Workspace/package paths** — `data/local/workspaces`, `data/local/packages`, `data/local/templates`, etc.
-   - **Runtime/config** — `configs/settings.yaml`, LLM/config paths.
-   - **Test files** — `test_release.py`, `test_templates.py`, `test_chain_lab.py`, `test_edge.py`, `test_pilot.py`, etc.
+   - **`src/workflow_dataset/cli.py`** - All panes add or touch commands; merge order helps but conflicts are still likely.
+   - **Shared manifest / provenance** - e.g. `workspace_manifest.json`, `artifact_list`, `template_id`, release/review state.
+   - **Workspace/package paths** - `data/local/workspaces`, `data/local/packages`, `data/local/templates`, etc.
+   - **Runtime/config** - `configs/settings.yaml`, LLM/config paths.
+   - **Test files** - `test_release.py`, `test_templates.py`, `test_chain_lab.py`, `test_edge.py`, `test_pilot.py`, etc.
 
 5. **Naming**  
    Task referred to `test_chain.py`; repo has `test_chain_lab.py`. Ensure scripts/CI use the actual filename.

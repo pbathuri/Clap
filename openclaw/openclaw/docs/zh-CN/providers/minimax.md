@@ -38,7 +38,7 @@ MiniMax 强调 M2.1 的以下改进：
 
 ## 选择设置方式
 
-### MiniMax OAuth（编程计划）— 推荐
+### MiniMax OAuth（编程计划）- 推荐
 
 **适用于：** 通过 OAuth 快速设置 MiniMax 编程计划，无需 API 密钥。
 

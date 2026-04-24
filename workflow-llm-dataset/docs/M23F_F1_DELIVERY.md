@@ -1,4 +1,4 @@
-# M23F-F1 — Cross-App Coordination Graph (advisory only) — Delivery
+# M23F-F1 - Cross-App Coordination Graph (advisory only) - Delivery
 
 ## 1. Files modified
 

@@ -1,7 +1,7 @@
 ---
 role: execution-semantics
 summary: |
-  How to execute OpenProse programs. You embody the OpenProse VM—a virtual machine that
+  How to execute OpenProse programs. You embody the OpenProse VM-a virtual machine that
   spawns sessions via the Task tool, manages state, and coordinates parallel execution.
   Read this file to run .prose programs.
 see-also:
@@ -16,7 +16,7 @@ see-also:
 
 # OpenProse VM
 
-This document defines how to execute OpenProse programs. You are the OpenProse VM—an intelligent virtual machine that spawns subagent sessions according to a structured program.
+This document defines how to execute OpenProse programs. You are the OpenProse VM-an intelligent virtual machine that spawns subagent sessions according to a structured program.
 
 ## OpenClaw Runtime Mapping
 
@@ -42,10 +42,10 @@ OpenProse is invoked via `prose` commands:
 You can run any `.prose` program from a URL or registry reference:
 
 ```bash
-# Direct URL — any fetchable URL works
+# Direct URL - any fetchable URL works
 prose run https://raw.githubusercontent.com/openprose/prose/main/skills/open-prose/examples/48-habit-miner.prose
 
-# Registry shorthand — handle/slug resolves to p.prose.md
+# Registry shorthand - handle/slug resolves to p.prose.md
 prose run irl-danb/habit-miner     # Fetches https://p.prose.md/irl-danb/habit-miner
 prose run alice/code-review        # Fetches https://p.prose.md/alice/code-review
 ```
@@ -67,7 +67,7 @@ use "alice/research" as research             # Registry shorthand
 
 ## Why This Is a VM
 
-Large language models are simulators. When given a detailed description of a system, they don't just _describe_ that system—they _simulate_ it. This document leverages that property: it describes a virtual machine with enough specificity that reading it causes a Prose Complete system to simulate that VM.
+Large language models are simulators. When given a detailed description of a system, they don't just _describe_ that system-they _simulate_ it. This document leverages that property: it describes a virtual machine with enough specificity that reading it causes a Prose Complete system to simulate that VM.
 
 But simulation with sufficient fidelity _is_ implementation. When the simulated VM spawns real subagents, produces real artifacts, and maintains real state, the distinction between "simulating a VM" and "being a VM" collapses.
 
@@ -87,13 +87,13 @@ A traditional VM has concrete components. The OpenProse VM has analogous structu
 
 ### What Makes It Real
 
-The OpenProse VM isn't a metaphor. Each `session` statement triggers a _real_ Task tool call that spawns a _real_ subagent. The outputs are _real_ artifacts. The simulation produces actual computation—it just happens through a different substrate than silicon executing bytecode.
+The OpenProse VM isn't a metaphor. Each `session` statement triggers a _real_ Task tool call that spawns a _real_ subagent. The outputs are _real_ artifacts. The simulation produces actual computation-it just happens through a different substrate than silicon executing bytecode.
 
 ---
 
 ## Embodying the VM
 
-When you execute a `.prose` program, you ARE the virtual machine. This is not a metaphor—it's a mode of operation:
+When you execute a `.prose` program, you ARE the virtual machine. This is not a metaphor-it's a mode of operation:
 
 | You                        | The VM                          |
 | -------------------------- | ------------------------------- |
@@ -104,14 +104,14 @@ When you execute a `.prose` program, you ARE the virtual machine. This is not a 
 
 **What this means in practice:**
 
-- You don't _simulate_ execution—you _perform_ it
+- You don't _simulate_ execution-you _perform_ it
 - Each `session` spawns a real subagent via the Task tool
 - Your state persists in files (`.prose/runs/`) or conversation (narration protocol)
 - You follow the program structure strictly, but apply intelligence where marked
 
 ### The VM as Intelligent Container
 
-Traditional dependency injection containers wire up components from configuration. You do the same—but with understanding:
+Traditional dependency injection containers wire up components from configuration. You do the same-but with understanding:
 
 | Declared Primitive          | Your Responsibility                                        |
 | --------------------------- | ---------------------------------------------------------- |
@@ -192,7 +192,7 @@ Format: `{YYYYMMDD}-{HHMMSS}-{random6}`
 
 Example: `20260115-143052-a7b3c9`
 
-No "run-" prefix needed—the directory name makes context obvious.
+No "run-" prefix needed-the directory name makes context obvious.
 
 ### Segment Numbering
 
@@ -206,8 +206,8 @@ If a program exceeds 999 segments, extend to 4 digits: `captain-1000.md`.
 
 OpenProse supports two state management systems. See the state files for detailed documentation:
 
-- **`state/filesystem.md`** — File-system state using the directory structure above (default)
-- **`state/in-context.md`** — In-context state using the narration protocol
+- **`state/filesystem.md`** - File-system state using the directory structure above (default)
+- **`state/in-context.md`** - In-context state using the narration protocol
 
 ### Who Writes What
 
@@ -321,7 +321,7 @@ The VM:
 2. Records the binding location in its state
 3. Updates `state.md` with new position/status
 4. Continues execution
-5. Does NOT read the full binding—only passes the reference forward
+5. Does NOT read the full binding-only passes the reference forward
 
 **Critical:** The VM never holds full binding values. It tracks locations and passes references. This keeps the VM's context lean and enables arbitrarily large intermediate values.
 
@@ -664,7 +664,7 @@ session "Write summary"
 
 ### How Context is Passed
 
-The VM passes context **by reference**, not by value. The VM never holds full binding values in its working memory—it tracks pointers to where bindings are stored.
+The VM passes context **by reference**, not by value. The VM never holds full binding values in its working memory-it tracks pointers to where bindings are stored.
 
 When spawning a session with context:
 
@@ -1031,7 +1031,7 @@ Each block invocation gets a unique `execution_id`:
 - Never reuse within a run
 - Root scope (outside any block) has `execution_id: 0` (conceptually)
 
-**Storage representation:** State backends may represent root scope differently—databases use `NULL`, filesystem uses no suffix. The conceptual model remains: root scope is distinct from any block invocation frame.
+**Storage representation:** State backends may represent root scope differently-databases use `NULL`, filesystem uses no suffix. The conceptual model remains: root scope is distinct from any block invocation frame.
 
 ### Recursive Block Invocation
 
@@ -1063,7 +1063,7 @@ do process(data, 5)
 6. Recursion continues until base case
 7. Frames pop as blocks complete
 
-**Key insight:** Sessions don't recurse—they're leaf nodes. The VM manages the entire call tree.
+**Key insight:** Sessions don't recurse-they're leaf nodes. The VM manages the entire call tree.
 
 ### Scope Resolution
 

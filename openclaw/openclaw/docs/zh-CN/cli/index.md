@@ -248,19 +248,19 @@ openclaw [--dev] [--profile <name>] <command>
 
 ## 安全
 
-- `openclaw security audit` — 审计配置 + 本地状态中常见的安全隐患。
-- `openclaw security audit --deep` — 尽力进行实时 Gateway 网关探测。
-- `openclaw security audit --fix` — 收紧安全默认值并 chmod 状态/配置。
+- `openclaw security audit` - 审计配置 + 本地状态中常见的安全隐患。
+- `openclaw security audit --deep` - 尽力进行实时 Gateway 网关探测。
+- `openclaw security audit --fix` - 收紧安全默认值并 chmod 状态/配置。
 
 ## 插件
 
 管理扩展及其配置：
 
-- `openclaw plugins list` — 发现插件（使用 `--json` 获取机器可读输出）。
-- `openclaw plugins info <id>` — 显示插件详情。
-- `openclaw plugins install <path|.tgz|npm-spec>` — 安装插件（或将插件路径添加到 `plugins.load.paths`）。
-- `openclaw plugins enable <id>` / `disable <id>` — 切换 `plugins.entries.<id>.enabled`。
-- `openclaw plugins doctor` — 报告插件加载错误。
+- `openclaw plugins list` - 发现插件（使用 `--json` 获取机器可读输出）。
+- `openclaw plugins info <id>` - 显示插件详情。
+- `openclaw plugins install <path|.tgz|npm-spec>` - 安装插件（或将插件路径添加到 `plugins.load.paths`）。
+- `openclaw plugins enable <id>` / `disable <id>` - 切换 `plugins.entries.<id>.enabled`。
+- `openclaw plugins doctor` - 报告插件加载错误。
 
 大多数插件更改需要重启 Gateway 网关。参见 [/plugin](/tools/plugin)。
 
@@ -268,9 +268,9 @@ openclaw [--dev] [--profile <name>] <command>
 
 对 `MEMORY.md` + `memory/*.md` 进行向量搜索：
 
-- `openclaw memory status` — 显示索引统计。
-- `openclaw memory index` — 重新索引记忆文件。
-- `openclaw memory search "<query>"` — 对记忆进行语义搜索。
+- `openclaw memory status` - 显示索引统计。
+- `openclaw memory index` - 重新索引记忆文件。
+- `openclaw memory search "<query>"` - 对记忆进行语义搜索。
 
 ## 聊天斜杠命令
 

@@ -159,7 +159,7 @@ Set an owner ship to receive approval requests when unauthorized users try to in
 }
 ```
 
-The owner ship is **automatically authorized everywhere** — DM invites are auto-accepted and
+The owner ship is **automatically authorized everywhere** - DM invites are auto-accepted and
 channel messages are always allowed. You don't need to add the owner to `dmAllowlist` or
 `defaultAuthorizedShips`.
 

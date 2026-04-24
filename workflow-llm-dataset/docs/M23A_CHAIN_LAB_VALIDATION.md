@@ -1,4 +1,4 @@
-# M23A — Internal Agent Chain Lab — Validation
+# M23A - Internal Agent Chain Lab - Validation
 
 ## Summary
 
@@ -11,11 +11,11 @@
 | Action | Path |
 |--------|------|
 | Added | `src/workflow_dataset/chain/__init__.py` |
-| Added | `src/workflow_dataset/chain/registry.py` — load_chain, list_chains, get_chain, _expand_step_to_cmd |
-| Added | `src/workflow_dataset/chain/runner.py` — run_chain, get_run_status, list_runs |
+| Added | `src/workflow_dataset/chain/registry.py` - load_chain, list_chains, get_chain, _expand_step_to_cmd |
+| Added | `src/workflow_dataset/chain/runner.py` - run_chain, get_run_status, list_runs |
 | Added | `data/local/chains/ops_reporting_chain_v1.yaml` |
 | Added | `data/local/chains/simple_command_chain.json` |
-| Modified | `src/workflow_dataset/cli.py` — chain list, chain run, chain status |
+| Modified | `src/workflow_dataset/cli.py` - chain list, chain run, chain status |
 | Added | `tests/test_chain.py` |
 | Added | `docs/M23A_CHAIN_LAB_VALIDATION.md` |
 
@@ -62,9 +62,9 @@ stop_conditions:
 
 **Step types:**
 
-- **command** — raw shell command: `cmd: "workflow-dataset intake add --path ./x --label l1"`.
-- **intake_add** — expanded to `workflow-dataset intake add --path <path> --label <label>`.
-- **release_demo** — expanded to `workflow-dataset release demo` with `--intake`, `--template`, `--save-artifact` from params.
+- **command** - raw shell command: `cmd: "workflow-dataset intake add --path ./x --label l1"`.
+- **intake_add** - expanded to `workflow-dataset intake add --path <path> --label <label>`.
+- **release_demo** - expanded to `workflow-dataset release demo` with `--intake`, `--template`, `--save-artifact` from params.
 
 ## Sample Chain Run Report
 
@@ -91,8 +91,8 @@ After `workflow-dataset chain run --id simple_command_chain`:
 
 Per-step files:
 
-- `step_0_step1.log` — stdout/stderr for step 0.
-- `step_0_step1.json` — step result (status, exit_code, paths).
+- `step_0_step1.log` - stdout/stderr for step 0.
+- `step_0_step1.json` - step result (status, exit_code, paths).
 - Same for step 1.
 
 ## Tests Run

@@ -1,4 +1,4 @@
-# M22E — Workflow Composer + Template Studio — Validation
+# M22E - Workflow Composer + Template Studio - Validation
 
 ## Summary
 
@@ -11,10 +11,10 @@
 | Action | Path |
 |--------|------|
 | Added | `src/workflow_dataset/templates/__init__.py` |
-| Added | `src/workflow_dataset/templates/registry.py` — load_template, list_templates, get_template, template_artifact_order_and_filenames |
+| Added | `src/workflow_dataset/templates/registry.py` - load_template, list_templates, get_template, template_artifact_order_and_filenames |
 | Added | `data/local/templates/ops_reporting_core.yaml` |
 | Added | `data/local/templates/weekly_plus_stakeholder.yaml` |
-| Modified | `src/workflow_dataset/cli.py` — templates list/show; release demo --template, template-based artifact filter/order, manifest template_id |
+| Modified | `src/workflow_dataset/cli.py` - templates list/show; release demo --template, template-based artifact filter/order, manifest template_id |
 | Added | `tests/test_templates.py` |
 | Added | `docs/M22E_TEMPLATES_VALIDATION.md` |
 

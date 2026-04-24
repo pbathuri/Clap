@@ -81,7 +81,7 @@ OpenClaw 既是产品也是实验：你正在将前沿模型的行为连接到�
 
 ## 通过 HTTP 访问控制 UI
 
-控制 UI 需要**安全上下文**（HTTPS 或 localhost）来生成设备身份。如果你启用 `gateway.controlUi.allowInsecureAuth`，UI 会回退到**仅令牌认证**，并在省略设备身份时跳过设备配对。这是安全性降级——优先使用 HTTPS（Tailscale Serve）或在 `127.0.0.1` 上打开 UI。
+控制 UI 需要**安全上下文**（HTTPS 或 localhost）来生成设备身份。如果你启用 `gateway.controlUi.allowInsecureAuth`，UI 会回退到**仅令牌认证**，并在省略设备身份时跳过设备配对。这是安全性降级--优先使用 HTTPS（Tailscale Serve）或在 `127.0.0.1` 上打开 UI。
 
 仅用于紧急情况，`gateway.controlUi.dangerouslyDisableDeviceAuth` 会完全禁用设备身份检查。这是严重的安全性降级；除非你正在主动调试并能快速恢复，否则请保持关闭。
 
@@ -142,7 +142,7 @@ OpenClaw 可以在会话中刷新 Skills 列表：
 
 ## 核心概念：访问控制优先于智能
 
-这里的大多数失败不是花哨的漏洞利用——而是"有人给机器人发消息，机器人就照做了。"
+这里的大多数失败不是花哨的漏洞利用--而是"有人给机器人发消息，机器人就照做了。"
 
 OpenClaw 的立场：
 
@@ -201,7 +201,7 @@ openclaw pairing approve <channel> <code>
 
 这可以防止跨用户上下文泄露，同时保持群聊隔离。如果你在同一渠道上运行多个账户，请改用 `per-account-channel-peer`。如果同一个人通过多个渠道联系你，请使用 `session.identityLinks` 将这些私信会话合并为一个规范身份。参见[会话管理](/concepts/session)和[配置](/gateway/configuration)。
 
-## 白名单（私信 + 群组）——术语
+## 白名单（私信 + 群组）--术语
 
 OpenClaw 有两个独立的"谁可以触发我？"层：
 
@@ -772,6 +772,6 @@ AI（Clawd）
 
 ---
 
-_"安全是一个过程，不是一个产品。另外，不要相信有 shell 访问权限的龙虾。"_ — 某位智者，大概
+_"安全是一个过程，不是一个产品。另外，不要相信有 shell 访问权限的龙虾。"_ - 某位智者，大概
 
 🦞🔐

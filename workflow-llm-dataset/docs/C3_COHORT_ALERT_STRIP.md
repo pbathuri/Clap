@@ -1,4 +1,4 @@
-# C3 — Cohort-aware dashboard + alert strip
+# C3 - Cohort-aware dashboard + alert strip
 
 Cohort summary and lightweight alert strip for the Local Reporting Command Center. Read-oriented and operator-friendly.
 
@@ -40,7 +40,7 @@ Alerts: Review pending: 3  |  Package ready  |  Staged apply-plan preview
 │   Recent recommendation: expand_adjacent                                 │
 ╰──────────────────────────────────────────────────────────────────────────╯
 
-——— Readiness ———
+--- Readiness ---
 ╭──────────────────────────────── 1. Readiness ────────────────────────────────╮
 ...
 ```
@@ -51,10 +51,10 @@ With no alerts:
 Alerts: none
 
 ╭──────────────────────── Cohort summary ─────────────────────────────────╮
-│   Active cohort: —                                                      │
+│   Active cohort: -                                                      │
 │   Sessions: 0                                                            │
-│   Avg usefulness: —                                                      │
-│   Recent recommendation: —                                              │
+│   Avg usefulness: -                                                      │
+│   Recent recommendation: -                                              │
 ╰──────────────────────────────────────────────────────────────────────────╯
 ```
 

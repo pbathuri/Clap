@@ -1,4 +1,4 @@
-# M22D — Local Knowledge Intake Center — Validation
+# M22D - Local Knowledge Intake Center - Validation
 
 ## Summary
 
@@ -11,11 +11,11 @@
 | Action | Path |
 |--------|------|
 | Added | `src/workflow_dataset/intake/__init__.py` |
-| Added | `src/workflow_dataset/intake/registry.py` — add_intake, get_intake, list_intakes, snapshot copy |
-| Added | `src/workflow_dataset/intake/load.py` — load_intake_content for demo |
-| Added | `src/workflow_dataset/intake/report.py` — intake_report, format_intake_report_text |
-| Modified | `src/workflow_dataset/cli.py` — intake add/list/report; release demo --intake; manifest intake_used/intake_name |
-| Modified | `src/workflow_dataset/release/workspace_rerun_diff.py` — infer_rerun_args includes intake |
+| Added | `src/workflow_dataset/intake/registry.py` - add_intake, get_intake, list_intakes, snapshot copy |
+| Added | `src/workflow_dataset/intake/load.py` - load_intake_content for demo |
+| Added | `src/workflow_dataset/intake/report.py` - intake_report, format_intake_report_text |
+| Modified | `src/workflow_dataset/cli.py` - intake add/list/report; release demo --intake; manifest intake_used/intake_name |
+| Modified | `src/workflow_dataset/release/workspace_rerun_diff.py` - infer_rerun_args includes intake |
 | Added | `tests/test_intake.py` |
 | Added | `docs/M22D_INTAKE_VALIDATION.md` |
 

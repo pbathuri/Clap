@@ -1,4 +1,4 @@
-# M22E-F2 — Template Versioning + Template Validation Reports — Delivery
+# M22E-F2 - Template Versioning + Template Validation Reports - Delivery
 
 ## 1. Files modified
 
@@ -93,7 +93,7 @@ Template not found:
 --- Template validation report ---
 Template id: _nonexistent_
 Version: unversioned
-Workflow: —
+Workflow: -
 Status: invalid
 
 Errors:

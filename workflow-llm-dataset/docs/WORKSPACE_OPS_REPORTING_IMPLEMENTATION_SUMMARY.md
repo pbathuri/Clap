@@ -1,4 +1,4 @@
-# Workspace & Ops Reporting — Implementation Summary (Recent Multi-Chats)
+# Workspace & Ops Reporting - Implementation Summary (Recent Multi-Chats)
 
 **Single entry point** for everything implemented in recent multi-chats: M21S (ops reporting workspace v2), A2 (input packs + schema hardening), A3 (rerun/diff/timeline), A4 (export contracts + handoff spec). This doc organizes **what** was built, **where** it lives, **how** it works, and **how much** is in scope. All of it is **local-only**, **sandbox-only**, and within the **ops/reporting** family.
 
@@ -53,17 +53,17 @@
 
 **Release group (release demo):**
 
-- `release demo` — `--workflow ops_reporting_workspace` (M21S), `--context-file`, `--context-text`, `--input-pack` (A2), `--rerun-from` (A3), `--save-artifact`. For ops_reporting_workspace: 6 prompts, then save via `workspace_save.save_ops_reporting_workspace` with manifest including `input_sources_used`, `retrieval_relevance_weak_or_mixed`, `schema_validation` (A2).
+- `release demo` - `--workflow ops_reporting_workspace` (M21S), `--context-file`, `--context-text`, `--input-pack` (A2), `--rerun-from` (A3), `--save-artifact`. For ops_reporting_workspace: 6 prompts, then save via `workspace_save.save_ops_reporting_workspace` with manifest including `input_sources_used`, `retrieval_relevance_weak_or_mixed`, `schema_validation` (A2).
 
 **Review group (workspace/review):**
 
-- `review list-workspaces` — list recent reporting workspaces (includes ops_reporting_workspace runs).
-- `review show-workspace <path>` — inventory + review state.
-- `review diff-workspaces <path_a> <path_b>` — A3: inventory diff, manifest metadata diff, artifact deltas (optional `--no-diffs`).
-- `review workspace-timeline` — A3: provenance timeline (optional `--workflow`, `--limit`).
-- `review validate-workspace <path>` — A4: validate against export contract (exit 1 if invalid).
-- `review export-contract` — A4: print contract for a workflow (default `ops_reporting_workspace`).
-- `review approve-artifact`, `review set-artifact-state`, `review build-package`, etc. — unchanged in scope by M21S/A2/A3/A4.
+- `review list-workspaces` - list recent reporting workspaces (includes ops_reporting_workspace runs).
+- `review show-workspace <path>` - inventory + review state.
+- `review diff-workspaces <path_a> <path_b>` - A3: inventory diff, manifest metadata diff, artifact deltas (optional `--no-diffs`).
+- `review workspace-timeline` - A3: provenance timeline (optional `--workflow`, `--limit`).
+- `review validate-workspace <path>` - A4: validate against export contract (exit 1 if invalid).
+- `review export-contract` - A4: print contract for a workflow (default `ops_reporting_workspace`).
+- `review approve-artifact`, `review set-artifact-state`, `review build-package`, etc. - unchanged in scope by M21S/A2/A3/A4.
 
 ### 2.4 Docs
 

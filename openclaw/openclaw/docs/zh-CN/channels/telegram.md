@@ -56,8 +56,8 @@ x-i18n:
 
 可选的 BotFather 设置：
 
-- `/setjoingroups` — 允许/拒绝将机器人添加到群组。
-- `/setprivacy` — 控制机器人是否可以看到所有群组消息。
+- `/setjoingroups` - 允许/拒绝将机器人添加到群组。
+- `/setprivacy` - 控制机器人是否可以看到所有群组消息。
 
 ### 2）配置 token（环境变量或配置文件）
 
@@ -307,11 +307,11 @@ Telegram 支持带回调按钮的内联键盘。
 
 作用域：
 
-- `off` — 禁用内联按钮
-- `dm` — 仅私信（群组目标被阻止）
-- `group` — 仅群组（私信目标被阻止）
-- `all` — 私信 + 群组
-- `allowlist` — 私信 + 群组，但仅限 `allowFrom`/`groupAllowFrom` 允许的发送者（与控制命令规则相同）
+- `off` - 禁用内联按钮
+- `dm` - 仅私信（群组目标被阻止）
+- `group` - 仅群组（私信目标被阻止）
+- `all` - 私信 + 群组
+- `allowlist` - 私信 + 群组，但仅限 `allowFrom`/`groupAllowFrom` 允许的发送者（与控制命令规则相同）
 
 默认：`allowlist`。
 旧版：`capabilities: ["inlineButtons"]` = `inlineButtons: "all"`。
@@ -422,7 +422,7 @@ OpenClaw 默认使用音频文件以保持向后兼容性。
 
 要在智能体回复中强制使用语音备忘录气泡，在回复中的任何位置包含此标签：
 
-- `[[audio_as_voice]]` — 将音频作为语音备忘录而不是文件发送。
+- `[[audio_as_voice]]` - 将音频作为语音备忘录而不是文件发送。
 
 该标签会从发送的文本中去除。其他渠道会忽略此标签。
 
@@ -452,12 +452,12 @@ OpenClaw 支持接收和发送 Telegram 贴纸，并具有智能缓存功能。
 
 接收贴纸时可用的模板上下文字段：
 
-- `Sticker` — 包含以下属性的对象：
-  - `emoji` — 与贴纸关联的表情符号
-  - `setName` — 贴纸集名称
-  - `fileId` — Telegram 文件 ID（用于发送相同贴纸）
-  - `fileUniqueId` — 用于缓存查找的稳定 ID
-  - `cachedDescription` — 可用时的缓存视觉描述
+- `Sticker` - 包含以下属性的对象：
+  - `emoji` - 与贴纸关联的表情符号
+  - `setName` - 贴纸集名称
+  - `fileId` - Telegram 文件 ID（用于发送相同贴纸）
+  - `fileUniqueId` - 用于缓存查找的稳定 ID
+  - `cachedDescription` - 可用时的缓存视觉描述
 
 ### 贴纸缓存
 
@@ -521,9 +521,9 @@ OpenClaw 支持接收和发送 Telegram 贴纸，并具有智能缓存功能。
 
 参数：
 
-- `fileId`（必需）— 贴纸的 Telegram 文件 ID。从接收贴纸时的 `Sticker.fileId` 获取，或从 `sticker-search` 结果获取。
-- `replyTo`（可选）— 要回复的消息 ID。
-- `threadId`（可选）— 论坛话题的消息线程 ID。
+- `fileId`（必需）- 贴纸的 Telegram 文件 ID。从接收贴纸时的 `Sticker.fileId` 获取，或从 `sticker-search` 结果获取。
+- `replyTo`（可选）- 要回复的消息 ID。
+- `threadId`（可选）- 论坛话题的消息线程 ID。
 
 **搜索贴纸：**
 
@@ -627,15 +627,15 @@ Telegram 反应作为**单独的 `message_reaction` 事件**到达，而不是�
 **配置：**
 
 - `channels.telegram.reactionNotifications`：控制哪些反应触发通知
-  - `"off"` — 忽略所有反应
-  - `"own"` — 当用户对机器人消息做出反应时通知（尽力而为；内存中）（默认）
-  - `"all"` — 通知所有反应
+  - `"off"` - 忽略所有反应
+  - `"own"` - 当用户对机器人消息做出反应时通知（尽力而为；内存中）（默认）
+  - `"all"` - 通知所有反应
 
 - `channels.telegram.reactionLevel`：控制智能体的反应能力
-  - `"off"` — 智能体不能对消息做出反应
-  - `"ack"` — 机器人发送确认反应（处理时显示 👀）（默认）
-  - `"minimal"` — 智能体可以少量反应（指导：每 5-10 次交换 1 次）
-  - `"extensive"` — 智能体可以在适当时自由反应
+  - `"off"` - 智能体不能对消息做出反应
+  - `"ack"` - 机器人发送确认反应（处理时显示 👀）（默认）
+  - `"minimal"` - 智能体可以少量反应（指导：每 5-10 次交换 1 次）
+  - `"extensive"` - 智能体可以在适当时自由反应
 
 **论坛群组：** 论坛群组中的反应包含 `message_thread_id`，使用类似 `agent:main:telegram:group:{chatId}:topic:{threadId}` 的会话键。这确保同一话题中的反应和消息保持在一起。
 
@@ -739,9 +739,9 @@ Telegram 反应作为**单独的 `message_reaction` 事件**到达，而不是�
 - `channels.telegram.actions.reactions`：门控 Telegram 工具反应。
 - `channels.telegram.actions.sendMessage`：门控 Telegram 工具消息发送。
 - `channels.telegram.actions.deleteMessage`：门控 Telegram 工具消息删除。
-- `channels.telegram.actions.sticker`：门控 Telegram 贴纸动作 — 发送和搜索（默认：false）。
-- `channels.telegram.reactionNotifications`：`off | own | all` — 控制哪些反应触发系统事件（未设置时默认：`own`）。
-- `channels.telegram.reactionLevel`：`off | ack | minimal | extensive` — 控制智能体的反应能力（未设置时默认：`minimal`）。
+- `channels.telegram.actions.sticker`：门控 Telegram 贴纸动作 - 发送和搜索（默认：false）。
+- `channels.telegram.reactionNotifications`：`off | own | all` - 控制哪些反应触发系统事件（未设置时默认：`own`）。
+- `channels.telegram.reactionLevel`：`off | ack | minimal | extensive` - 控制智能体的反应能力（未设置时默认：`minimal`）。
 
 相关全局选项：
 

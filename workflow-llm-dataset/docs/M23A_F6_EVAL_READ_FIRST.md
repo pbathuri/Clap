@@ -1,4 +1,4 @@
-# M23A-F6 — Chain Hooks into Eval/Benchmark: READ FIRST (state check)
+# M23A-F6 - Chain Hooks into Eval/Benchmark: READ FIRST (state check)
 
 ## 1. Current state
 
@@ -14,9 +14,9 @@
 
 ## 3. What this pass adds (minimal)
 
-1. **Operator guide** — Add a short "Chain runs and evaluation" section in `M23A_CHAIN_OPERATOR_GUIDE.md` that points to the eval bridge doc and the API/CLI surface.
-2. **Compare summary text** — Optional helper `benchmark_summary_text(diff)` in compare.py for a single string suitable for logs/reports; CLI can use it for a cleaner benchmark block when `--benchmark-view` is set.
-3. **Delivery doc** — `M23A_F6_DELIVERY.md` with files modified/created, interface summary, sample manifest excerpt, sample compare output, tests run, weaknesses.
+1. **Operator guide** - Add a short "Chain runs and evaluation" section in `M23A_CHAIN_OPERATOR_GUIDE.md` that points to the eval bridge doc and the API/CLI surface.
+2. **Compare summary text** - Optional helper `benchmark_summary_text(diff)` in compare.py for a single string suitable for logs/reports; CLI can use it for a cleaner benchmark block when `--benchmark-view` is set.
+3. **Delivery doc** - `M23A_F6_DELIVERY.md` with files modified/created, interface summary, sample manifest excerpt, sample compare output, tests run, weaknesses.
 
 ## 4. What not to change
 

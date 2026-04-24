@@ -162,7 +162,7 @@ See example 39 for the full implementation.
 
 ## The Captain's Chair Pattern
 
-The captain's chair is an orchestration paradigm where a coordinating agent (the "captain") dispatches specialized subagents for all execution. The captain never writes code directly—only plans, coordinates, and validates.
+The captain's chair is an orchestration paradigm where a coordinating agent (the "captain") dispatches specialized subagents for all execution. The captain never writes code directly-only plans, coordinates, and validates.
 
 **Key principles:**
 

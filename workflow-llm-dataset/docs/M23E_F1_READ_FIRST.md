@@ -1,4 +1,4 @@
-# M23E-F1 — Task Demonstration Capture + Replay Skeleton — Read First
+# M23E-F1 - Task Demonstration Capture + Replay Skeleton - Read First
 
 ## 1. Current adapter / discovery state
 

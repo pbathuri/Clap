@@ -1,4 +1,4 @@
-# M23I — Desktop benchmark operator guide
+# M23I - Desktop benchmark operator guide
 
 What is benchmarked, what is simulate-only, trusted real actions, how to interpret board/report, and how this differs from uncontrolled desktop automation.
 

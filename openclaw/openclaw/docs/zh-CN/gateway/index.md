@@ -145,25 +145,25 @@ OPENCLAW_CONFIG_PATH=~/.openclaw/b.json OPENCLAW_STATE_DIR=~/.openclaw-b opencla
 
 ## 方法（初始集）
 
-- `health` — 完整健康快照（与 `openclaw health --json` 形状相同）。
-- `status` — 简短摘要。
-- `system-presence` — 当前 presence 列表。
-- `system-event` — 发布 presence/系统注释（结构化）。
-- `send` — 通过活跃渠道发送消息。
-- `agent` — 运行智能体轮次（在同一连接上流回事件）。
-- `node.list` — 列出已配对 + 当前连接的节点（包括 `caps`、`deviceFamily`、`modelIdentifier`、`paired`、`connected` 和广播的 `commands`）。
-- `node.describe` — 描述节点（能力 + 支持的 `node.invoke` 命令；适用于已配对节点和当前连接的未配对节点）。
-- `node.invoke` — 在节点上调用命令（例如 `canvas.*`、`camera.*`）。
-- `node.pair.*` — 配对生命周期（`request`、`list`、`approve`、`reject`、`verify`）。
+- `health` - 完整健康快照（与 `openclaw health --json` 形状相同）。
+- `status` - 简短摘要。
+- `system-presence` - 当前 presence 列表。
+- `system-event` - 发布 presence/系统注释（结构化）。
+- `send` - 通过活跃渠道发送消息。
+- `agent` - 运行智能体轮次（在同一连接上流回事件）。
+- `node.list` - 列出已配对 + 当前连接的节点（包括 `caps`、`deviceFamily`、`modelIdentifier`、`paired`、`connected` 和广播的 `commands`）。
+- `node.describe` - 描述节点（能力 + 支持的 `node.invoke` 命令；适用于已配对节点和当前连接的未配对节点）。
+- `node.invoke` - 在节点上调用命令（例如 `canvas.*`、`camera.*`）。
+- `node.pair.*` - 配对生命周期（`request`、`list`、`approve`、`reject`、`verify`）。
 
 另见：[Presence](/concepts/presence) 了解 presence 如何产生/去重以及为什么稳定的 `client.instanceId` 很重要。
 
 ## 事件
 
-- `agent` — 来自智能体运行的流式工具/输出事件（带 seq 标记）。
-- `presence` — presence 更新（带 stateVersion 的增量）推送到所有连接的客户端。
-- `tick` — 定期保活/无操作以确认活跃。
-- `shutdown` — Gateway 网关正在退出；payload 包括 `reason` 和可选的 `restartExpectedMs`。客户端应重新连接。
+- `agent` - 来自智能体运行的流式工具/输出事件（带 seq 标记）。
+- `presence` - presence 更新（带 stateVersion 的增量）推送到所有连接的客户端。
+- `tick` - 定期保活/无操作以确认活跃。
+- `shutdown` - Gateway 网关正在退出；payload 包括 `reason` 和可选的 `restartExpectedMs`。客户端应重新连接。
 
 ## WebChat 集成
 
@@ -188,10 +188,10 @@ OPENCLAW_CONFIG_PATH=~/.openclaw/b.json OPENCLAW_STATE_DIR=~/.openclaw-b opencla
 
 - 错误使用 `{ code, message, details?, retryable?, retryAfterMs? }`。
 - 标准码：
-  - `NOT_LINKED` — WhatsApp 未认证。
-  - `AGENT_TIMEOUT` — 智能体未在配置的截止时间内响应。
-  - `INVALID_REQUEST` — schema/参数验证失败。
-  - `UNAVAILABLE` — Gateway 网关正在关闭或依赖项不可用。
+  - `NOT_LINKED` - WhatsApp 未认证。
+  - `AGENT_TIMEOUT` - 智能体未在配置的截止时间内响应。
+  - `INVALID_REQUEST` - schema/参数验证失败。
+  - `UNAVAILABLE` - Gateway 网关正在关闭或依赖项不可用。
 
 ## 保活行为
 
@@ -322,11 +322,11 @@ Windows 安装应使用 **WSL2** 并遵循上面的 Linux systemd 部分。
 
 ## CLI 辅助工具
 
-- `openclaw gateway health|status` — 通过 Gateway 网关 WS 请求 health/status。
-- `openclaw message send --target <num> --message "hi" [--media ...]` — 通过 Gateway 网关发送（对 WhatsApp 是幂等的）。
-- `openclaw agent --message "hi" --to <num>` — 运行智能体轮次（默认等待最终结果）。
-- `openclaw gateway call <method> --params '{"k":"v"}'` — 用于调试的原始方法调用器。
-- `openclaw gateway stop|restart` — 停止/重启受监管的 Gateway 网关服务（launchd/systemd）。
+- `openclaw gateway health|status` - 通过 Gateway 网关 WS 请求 health/status。
+- `openclaw message send --target <num> --message "hi" [--media ...]` - 通过 Gateway 网关发送（对 WhatsApp 是幂等的）。
+- `openclaw agent --message "hi" --to <num>` - 运行智能体轮次（默认等待最终结果）。
+- `openclaw gateway call <method> --params '{"k":"v"}'` - 用于调试的原始方法调用器。
+- `openclaw gateway stop|restart` - 停止/重启受监管的 Gateway 网关服务（launchd/systemd）。
 - Gateway 网关辅助子命令假设 `--url` 上有运行中的 Gateway 网关；它们不再自动生成一个。
 
 ## 迁移指南

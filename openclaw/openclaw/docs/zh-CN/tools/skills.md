@@ -85,12 +85,12 @@ description: Generate or edit images via Gemini 3 Pro Image
 - `metadata` 应该是**单行 JSON 对象**。
 - 在说明中使用 `{baseDir}` 来引用 Skills 文件夹路径。
 - 可选的 frontmatter 键：
-  - `homepage` — 在 macOS Skills UI 中显示为"Website"的 URL（也支持通过 `metadata.openclaw.homepage`）。
-  - `user-invocable` — `true|false`（默认：`true`）。当为 `true` 时，Skills 作为用户斜杠命令暴露。
-  - `disable-model-invocation` — `true|false`（默认：`false`）。当为 `true` 时，Skills 从模型提示词中排除（仍可通过用户调用使用）。
-  - `command-dispatch` — `tool`（可选）。当设置为 `tool` 时，斜杠命令绕过模型直接调度到工具。
-  - `command-tool` — 当设置 `command-dispatch: tool` 时要调用的工具名称。
-  - `command-arg-mode` — `raw`（默认）。对于工具调度，将原始参数字符串转发到工具（无核心解析）。
+  - `homepage` - 在 macOS Skills UI 中显示为"Website"的 URL（也支持通过 `metadata.openclaw.homepage`）。
+  - `user-invocable` - `true|false`（默认：`true`）。当为 `true` 时，Skills 作为用户斜杠命令暴露。
+  - `disable-model-invocation` - `true|false`（默认：`false`）。当为 `true` 时，Skills 从模型提示词中排除（仍可通过用户调用使用）。
+  - `command-dispatch` - `tool`（可选）。当设置为 `tool` 时，斜杠命令绕过模型直接调度到工具。
+  - `command-tool` - 当设置 `command-dispatch: tool` 时要调用的工具名称。
+  - `command-arg-mode` - `raw`（默认）。对于工具调度，将原始参数字符串转发到工具（无核心解析）。
 
     工具使用以下参数调用：
     `{ command: "<raw args>", commandName: "<slash command>", skillName: "<skill name>" }`。
@@ -116,16 +116,16 @@ metadata:
 
 `metadata.openclaw` 下的字段：
 
-- `always: true` — 始终包含该 Skills（跳过其他门控）。
-- `emoji` — macOS Skills UI 使用的可选表情符号。
-- `homepage` — 在 macOS Skills UI 中显示为"Website"的可选 URL。
-- `os` — 可选的平台列表（`darwin`、`linux`、`win32`）。如果设置，该 Skills 仅在这些操作系统上有资格。
-- `requires.bins` — 列表；每个都必须存在于 `PATH` 中。
-- `requires.anyBins` — 列表；至少一个必须存在于 `PATH` 中。
-- `requires.env` — 列表；环境变量必须存在**或**在配置中提供。
-- `requires.config` — `openclaw.json` 路径列表，必须为真值。
-- `primaryEnv` — 与 `skills.entries.<name>.apiKey` 关联的环境变量名称。
-- `install` — macOS Skills UI 使用的可选安装器规格数组（brew/node/go/uv/download）。
+- `always: true` - 始终包含该 Skills（跳过其他门控）。
+- `emoji` - macOS Skills UI 使用的可选表情符号。
+- `homepage` - 在 macOS Skills UI 中显示为"Website"的可选 URL。
+- `os` - 可选的平台列表（`darwin`、`linux`、`win32`）。如果设置，该 Skills 仅在这些操作系统上有资格。
+- `requires.bins` - 列表；每个都必须存在于 `PATH` 中。
+- `requires.anyBins` - 列表；至少一个必须存在于 `PATH` 中。
+- `requires.env` - 列表；环境变量必须存在**或**在配置中提供。
+- `requires.config` - `openclaw.json` 路径列表，必须为真值。
+- `primaryEnv` - 与 `skills.entries.<name>.apiKey` 关联的环境变量名称。
+- `install` - macOS Skills UI 使用的可选安装器规格数组（brew/node/go/uv/download）。
 
 沙箱隔离注意事项：
 

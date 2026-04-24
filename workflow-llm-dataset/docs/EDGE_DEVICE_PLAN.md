@@ -34,12 +34,12 @@ Local deployment profiles (not hardware products): **dev_full**, **local_standar
 
 ### Commands
 
-- `workflow-dataset edge profile --tier local_standard` — Profile summary for a tier (runtime, paths, workflow availability).
-- `workflow-dataset edge matrix` — Workflow support matrix (all tiers or `--tier X`); includes required/optional dependencies and degraded section.
-- `workflow-dataset edge compare --tier local_standard --tier-b constrained_edge` — Compare two tiers: workflow status diff, degraded workflows, path/dependency differences.
-- `workflow-dataset edge degraded-report [--tier X]` — Report why workflows are partially supported, what is missing, and what fallback is available.
-- `workflow-dataset edge package-report [--tier X]` — Packaging/readiness metadata for a tier (required/optional components, supported/degraded workflows, path and config assumptions). For operator handoff to deployment or appliance.
-- `workflow-dataset edge smoke-check --tier X [--workflow W]` — Lightweight smoke check: readiness plus optional workflow demo runs. Reports pass/fail/skipped and degraded or missing-dependency reasons. Use `--no-demo` for readiness-only.
+- `workflow-dataset edge profile --tier local_standard` - Profile summary for a tier (runtime, paths, workflow availability).
+- `workflow-dataset edge matrix` - Workflow support matrix (all tiers or `--tier X`); includes required/optional dependencies and degraded section.
+- `workflow-dataset edge compare --tier local_standard --tier-b constrained_edge` - Compare two tiers: workflow status diff, degraded workflows, path/dependency differences.
+- `workflow-dataset edge degraded-report [--tier X]` - Report why workflows are partially supported, what is missing, and what fallback is available.
+- `workflow-dataset edge package-report [--tier X]` - Packaging/readiness metadata for a tier (required/optional components, supported/degraded workflows, path and config assumptions). For operator handoff to deployment or appliance.
+- `workflow-dataset edge smoke-check --tier X [--workflow W]` - Lightweight smoke check: readiness plus optional workflow demo runs. Reports pass/fail/skipped and degraded or missing-dependency reasons. Use `--no-demo` for readiness-only.
 
 ### Workflow support by tier
 
@@ -54,5 +54,5 @@ Degraded workflows: reason, missing functionality, and fallback are in the matri
 
 ### Operator guide and sample profiles
 
-- **[EDGE_OPERATOR_GUIDE.md](EDGE_OPERATOR_GUIDE.md)** — How to run each command, read degraded output, and interpret missing dependencies.
-- **[docs/edge/sample_profiles](edge/sample_profiles)** — Sample profile documents per tier (dev_full, local_standard, constrained_edge, minimal_eval) with example commands and outcomes.
+- **[EDGE_OPERATOR_GUIDE.md](EDGE_OPERATOR_GUIDE.md)** - How to run each command, read degraded output, and interpret missing dependencies.
+- **[docs/edge/sample_profiles](edge/sample_profiles)** - Sample profile documents per tier (dev_full, local_standard, constrained_edge, minimal_eval) with example commands and outcomes.

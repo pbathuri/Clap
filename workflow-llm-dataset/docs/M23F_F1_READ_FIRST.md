@@ -1,4 +1,4 @@
-# M23F-F1 — Cross-App Coordination Graph (advisory only) — Read First
+# M23F-F1 - Cross-App Coordination Graph (advisory only) - Read First
 
 ## 1. Current adapter / discovery / task state
 

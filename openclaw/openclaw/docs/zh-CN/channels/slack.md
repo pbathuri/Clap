@@ -455,8 +455,8 @@ Slack 仅使用 Socket Mode（无 HTTP webhook 服务器）。提供两个令牌
 
 对于细粒度控制，在智能体响应中使用这些标签：
 
-- `[[reply_to_current]]` — 回复触发消息（开始/继续线程）。
-- `[[reply_to:<id>]]` — 回复特定的消息 id。
+- `[[reply_to_current]]` - 回复触发消息（开始/继续线程）。
+- `[[reply_to:<id>]]` - 回复特定的消息 id。
 
 ## 会话 + 路由
 
@@ -469,7 +469,7 @@ Slack 仅使用 Socket Mode（无 HTTP webhook 服务器）。提供两个令牌
 
 ## 私信安全（配对）
 
-- 默认：`channels.slack.dm.policy="pairing"` — 未知的私信发送者会收到配对码（1 小时后过期）。
+- 默认：`channels.slack.dm.policy="pairing"` - 未知的私信发送者会收到配对码（1 小时后过期）。
 - 通过以下方式批准：`openclaw pairing approve slack <code>`。
 - 要允许任何人：设置 `channels.slack.dm.policy="open"` 和 `channels.slack.dm.allowFrom=["*"]`。
 - `channels.slack.dm.allowFrom` 接受用户 ID、@用户名或邮箱（在令牌允许时启动时解析）。向导在设置期间接受用户名，并在令牌允许时将其解析为 ID。

@@ -28,7 +28,7 @@ metadata:
   }
 ---
 
-# xurl — Agent Skill Reference
+# xurl - Agent Skill Reference
 
 `xurl` is a CLI tool for the X API. It supports both **shortcut commands** (human/agent‑friendly one‑liners) and **raw curl‑style** access to any v2 endpoint. All commands return JSON to stdout.
 
@@ -150,7 +150,7 @@ Tokens are persisted to `~/.xurl` in YAML format. Each app has its own isolated 
 | Use app per-request       | `xurl --app NAME /2/users/me`                         |
 | Auth status               | `xurl auth status`                                    |
 
-> **Post IDs vs URLs:** Anywhere `POST_ID` appears above you can also paste a full post URL (e.g. `https://x.com/user/status/1234567890`) — xurl extracts the ID automatically.
+> **Post IDs vs URLs:** Anywhere `POST_ID` appears above you can also paste a full post URL (e.g. `https://x.com/user/status/1234567890`) - xurl extracts the ID automatically.
 
 > **Usernames:** Leading `@` is optional. `@elonmusk` and `elonmusk` both work.
 
@@ -313,7 +313,7 @@ These flags work on every command:
 
 ## Raw API Access
 
-The shortcut commands cover the most common operations. For anything else, use xurl's raw curl‑style mode — it works with **any** X API v2 endpoint:
+The shortcut commands cover the most common operations. For anything else, use xurl's raw curl‑style mode - it works with **any** X API v2 endpoint:
 
 ```bash
 # GET request (default)
@@ -453,7 +453,7 @@ xurl --app staging /2/users/me         # one-off request against staging
 ## Notes
 
 - **Rate limits:** The X API enforces rate limits per endpoint. If you get a 429 error, wait and retry. Write endpoints (post, reply, like, repost) have stricter limits than read endpoints.
-- **Scopes:** OAuth 2.0 tokens are requested with broad scopes. If you get a 403 on a specific action, your token may lack the required scope — re‑run `xurl auth oauth2` to get a fresh token.
+- **Scopes:** OAuth 2.0 tokens are requested with broad scopes. If you get a 403 on a specific action, your token may lack the required scope - re‑run `xurl auth oauth2` to get a fresh token.
 - **Token refresh:** OAuth 2.0 tokens auto‑refresh when expired. No manual intervention needed.
 - **Multiple apps:** Each app has its own isolated credentials and tokens. Configure credentials manually outside agent/LLM context, then switch with `xurl auth default` or `--app`.
 - **Multiple accounts:** You can authenticate multiple OAuth 2.0 accounts per app and switch between them with `--username` / `-u` or set a default with `xurl auth default APP USER`.

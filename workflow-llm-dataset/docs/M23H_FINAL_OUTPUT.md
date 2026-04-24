@@ -1,4 +1,4 @@
-# M23H — Desktop Bridge Validation + Gated Activation — Final Output
+# M23H - Desktop Bridge Validation + Gated Activation - Final Output
 
 ## 1. Files modified
 
@@ -17,7 +17,7 @@
 
 | File | Purpose |
 |------|--------|
-| `src/workflow_dataset/capability_discovery/approval_check.py` | `check_execution_allowed(adapter_id, action_id, params, repo_root, registry)` — when registry file exists enforces approved_action_scopes (if non-empty) and approved_paths for path-using actions; returns (allowed, message). |
+| `src/workflow_dataset/capability_discovery/approval_check.py` | `check_execution_allowed(adapter_id, action_id, params, repo_root, registry)` - when registry file exists enforces approved_action_scopes (if non-empty) and approved_paths for path-using actions; returns (allowed, message). |
 | `tests/test_m23h_approval_check.py` | Unit tests for approval_check: registry missing → allow; scope not listed / executable false → refuse; scope listed → allow; path not under approved → refuse; path under approved → allow. |
 | `docs/M23H_DESKTOP_BRIDGE_OPERATOR.md` | Operator reference: verify bridge commands, simulate-only vs real table, how to enable approved real execution, example approvals.yaml, safety summary. |
 | `docs/M23H_FINAL_OUTPUT.md` | This file. |

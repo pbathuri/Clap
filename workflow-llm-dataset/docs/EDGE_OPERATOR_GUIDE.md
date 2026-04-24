@@ -1,4 +1,4 @@
-# Edge Readiness — Operator Guide
+# Edge Readiness - Operator Guide
 
 How to run edge commands, read reports, and interpret outcomes. All outputs are local (e.g. `data/local/edge/`). No cloud; no hardware device design.
 

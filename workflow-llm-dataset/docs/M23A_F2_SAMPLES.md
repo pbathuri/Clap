@@ -1,4 +1,4 @@
-# M23A-F2 — Sample outputs
+# M23A-F2 - Sample outputs
 
 ## 1. Chain failure / resume / compare CLI usage
 
@@ -41,7 +41,7 @@ Output of `workflow-dataset chain report <run_id>` when the run failed at step 1
 
 ## Failure report
 
-- **Failing step:** 1 — demo_weekly
+- **Failing step:** 1 - demo_weekly
 - **Why:** exit code 1
 
 - **Artifacts already produced:**

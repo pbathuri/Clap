@@ -18,10 +18,10 @@ x-i18n:
 
 ## 快速检查
 
-- `openclaw status` — 本地摘要：Gateway 网关可达性/模式、更新提示、已链接渠道认证时长、会话 + 最近活动。
-- `openclaw status --all` — 完整本地诊断（只读、彩色、可安全粘贴用于调试）。
-- `openclaw status --deep` — 还会探测运行中的 Gateway 网关（支持时进行每渠道探测）。
-- `openclaw health --json` — 向运行中的 Gateway 网关请求完整健康快照（仅 WS；不直接访问 Baileys 套接字）。
+- `openclaw status` - 本地摘要：Gateway 网关可达性/模式、更新提示、已链接渠道认证时长、会话 + 最近活动。
+- `openclaw status --all` - 完整本地诊断（只读、彩色、可安全粘贴用于调试）。
+- `openclaw status --deep` - 还会探测运行中的 Gateway 网关（支持时进行每渠道探测）。
+- `openclaw health --json` - 向运行中的 Gateway 网关请求完整健康快照（仅 WS；不直接访问 Baileys 套接字）。
 - 在 WhatsApp/WebChat 中单独发送 `/status` 消息可获取状态回复，而不调用智能体。
 - 日志：跟踪 `/tmp/openclaw/openclaw-*.log` 并过滤 `web-heartbeat`、`web-reconnect`、`web-auto-reply`、`web-inbound`。
 

@@ -418,8 +418,8 @@ Discord 到处使用数字 ID；OpenClaw 配置优先使用 ID。
 
 要请求线程回复，模型可以在其输出中包含一个标签：
 
-- `[[reply_to_current]]` — 回复触发的 Discord 消息。
-- `[[reply_to:<id>]]` — 回复上下文/历史中的特定消息 ID。当前消息 ID 作为 `[message_id: …]` 附加到提示词；历史条目已包含 ID。
+- `[[reply_to_current]]` - 回复触发的 Discord 消息。
+- `[[reply_to:<id>]]` - 回复上下文/历史中的特定消息 ID。当前消息 ID 作为 `[message_id: …]` 附加到提示词；历史条目已包含 ID。
 
 行为由 `channels.discord.replyToMode` 控制：
 

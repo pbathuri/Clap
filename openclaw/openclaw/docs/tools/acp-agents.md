@@ -498,7 +498,7 @@ See [Plugins](/tools/plugin).
 
 ## Permission configuration
 
-ACP sessions run non-interactively — there is no TTY to approve or deny file-write and shell-exec permission prompts. The acpx plugin provides two config keys that control how permissions are handled:
+ACP sessions run non-interactively - there is no TTY to approve or deny file-write and shell-exec permission prompts. The acpx plugin provides two config keys that control how permissions are handled:
 
 ### `permissionMode`
 

@@ -167,7 +167,7 @@ Common property formats for database items:
 ## Notes
 
 - Page/database IDs are UUIDs (with or without dashes)
-- The API cannot set database view filters — that's UI-only
+- The API cannot set database view filters - that's UI-only
 - Rate limit: ~3 requests/second average, with `429 rate_limited` responses using `Retry-After`
 - Append block children: up to 100 children per request, up to two levels of nesting in a single append request
 - Payload size limits: up to 1000 block elements and 500KB overall

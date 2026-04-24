@@ -18,8 +18,8 @@ x-i18n:
 
 OpenClaw 提供两个轻量级 Web 工具：
 
-- `web_search` — 通过 Brave Search API（默认）或 Perplexity Sonar（直连或通过 OpenRouter）搜索网络。
-- `web_fetch` — HTTP 获取 + 可读性提取（HTML → markdown/文本）。
+- `web_search` - 通过 Brave Search API（默认）或 Perplexity Sonar（直连或通过 OpenRouter）搜索网络。
+- `web_fetch` - HTTP 获取 + 可读性提取（HTML → markdown/文本）。
 
 这些**不是**浏览器自动化。对于 JS 密集型网站或需要登录的情况，请使用[浏览器工具](/tools/browser)。
 

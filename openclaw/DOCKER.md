@@ -38,10 +38,10 @@ docker compose up -d openclaw-gateway
 
 Default env (used by `docker-setup.sh`):
 
-- `OPENCLAW_CONFIG_DIR` — host path for config (default: `$HOME/.openclaw`)
-- `OPENCLAW_WORKSPACE_DIR` — host path for workspace (default: `$HOME/.openclaw/workspace`)
-- `OPENCLAW_GATEWAY_PORT` — host port (default: `18789`)
-- `OPENCLAW_GATEWAY_BIND` — `lan` (reachable from host) or `loopback`
+- `OPENCLAW_CONFIG_DIR` - host path for config (default: `$HOME/.openclaw`)
+- `OPENCLAW_WORKSPACE_DIR` - host path for workspace (default: `$HOME/.openclaw/workspace`)
+- `OPENCLAW_GATEWAY_PORT` - host port (default: `18789`)
+- `OPENCLAW_GATEWAY_BIND` - `lan` (reachable from host) or `loopback`
 
 ## Useful commands
 

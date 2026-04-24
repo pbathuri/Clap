@@ -1,4 +1,4 @@
-# M23D-F1 — Capability Discovery + Approval Registry — Read First
+# M23D-F1 - Capability Discovery + Approval Registry - Read First
 
 ## 1. Current adapter layer (post M23C-F1/F2/F3)
 

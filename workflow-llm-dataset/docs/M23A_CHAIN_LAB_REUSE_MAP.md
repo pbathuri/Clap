@@ -1,4 +1,4 @@
-# M23A Chain Lab — Reuse Map
+# M23A Chain Lab - Reuse Map
 
 Internal chain lab reuses existing workflow entrypoints; it does not reimplement them.
 

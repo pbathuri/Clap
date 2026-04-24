@@ -1,4 +1,4 @@
-# M23N — First-Run Onboarding Analysis (pre-coding)
+# M23N - First-Run Onboarding Analysis (pre-coding)
 
 ## 1. What onboarding/setup already exists
 
@@ -28,13 +28,13 @@
 | Action | Path |
 |--------|------|
 | Create | `src/workflow_dataset/onboarding/__init__.py` |
-| Create | `src/workflow_dataset/onboarding/bootstrap_profile.py` — model, build, save, load bootstrap profile (machine_id, adapters, capabilities, approval summary, trusted subset, simulate_only, recommended_job_packs). Persist to `data/local/onboarding/bootstrap_profile.yaml`. |
-| Create | `src/workflow_dataset/onboarding/onboarding_flow.py` — run_flow(): env readiness, capabilities, required approvals, next steps; status display. |
-| Create | `src/workflow_dataset/onboarding/product_summary.py` — build_first_run_summary(): what can do safely, benchmarked/trusted, simulate-only, ready jobs/routines, recommended first workflow. |
-| Create | `src/workflow_dataset/onboarding/approval_bootstrap.py` — batch review (pending requests), grouped scopes, explicit refuse, consequence text. No auto-grant. |
-| Modify | `src/workflow_dataset/cli.py` — add `onboard_group` with `onboard`, `onboard status`, `onboard bootstrap`; optionally `onboard approve` (calls approval_bootstrap). |
-| Create | `tests/test_onboarding.py` — bootstrap profile creation, onboarding status, approval bootstrap, refusal, first-run messaging. |
-| Create | `docs/M23N_ONBOARDING.md` — usage, sample profile, sample summary, safety. |
+| Create | `src/workflow_dataset/onboarding/bootstrap_profile.py` - model, build, save, load bootstrap profile (machine_id, adapters, capabilities, approval summary, trusted subset, simulate_only, recommended_job_packs). Persist to `data/local/onboarding/bootstrap_profile.yaml`. |
+| Create | `src/workflow_dataset/onboarding/onboarding_flow.py` - run_flow(): env readiness, capabilities, required approvals, next steps; status display. |
+| Create | `src/workflow_dataset/onboarding/product_summary.py` - build_first_run_summary(): what can do safely, benchmarked/trusted, simulate-only, ready jobs/routines, recommended first workflow. |
+| Create | `src/workflow_dataset/onboarding/approval_bootstrap.py` - batch review (pending requests), grouped scopes, explicit refuse, consequence text. No auto-grant. |
+| Modify | `src/workflow_dataset/cli.py` - add `onboard_group` with `onboard`, `onboard status`, `onboard bootstrap`; optionally `onboard approve` (calls approval_bootstrap). |
+| Create | `tests/test_onboarding.py` - bootstrap profile creation, onboarding status, approval bootstrap, refusal, first-run messaging. |
+| Create | `docs/M23N_ONBOARDING.md` - usage, sample profile, sample summary, safety. |
 
 ## 5. Safety/risk note
 

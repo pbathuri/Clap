@@ -1,4 +1,4 @@
-# M23A Chain Lab — Samples
+# M23A Chain Lab - Samples
 
 ## 1. Chain CLI usage
 

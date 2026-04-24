@@ -1,4 +1,4 @@
-# M23V — Daily Copilot Surface + Macro Execution + Trust/Release Cockpit
+# M23V - Daily Copilot Surface + Macro Execution + Trust/Release Cockpit
 
 ## Overview
 
@@ -87,8 +87,8 @@ Mode: simulate
 Jobs: weekly_status, notes_summary
 
 [Step previews]
-  1. weekly_status — simulate
-  2. notes_summary — simulate
+  1. weekly_status - simulate
+  2. notes_summary - simulate
 
 (No execution. Use: workflow-dataset macro run --id morning_ops --mode simulate)
 ```
@@ -151,9 +151,9 @@ Jobs: weekly_status, notes_summary
 
 `workflow-dataset mission-control` now includes additive sections:
 
-- **[Inbox]** — relevant_jobs_count, relevant_routines_count, blocked_count, reminders_due_count, recommended_next_action
-- **[Trust cockpit]** — benchmark_trust_status, approval_registry_exists, release_gate_staged_count
-- **[Package readiness]** — machine_ready, ready_for_first_install
+- **[Inbox]** - relevant_jobs_count, relevant_routines_count, blocked_count, reminders_due_count, recommended_next_action
+- **[Trust cockpit]** - benchmark_trust_status, approval_registry_exists, release_gate_staged_count
+- **[Package readiness]** - machine_ready, ready_for_first_install
 
 ## Safety
 

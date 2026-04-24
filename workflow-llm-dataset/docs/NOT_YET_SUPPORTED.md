@@ -18,10 +18,10 @@ Truthful boundary for the first narrow release. Do not demo or claim these as pr
 
 ## Still internal / dev flows
 
-- **Full LLM training pipeline:** Corpus build, SFT build, full-train, compare-runs — for internal iteration, not end-user.
-- **Workflow trials framework:** Trials list/run/compare/report — for evaluation; release run/demo are the user-facing entrypoints.
-- **Raw observation/event ingestion:** File observer, event log — config exists but not part of narrow release UX.
-- **Multiple backends:** Document/image demos, mock backends — config-gated; release focuses on ops + adapter.
+- **Full LLM training pipeline:** Corpus build, SFT build, full-train, compare-runs - for internal iteration, not end-user.
+- **Workflow trials framework:** Trials list/run/compare/report - for evaluation; release run/demo are the user-facing entrypoints.
+- **Raw observation/event ingestion:** File observer, event log - config exists but not part of narrow release UX.
+- **Multiple backends:** Document/image demos, mock backends - config-gated; release focuses on ops + adapter.
 
 ---
 

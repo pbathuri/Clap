@@ -85,9 +85,9 @@ When you configure a Hugging Face API key (via onboarding, `HUGGINGFACE_HUB_TOKE
 ```
 
 - **Provider / policy selection:** Append a suffix to the **model id** to choose how the router picks the backend:
-  - **`:fastest`** — highest throughput (router picks; provider choice is **locked** — no interactive backend picker).
-  - **`:cheapest`** — lowest cost per output token (router picks; provider choice is **locked**).
-  - **`:provider`** — force a specific backend (e.g. `:sambanova`, `:together`).
+  - **`:fastest`** - highest throughput (router picks; provider choice is **locked** - no interactive backend picker).
+  - **`:cheapest`** - lowest cost per output token (router picks; provider choice is **locked**).
+  - **`:provider`** - force a specific backend (e.g. `:sambanova`, `:together`).
 
   When you select **:cheapest** or **:fastest** (e.g. in the onboarding model dropdown), the provider is locked: the router decides by cost or speed and no optional “prefer specific backend” step is shown. You can add these as separate entries in `models.providers.huggingface.models` or set `model.primary` with the suffix. You can also set your default order in [Inference Provider settings](https://hf.co/settings/inference-providers) (no suffix = use that order).
 

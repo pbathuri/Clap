@@ -1,15 +1,15 @@
-# M23A-F6 — Chain Hooks into Eval/Benchmark: Delivery
+# M23A-F6 - Chain Hooks into Eval/Benchmark: Delivery
 
 ## 1. Files modified
 
-- `src/workflow_dataset/chain_lab/compare.py` — Added `benchmark_summary_text(diff)` for a short, benchmark/review-friendly text summary.
-- `src/workflow_dataset/cli.py` — When `chain compare --benchmark-view` is used, the benchmark block now uses `benchmark_summary_text(diff)` for consistent multi-line output.
-- `docs/M23A_CHAIN_OPERATOR_GUIDE.md` — Added section **7. Chain runs and evaluation** (eval-ready metadata, eval API, compare for benchmark, link to M23A_F6_CHAIN_EVAL_BRIDGE.md); renumbered Quick reference to **8**; added table row for `chain compare --benchmark-view`.
+- `src/workflow_dataset/chain_lab/compare.py` - Added `benchmark_summary_text(diff)` for a short, benchmark/review-friendly text summary.
+- `src/workflow_dataset/cli.py` - When `chain compare --benchmark-view` is used, the benchmark block now uses `benchmark_summary_text(diff)` for consistent multi-line output.
+- `docs/M23A_CHAIN_OPERATOR_GUIDE.md` - Added section **7. Chain runs and evaluation** (eval-ready metadata, eval API, compare for benchmark, link to M23A_F6_CHAIN_EVAL_BRIDGE.md); renumbered Quick reference to **8**; added table row for `chain compare --benchmark-view`.
 
 ## 2. Files created
 
-- `docs/M23A_F6_EVAL_READ_FIRST.md` — State check and file plan for this pass.
-- `docs/M23A_F6_DELIVERY.md` — This file.
+- `docs/M23A_F6_EVAL_READ_FIRST.md` - State check and file plan for this pass.
+- `docs/M23A_F6_DELIVERY.md` - This file.
 
 **Unchanged (already F6-ready):** `chain_lab/manifest.py` (eval fields in payload), `chain_lab/eval_bridge.py`, `chain_lab/__init__.py` (exports), `docs/M23A_F6_CHAIN_EVAL_BRIDGE.md`.
 
@@ -83,6 +83,6 @@ Result: **5 passed.** Covers eval-ready manifest fields, `list_chain_runs_for_ev
 
 ## 7. Remaining weaknesses (this pane only)
 
-- **Eval harness integration** — The eval layer (`eval/`) does not yet call `list_chain_runs_for_eval` or `get_chain_run_for_eval`; the bridge is in place for when that integration is added.
-- **Scoring** — No chain-specific scoring logic in this repo; comparison is status/duration/artifact counts only. Actual scoring remains in the eval harness.
-- **benchmark_summary_text** — Only used when `benchmark_summary` is present; not exported from `chain_lab/__init__.py` (optional for external use).
+- **Eval harness integration** - The eval layer (`eval/`) does not yet call `list_chain_runs_for_eval` or `get_chain_run_for_eval`; the bridge is in place for when that integration is added.
+- **Scoring** - No chain-specific scoring logic in this repo; comparison is status/duration/artifact counts only. Actual scoring remains in the eval harness.
+- **benchmark_summary_text** - Only used when `benchmark_summary` is present; not exported from `chain_lab/__init__.py` (optional for external use).

@@ -70,16 +70,16 @@ Use the aggregated feedback report (`data/local/trials/latest_feedback_report.md
 
 - **Refine internally:** Failure rate high, or usefulness/trust low, or no clear “would use this” signal. Do another internal loop before more users.
 - **Continue friendly trial:** Some success; need more sessions or more diverse users before expanding.
-- **Expand to narrow private pilot:** Multiple unassisted successes, usefulness and trust above threshold, and clear evidence that outputs are adoptable. Then (in a later milestone) add a few more trusted users and slightly broader tasks—still within the narrow scope.
+- **Expand to narrow private pilot:** Multiple unassisted successes, usefulness and trust above threshold, and clear evidence that outputs are adoptable. Then (in a later milestone) add a few more trusted users and slightly broader tasks-still within the narrow scope.
 
 ---
 
 ## 8. Commands reference
 
-- `workflow-dataset trial start --user <alias>` — start session
-- `workflow-dataset trial tasks` — list tasks
-- `workflow-dataset trial record-feedback <task_id> --outcome completed --usefulness 4 --trust 3 -f "notes"` — record feedback
-- `workflow-dataset trial summary` — write session summary
-- `workflow-dataset trial aggregate-feedback` — write latest_feedback_report.md
+- `workflow-dataset trial start --user <alias>` - start session
+- `workflow-dataset trial tasks` - list tasks
+- `workflow-dataset trial record-feedback <task_id> --outcome completed --usefulness 4 --trust 3 -f "notes"` - record feedback
+- `workflow-dataset trial summary` - write session summary
+- `workflow-dataset trial aggregate-feedback` - write latest_feedback_report.md
 
 Console: **F** from Home → Friendly trial (session, tasks, quick feedback, summary).

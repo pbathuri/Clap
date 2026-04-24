@@ -58,11 +58,11 @@ From **docs/RELIABILITY_TRIAGE.md** and **data/local/pilot/reliability_issues.js
 
 ## 5. What should the next milestone after M20 be?
 
-**M21 — Pilot execution and iteration**
+**M21 - Pilot execution and iteration**
 
 - **Execute** the narrow private pilot with 2–5 users per PILOT_SCOPE.
 - **Collect** structured feedback via existing trial commands and aggregate reports.
 - **Iterate** on reliability and UX from pilot feedback (no scope creep).
-- **Decide** after pilot: continue pilot with more users, refine and re-pilot, or prepare for a slightly broader (still private) pilot — all within ops reporting scope.
+- **Decide** after pilot: continue pilot with more users, refine and re-pilot, or prepare for a slightly broader (still private) pilot - all within ops reporting scope.
 
 Do not broaden product scope in M21; focus on pilot execution and evidence-based iteration.

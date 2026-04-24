@@ -1,4 +1,4 @@
-# M23I — Desktop Task Benchmark + Trusted Automation Harness — Final Output
+# M23I - Desktop Task Benchmark + Trusted Automation Harness - Final Output
 
 ## 1. Files modified
 

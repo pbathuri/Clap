@@ -1,9 +1,9 @@
-# M22E-F3 — Template Import/Export + Typed Parameters: Delivery
+# M22E-F3 - Template Import/Export + Typed Parameters: Delivery
 
 ## 1. Files modified
 
-- `src/workflow_dataset/templates/registry.py` — Normalize `parameters` list in `load_template` (ensure list of dicts).
-- `tests/test_templates.py` — Added `test_resolve_template_params_defaults_filled`.
+- `src/workflow_dataset/templates/registry.py` - Normalize `parameters` list in `load_template` (ensure list of dicts).
+- `tests/test_templates.py` - Added `test_resolve_template_params_defaults_filled`.
 
 ## 2. Files created
 

@@ -31,9 +31,9 @@ This is **not** the end product; it is the prior knowledge base that helps the d
 
 ### 2. Personal agent scaffolding
 
-- **Observation layer** (Tier 1–3): schema and modules for file, app, browser, terminal, calendar, and manual-teaching events — on-device only; no real collectors yet.
-- **Personal work graph**: schema and modules for profile, projects, routines, workflows, preferences, approval boundaries — on-device only.
-- **Agent execution layer**: execution modes (observe → simulate → assist → automate), action policy, audit log, sandbox runner — interfaces only; default mode **simulate**.
+- **Observation layer** (Tier 1–3): schema and modules for file, app, browser, terminal, calendar, and manual-teaching events - on-device only; no real collectors yet.
+- **Personal work graph**: schema and modules for profile, projects, routines, workflows, preferences, approval boundaries - on-device only.
+- **Agent execution layer**: execution modes (observe → simulate → assist → automate), action policy, audit log, sandbox runner - interfaces only; default mode **simulate**.
 
 See **docs/** for architecture, vision, edge device plan, privacy model, and observation phases; **docs/schemas/** for personal graph, observation events, action log, and execution modes.
 
@@ -91,7 +91,7 @@ Corpus → `data/local/llm/corpus/corpus.jsonl`. SFT → `data/local/llm/sft/*.j
 
 ### Local Operator Console (M9)
 
-A guided TUI for setup, projects, suggestions, drafts, materialize, apply, rollback, and chat — without memorizing CLI commands. Local-only; apply and rollback require explicit confirmation.
+A guided TUI for setup, projects, suggestions, drafts, materialize, apply, rollback, and chat - without memorizing CLI commands. Local-only; apply and rollback require explicit confirmation.
 
 ```bash
 workflow-dataset console
@@ -112,18 +112,18 @@ pytest tests/test_ui_services.py tests/test_ui_state_store.py tests/test_console
 
 ## Config
 
-- **configs/settings.yaml** — project paths, runtime, and **agent** section (observation, privacy, sync, execution mode, hardware/model profile, sandbox). Defaults: observation off, sync off, **execution_mode: simulate**.
-- **configs/llm_training.yaml** — LLM pipeline: backend (mlx), base_model, LoRA hyperparameters, data paths (`corpus_path`, `sft_train_dir`, `runs_dir`), eval options.
+- **configs/settings.yaml** - project paths, runtime, and **agent** section (observation, privacy, sync, execution mode, hardware/model profile, sandbox). Defaults: observation off, sync off, **execution_mode: simulate**.
+- **configs/llm_training.yaml** - LLM pipeline: backend (mlx), base_model, LoRA hyperparameters, data paths (`corpus_path`, `sft_train_dir`, `runs_dir`), eval options.
 
 ## Architecture summary
 
 | Layer | Role |
 |-------|------|
-| **A — Global work priors** | Dataset pipeline (current `build`): industries, occupations, tasks, DWAs, tools, workflow steps, labor market. |
-| **B — Personal observation** | Local event capture (file, app, browser, terminal, calendar, teaching); phased by edge feasibility. |
-| **C — Personal work graph** | Device-local graph: profile, projects, routines, workflows, preferences, approval boundaries. |
-| **D — Agent execution** | Modes: observe, simulate, assist, automate. Default simulate; no local changes without approval. |
-| **E — Device runtime** | Edge device, local model routing, vector store, event/graph persistence, privacy/sync boundaries, updates. |
+| **A - Global work priors** | Dataset pipeline (current `build`): industries, occupations, tasks, DWAs, tools, workflow steps, labor market. |
+| **B - Personal observation** | Local event capture (file, app, browser, terminal, calendar, teaching); phased by edge feasibility. |
+| **C - Personal work graph** | Device-local graph: profile, projects, routines, workflows, preferences, approval boundaries. |
+| **D - Agent execution** | Modes: observe, simulate, assist, automate. Default simulate; no local changes without approval. |
+| **E - Device runtime** | Edge device, local model routing, vector store, event/graph persistence, privacy/sync boundaries, updates. |
 
 ## Roadmap
 

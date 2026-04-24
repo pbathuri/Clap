@@ -197,7 +197,7 @@ OpenClaw 默认为良好的助手设置，但你通常需要调整：
 - 如果 `HEARTBEAT.md` 存在但实际上是空的（只有空行和 markdown 标题如 `# Heading`），OpenClaw 会跳过心跳运行以节省 API 调用。
 - 如果文件不存在，心跳仍然运行，模型决定做什么。
 - 如果智能体回复 `HEARTBEAT_OK`（可选带有短填充；参见 `agents.defaults.heartbeat.ackMaxChars`），OpenClaw 会为该心跳抑制出站投递。
-- 心跳运行完整的智能体轮次 — 更短的间隔会消耗更多 token。
+- 心跳运行完整的智能体轮次 - 更短的间隔会消耗更多 token。
 
 ```json5
 {

@@ -168,7 +168,7 @@ BlueBubbles 在配置中启用时支持高级消息操作：
 - **reply**：回复特定消息（`messageId`、`text`、`to`）
 - **sendWithEffect**：带 iMessage 效果发送（`text`、`to`、`effectId`）
 - **renameGroup**：重命名群聊（`chatGuid`、`displayName`）
-- **setGroupIcon**：设置群聊图标/照片（`chatGuid`、`media`）— 在 macOS 26 Tahoe 上不稳定（API 可能返回成功但图标未同步）。
+- **setGroupIcon**：设置群聊图标/照片（`chatGuid`、`media`）- 在 macOS 26 Tahoe 上不稳定（API 可能返回成功但图标未同步）。
 - **addParticipant**：将某人添加到群组（`chatGuid`、`address`）
 - **removeParticipant**：将某人从群组移除（`chatGuid`、`address`）
 - **leaveGroup**：离开群聊（`chatGuid`）

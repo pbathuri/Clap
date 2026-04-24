@@ -29,7 +29,7 @@ x-i18n:
     />
 </p>
 
-> _「EXFOLIATE! EXFOLIATE!」_ — たぶん宇宙ロブスター
+> _「EXFOLIATE! EXFOLIATE!」_ - たぶん宇宙ロブスター
 
 <p align="center">
   <strong>WhatsApp、Telegram、Discord、iMessageなどに対応した、あらゆるOS向けのAIエージェントgateway。</strong><br />

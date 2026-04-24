@@ -1,4 +1,4 @@
-# M23E-F1 — Task Demonstration Capture + Replay Skeleton — Delivery
+# M23E-F1 - Task Demonstration Capture + Replay Skeleton - Delivery
 
 ## 1. Files modified
 
@@ -54,12 +54,12 @@ Output (excerpt):
 ```
 # Replay (simulate): demo1
 
-## Step 1: file_ops inspect_path — ok
+## Step 1: file_ops inspect_path - ok
 [Simulate] adapter=file_ops action=inspect_path
   path=/tmp
   Would inspect path metadata (exists, is_file, is_dir, size, mtime)...
 
-## Step 2: browser_open open_url — ok
+## Step 2: browser_open open_url - ok
 [Simulate] adapter=browser_open action=open_url
   url=https://example.com
   Validation: ok (category=https)

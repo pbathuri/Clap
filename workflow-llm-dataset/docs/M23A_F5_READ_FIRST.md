@@ -1,4 +1,4 @@
-# M23A-F5 — Chain Operator Docs + Example Library + Cleanup: READ FIRST
+# M23A-F5 - Chain Operator Docs + Example Library + Cleanup: READ FIRST
 
 ## 1. Current state
 

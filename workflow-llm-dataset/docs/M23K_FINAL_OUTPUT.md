@@ -1,4 +1,4 @@
-# M23K — Operator-Approved Workday Copilot — Final Output
+# M23K - Operator-Approved Workday Copilot - Final Output
 
 ## 1. Files modified
 
@@ -14,7 +14,7 @@
 |------|--------|
 | `src/workflow_dataset/copilot/__init__.py` | Package exports. |
 | `src/workflow_dataset/copilot/config.py` | get_copilot_root, get_routines_dir, get_runs_dir, get_reminders_path (data/local/copilot). |
-| `src/workflow_dataset/copilot/recommendations.py` | recommend_jobs(repo_root, limit) — explicit reasons (recent_successful_run, trusted_for_real, approval_blocked, simulate_only_available). |
+| `src/workflow_dataset/copilot/recommendations.py` | recommend_jobs(repo_root, limit) - explicit reasons (recent_successful_run, trusted_for_real, approval_blocked, simulate_only_available). |
 | `src/workflow_dataset/copilot/routines.py` | Routine dataclass; list_routines, get_routine, save_routine, get_ordered_job_ids. |
 | `src/workflow_dataset/copilot/plan.py` | PlanPreview; build_plan_for_job, build_plan_for_routine (no execution). |
 | `src/workflow_dataset/copilot/run.py` | run_plan(plan, repo_root, stop_on_first_blocked, continue_on_blocked); list_plan_runs. Persist plan_run.json under runs/<plan_run_id>. |

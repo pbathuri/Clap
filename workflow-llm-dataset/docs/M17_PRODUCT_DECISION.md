@@ -1,4 +1,4 @@
-# M17 — Product decision guide
+# M17 - Product decision guide
 
 After running workflow trials (`trials run-suite`, `trials compare`, `trials report`), use the trial report and this guide to answer product questions.
 
@@ -33,9 +33,9 @@ After running workflow trials (`trials run-suite`, `trials compare`, `trials rep
 
 ## 5. Single most important next milestone after M17
 
-- If **retrieval hurt** full adapter in trials: **M18 — Retrieval tuning** (prompt format, context length, or retrieval target).
-- If **personalization is weak**: **M18 — SFT for deferred categories** (more setup/graph-derived examples).
-- If **strongest category is clear**: **M18 — Narrow pilot** (scope product to that category and run internal pilot).
+- If **retrieval hurt** full adapter in trials: **M18 - Retrieval tuning** (prompt format, context length, or retrieval target).
+- If **personalization is weak**: **M18 - SFT for deferred categories** (more setup/graph-derived examples).
+- If **strongest category is clear**: **M18 - Narrow pilot** (scope product to that category and run internal pilot).
 
 ---
 

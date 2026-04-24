@@ -15,9 +15,9 @@ All of the above is **dataset-only**: it produces a prior knowledge base (indust
 
 ### New scaffolding (no real behavior yet)
 
-- **Observation**: `observe/` — event envelope, file/app/browser/terminal/calendar/teaching payloads and stubs; no OS integrations.
-- **Personal**: `personal/` — work graph node types, profile builder, routine detector, preference model; no persistence.
-- **Agent**: `agent/` — execution modes, action policy, audit log, sandbox runner; interfaces only.
+- **Observation**: `observe/` - event envelope, file/app/browser/terminal/calendar/teaching payloads and stubs; no OS integrations.
+- **Personal**: `personal/` - work graph node types, profile builder, routine detector, preference model; no persistence.
+- **Agent**: `agent/` - execution modes, action policy, audit log, sandbox runner; interfaces only.
 - **Config**: `agent` section in settings (observation_enabled, execution_mode, etc.); new paths for event log, graph store, audit log.
 - **Docs**: ARCHITECTURE_OVERVIEW, PERSONAL_AGENT_VISION, EDGE_DEVICE_PLAN, PRIVACY_AND_LOCAL_FIRST_MODEL, OBSERVATION_PHASES; schemas for personal graph, observation events, action log, execution modes.
 
@@ -72,11 +72,11 @@ These stay as future enhancements to the **global prior** pipeline; they do not 
 
 | Milestone | Description | Success criteria |
 |-----------|-------------|-------------------|
-| **M1 — First local observer** | At least one Tier 1 source (e.g. file metadata or app usage) producing events and writing to event log. | Events in local store; config toggles source on/off. |
-| **M2 — First personal work graph** | Graph store (e.g. SQLite) with profile, projects, routines; updated from events + teaching. | Queryable graph; teaching updates profile or routines. |
-| **M3 — First simulated suggestion loop** | Agent (using priors + graph) proposes next step; action runs in sandbox only; result shown to user. | No real system changes; user sees proposed action and sandbox result. |
-| **M4 — First user-approved local action** | Assist mode: user approves one action → executed on real system; logged in audit log. | One real action (e.g. write file) after explicit approval; audit record. |
-| **M5 — First edge-device prototype** | Run on Raspberry Pi 5 + AI module; local small model; vector store; workflow_steps/priors loaded; updates and model download without user data. | End-to-end on device; no cloud dependency for inference or learning. |
+| **M1 - First local observer** | At least one Tier 1 source (e.g. file metadata or app usage) producing events and writing to event log. | Events in local store; config toggles source on/off. |
+| **M2 - First personal work graph** | Graph store (e.g. SQLite) with profile, projects, routines; updated from events + teaching. | Queryable graph; teaching updates profile or routines. |
+| **M3 - First simulated suggestion loop** | Agent (using priors + graph) proposes next step; action runs in sandbox only; result shown to user. | No real system changes; user sees proposed action and sandbox result. |
+| **M4 - First user-approved local action** | Assist mode: user approves one action → executed on real system; logged in audit log. | One real action (e.g. write file) after explicit approval; audit record. |
+| **M5 - First edge-device prototype** | Run on Raspberry Pi 5 + AI module; local small model; vector store; workflow_steps/priors loaded; updates and model download without user data. | End-to-end on device; no cloud dependency for inference or learning. |
 
 ---
 

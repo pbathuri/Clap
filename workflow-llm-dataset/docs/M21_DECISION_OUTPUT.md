@@ -1,4 +1,4 @@
-# M21 decision output — OpenClaw-anchored capability intake
+# M21 decision output - OpenClaw-anchored capability intake
 
 Blunt, evidence-based answers. Do not overstate.
 
@@ -12,7 +12,7 @@ Blunt, evidence-based answers. Do not overstate.
 - **Control:** Our planner, memory, tools, and policy layers must stay under our control; we reimplement patterns rather than wrap their runtime.
 - **Narrow scope:** Our current product is narrow release/pilot + capability intake; a full OpenClaw integration would broaden scope and dependency surface.
 
-**Narrow part we could later consider:** If we ever add an optional “local multi-agent” mode, we could design a **minimal** wrapper that only runs in a sandbox and uses only local channels—but that is not M22; it would require explicit design and safety review.
+**Narrow part we could later consider:** If we ever add an optional “local multi-agent” mode, we could design a **minimal** wrapper that only runs in a sandbox and uses only local channels-but that is not M22; it would require explicit design and safety review.
 
 ---
 
@@ -70,9 +70,9 @@ we treat MiroFish as **unresolved** and **reference_only**. If we confirm the ab
 
 Recommend **M22** focus on:
 
-1. **OpenClaw-aligned runtime refactor (planner layer)** — Implement a small planner that, given role/workflow/task, selects which capability pack or flow to run. No OpenClaw code; our implementation aligned with AGENT_RUNTIME_TARGET_ARCHITECTURE.md.
-2. **Capability-pack installer** — Local install from manifest (path or dir); register pack; `packs list` shows installed packs. No cloud yet.
-3. **GitHub repo parser expansion (optional, scoped)** — If we add live discovery, keep it optional and rate-limited; use it only to refresh metadata for already-registered URLs or to propose new candidates for human review. Do not auto-ingest into training or packs.
+1. **OpenClaw-aligned runtime refactor (planner layer)** - Implement a small planner that, given role/workflow/task, selects which capability pack or flow to run. No OpenClaw code; our implementation aligned with AGENT_RUNTIME_TARGET_ARCHITECTURE.md.
+2. **Capability-pack installer** - Local install from manifest (path or dir); register pack; `packs list` shows installed packs. No cloud yet.
+3. **GitHub repo parser expansion (optional, scoped)** - If we add live discovery, keep it optional and rate-limited; use it only to refresh metadata for already-registered URLs or to propose new candidates for human review. Do not auto-ingest into training or packs.
 
 **Do not** prioritize in M22:
 
@@ -83,7 +83,7 @@ Recommend **M22** focus on:
 
 ## Exact next milestone after M21
 
-**M22 — OpenClaw-aligned planner + local capability-pack installer**
+**M22 - OpenClaw-aligned planner + local capability-pack installer**
 
 - Implement **planner** that selects pack/flow by role/workflow/task (see AGENT_RUNTIME_TARGET_ARCHITECTURE.md Layer 2).
 - Implement **local pack installer** (install from manifest path/dir, validate, register); extend `packs list` to show installed packs.

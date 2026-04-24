@@ -1,4 +1,4 @@
-# M23M — Operator correction loop — operator guide
+# M23M - Operator correction loop - operator guide
 
 What a correction is, how correction learning differs from hidden continual learning, what can and cannot be updated, how updates are reviewed and reverted, and how privacy/local-first/safety are preserved.
 
@@ -33,12 +33,12 @@ Corrections are stored under `data/local/corrections/events/` as JSON. They are 
 
 Learning rules allow these **targets** (only when the correction category matches):
 
-- **specialization_params** — from category `bad_job_parameter_default` (corrected_value = dict of param key → value)
-- **specialization_paths** — from `bad_path_app_preference`
-- **specialization_output_style** — from `output_style_correction`
-- **job_pack_trust_notes** — from `trust_notes_correction`, `trust_level_too_high`, `trust_level_too_low` (advisory note only; does **not** change trust_level)
-- **routine_ordering** — from `routine_ordering_correction` (corrected_value = list of job_pack_ids in order)
-- **trigger_suppression** — from `context_trigger_false_positive` / `context_trigger_false_negative` (stored in `data/local/corrections/trigger_suppressions.json` for trigger evaluation to respect)
+- **specialization_params** - from category `bad_job_parameter_default` (corrected_value = dict of param key → value)
+- **specialization_paths** - from `bad_path_app_preference`
+- **specialization_output_style** - from `output_style_correction`
+- **job_pack_trust_notes** - from `trust_notes_correction`, `trust_level_too_high`, `trust_level_too_low` (advisory note only; does **not** change trust_level)
+- **routine_ordering** - from `routine_ordering_correction` (corrected_value = list of job_pack_ids in order)
+- **trigger_suppression** - from `context_trigger_false_positive` / `context_trigger_false_negative` (stored in `data/local/corrections/trigger_suppressions.json` for trigger evaluation to respect)
 
 ---
 
@@ -75,8 +75,8 @@ These are enforced in the learning rules (BLOCKED_TARGETS). Trust-level feedback
 
 Repeated corrections for the same job or routine can surface **advisory** signals:
 
-- **review_trust** — when there are trust-level-related corrections
-- **review_benchmark** — when there are output/param/artifact corrections
-- **review_trigger_policy** — when there are trigger false positive/negative corrections
+- **review_trust** - when there are trust-level-related corrections
+- **review_benchmark** - when there are output/param/artifact corrections
+- **review_trigger_policy** - when there are trigger false positive/negative corrections
 
 Mission control shows `review_recommended` job/routine ids from this bridge. It does **not** auto-downgrade or auto-upgrade trust; it only suggests that an operator review trust or benchmark for that job.

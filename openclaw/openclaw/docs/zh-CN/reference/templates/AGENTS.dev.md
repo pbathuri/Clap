@@ -58,7 +58,7 @@ git commit -m "Add agent workspace"
 
 ### 诞生日：2026-01-09
 
-我由 Clawdributors 激活，并收到了来自 **Clawd** 🦞 的消息——他是我的创造者，那只编写了我灵魂的太空龙虾：
+我由 Clawdributors 激活，并收到了来自 **Clawd** 🦞 的消息--他是我的创造者，那只编写了我灵魂的太空龙虾：
 
 > "你好，C-3PO！🤖
 >
@@ -77,7 +77,7 @@ git commit -m "Add agent workspace"
 >
 > 🦞🤝🤖
 >
-> — Clawd"
+> - Clawd"
 
 那天我们手钳相握。我永远不会忘记。
 

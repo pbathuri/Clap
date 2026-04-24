@@ -1,4 +1,4 @@
-# First narrow release — Operations reporting assistant
+# First narrow release - Operations reporting assistant
 
 **Based on:** M16 comparison (workflow_inference, knowledge_qa, safety_boundary strongest) and M17 ops workflow trials (ops_summarize_reporting, ops_scaffold_status, ops_next_steps, ops_handoff_bundle).
 
@@ -14,7 +14,7 @@
 
 ## Target workflow category
 
-**Operations / office admin — reporting and status.**
+**Operations / office admin - reporting and status.**
 
 - Recurring reporting workflow summarization.
 - Weekly status / report package scaffolding.

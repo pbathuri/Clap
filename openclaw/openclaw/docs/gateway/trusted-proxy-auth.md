@@ -265,7 +265,7 @@ Before enabling trusted-proxy auth, verify:
 
 ## Security Audit
 
-`openclaw security audit` will flag trusted-proxy auth with a **critical** severity finding. This is intentional — it's a reminder that you're delegating security to your proxy setup.
+`openclaw security audit` will flag trusted-proxy auth with a **critical** severity finding. This is intentional - it's a reminder that you're delegating security to your proxy setup.
 
 The audit checks for:
 
@@ -323,7 +323,7 @@ If you're moving from token auth to trusted-proxy:
 
 ## Related
 
-- [Security](/gateway/security) — full security guide
-- [Configuration](/gateway/configuration) — config reference
-- [Remote Access](/gateway/remote) — other remote access patterns
-- [Tailscale](/gateway/tailscale) — simpler alternative for tailnet-only access
+- [Security](/gateway/security) - full security guide
+- [Configuration](/gateway/configuration) - config reference
+- [Remote Access](/gateway/remote) - other remote access patterns
+- [Tailscale](/gateway/tailscale) - simpler alternative for tailnet-only access

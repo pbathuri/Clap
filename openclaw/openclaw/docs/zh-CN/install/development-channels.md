@@ -24,7 +24,7 @@ OpenClaw 提供三个更新渠道：
 - **dev**：`main` 的移动头（git）。npm dist-tag：`dev`（发布时）。
 
 我们将构建发布到 **beta**，进行测试，然后**将经过验证的构建提升到 `latest`**，
-版本号不变——dist-tag 是 npm 安装的数据源。
+版本号不变--dist-tag 是 npm 安装的数据源。
 
 ## 切换渠道
 

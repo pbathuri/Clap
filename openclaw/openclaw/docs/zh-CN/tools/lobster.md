@@ -1,5 +1,5 @@
 ---
-description: Typed workflow runtime for OpenClaw — composable pipelines with approval gates.
+description: Typed workflow runtime for OpenClaw - composable pipelines with approval gates.
 read_when:
   - 你想要具有显式审批的确定性多步骤工作流
   - 你需要恢复工作流而不重新运行早期步骤
@@ -47,7 +47,7 @@ OpenClaw 以**工具模式**启动本地 `lobster` CLI，并从 stdout 解析 JS
 
 ## 模式：小型 CLI + JSON 管道 + 审批
 
-构建输出 JSON 的小命令，然后将它们链接成单个 Lobster 调用。（下面是示例命令名称——替换成你自己的。）
+构建输出 JSON 的小命令，然后将它们链接成单个 Lobster 调用。（下面是示例命令名称--替换成你自己的。）
 
 ```bash
 inbox list --json
@@ -324,10 +324,10 @@ OpenProse 与 Lobster 配合良好：使用 `/prose` 编排多智能体准备，
 
 ## 安全
 
-- **仅限本地子进程** — 插件本身不进行网络调用。
-- **无密钥** — Lobster 不管理 OAuth；它调用管理 OAuth 的 OpenClaw 工具。
-- **沙箱感知** — 当工具上下文处于沙箱隔离状态时禁用。
-- **加固** — 如果指定，`lobsterPath` 必须是绝对路径；强制执行超时和输出上限。
+- **仅限本地子进程** - 插件本身不进行网络调用。
+- **无密钥** - Lobster 不管理 OAuth；它调用管理 OAuth 的 OpenClaw 工具。
+- **沙箱感知** - 当工具上下文处于沙箱隔离状态时禁用。
+- **加固** - 如果指定，`lobsterPath` 必须是绝对路径；强制执行超时和输出上限。
 
 ## 故障排除
 

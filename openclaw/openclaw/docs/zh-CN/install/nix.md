@@ -16,7 +16,7 @@ x-i18n:
 
 # Nix 安装
 
-使用 Nix 运行 OpenClaw 的推荐方式是通过 **[nix-openclaw](https://github.com/openclaw/nix-openclaw)** — 一个开箱即用的 Home Manager 模块。
+使用 Nix 运行 OpenClaw 的推荐方式是通过 **[nix-openclaw](https://github.com/openclaw/nix-openclaw)** - 一个开箱即用的 Home Manager 模块。
 
 ## 快速开始
 
@@ -43,7 +43,7 @@ Reference the nix-openclaw README for module options.
 
 ## 你将获得
 
-- Gateway 网关 + macOS 应用 + 工具（whisper、spotify、cameras）— 全部固定版本
+- Gateway 网关 + macOS 应用 + 工具（whisper、spotify、cameras）- 全部固定版本
 - 重启后仍能运行的 Launchd 服务
 - 带有声明式配置的插件系统
 - 即时回滚：`home-manager switch --rollback`
@@ -94,6 +94,6 @@ apps/macos/Sources/OpenClaw/Resources/Info.plist
 
 ## 相关内容
 
-- [nix-openclaw](https://github.com/openclaw/nix-openclaw) — 完整设置指南
-- [向导](/start/wizard) — 非 Nix CLI 设置
-- [Docker](/install/docker) — 容器化设置
+- [nix-openclaw](https://github.com/openclaw/nix-openclaw) - 完整设置指南
+- [向导](/start/wizard) - 非 Nix CLI 设置
+- [Docker](/install/docker) - 容器化设置

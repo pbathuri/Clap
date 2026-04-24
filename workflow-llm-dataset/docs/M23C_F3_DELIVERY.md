@@ -1,4 +1,4 @@
-# M23C-F3 — Browser/URL + App-Launch Simulation Adapter — Delivery
+# M23C-F3 - Browser/URL + App-Launch Simulation Adapter - Delivery
 
 ## 1. Files modified
 
@@ -41,7 +41,7 @@ workflow-dataset adapters show --id app_launch
 
 ## 4. Sample simulate previews
 
-### Valid URL — `adapters simulate --id browser_open --action open_url --param url=https://example.com`
+### Valid URL - `adapters simulate --id browser_open --action open_url --param url=https://example.com`
 
 ```
 Simulate OK
@@ -52,17 +52,17 @@ Simulate OK
 Real execution not implemented for this adapter/action.
 ```
 
-### Invalid URL — `adapters simulate --id browser_open --action open_url --param url=javascript:void(0)`
+### Invalid URL - `adapters simulate --id browser_open --action open_url --param url=javascript:void(0)`
 
 ```
 Simulate OK
 [Simulate] adapter=browser_open action=open_url
   url=javascript:void(0)
-  Validation: invalid — scheme_not_allowed
+  Validation: invalid - scheme_not_allowed
   Would not open; fix URL and retry.
 ```
 
-### Approved app — `adapters simulate --id app_launch --action launch_app --param app_name_or_path=Safari`
+### Approved app - `adapters simulate --id app_launch --action launch_app --param app_name_or_path=Safari`
 
 ```
 Simulate OK
@@ -73,7 +73,7 @@ Simulate OK
 Real execution not implemented for this adapter/action.
 ```
 
-### Unapproved app — `adapters simulate --id app_launch --action launch_app --param app_name_or_path=MyApp`
+### Unapproved app - `adapters simulate --id app_launch --action launch_app --param app_name_or_path=MyApp`
 
 ```
 Simulate OK

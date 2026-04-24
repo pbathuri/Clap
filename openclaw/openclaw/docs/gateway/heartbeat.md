@@ -336,7 +336,7 @@ Example `HEARTBEAT.md`:
 
 ### Can the agent update HEARTBEAT.md?
 
-Yes — if you ask it to.
+Yes - if you ask it to.
 
 `HEARTBEAT.md` is just a normal file in the agent workspace, so you can tell the
 agent (in a normal chat) something like:
@@ -349,7 +349,7 @@ your heartbeat prompt like: “If the checklist becomes stale, update HEARTBEAT.
 with a better one.”
 
 Safety note: don’t put secrets (API keys, phone numbers, private tokens) into
-`HEARTBEAT.md` — it becomes part of the prompt context.
+`HEARTBEAT.md` - it becomes part of the prompt context.
 
 ## Manual wake (on-demand)
 
@@ -375,7 +375,7 @@ If you want transparency, enable:
 When enabled, heartbeats will also deliver a separate message prefixed
 `Reasoning:` (same shape as `/reasoning on`). This can be useful when the agent
 is managing multiple sessions/codexes and you want to see why it decided to ping
-you — but it can also leak more internal detail than you want. Prefer keeping it
+you - but it can also leak more internal detail than you want. Prefer keeping it
 off in group chats.
 
 ## Cost awareness

@@ -1,4 +1,4 @@
-# Workflow Matrix — local_standard
+# Workflow Matrix - local_standard
 
 Standard local: core paths and LLM; adapter/retrieval optional.
 

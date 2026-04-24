@@ -26,7 +26,7 @@ Start conservative:
 
 ## Prerequisites
 
-- OpenClaw installed and onboarded — see [Getting Started](/start/getting-started) if you haven't done this yet
+- OpenClaw installed and onboarded - see [Getting Started](/start/getting-started) if you haven't done this yet
 - A second phone number (SIM/eSIM/prepaid) for the assistant
 
 ## The two-phone setup (recommended)
@@ -165,7 +165,7 @@ Set `agents.defaults.heartbeat.every: "0m"` to disable.
 - If the file is missing, the heartbeat still runs and the model decides what to do.
 - If the agent replies with `HEARTBEAT_OK` (optionally with short padding; see `agents.defaults.heartbeat.ackMaxChars`), OpenClaw suppresses outbound delivery for that heartbeat.
 - By default, heartbeat delivery to DM-style `user:<id>` targets is allowed. Set `agents.defaults.heartbeat.directPolicy: "block"` to suppress direct-target delivery while keeping heartbeat runs active.
-- Heartbeats run full agent turns — shorter intervals burn more tokens.
+- Heartbeats run full agent turns - shorter intervals burn more tokens.
 
 ```json5
 {

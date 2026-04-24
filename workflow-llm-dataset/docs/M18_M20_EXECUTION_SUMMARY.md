@@ -113,4 +113,4 @@ Scope and readiness in reports match the implemented ops reporting assistant and
 
 ## 10. Exact next milestone after this verification pass
 
-- **Next step:** Execute **M21 — Pilot execution and iteration** as in docs/M20_DECISION_OUTPUT.md: run the narrow private pilot with 2–5 users, collect feedback via trial commands and aggregate reports, iterate on reliability and UX from evidence without scope creep. No new architecture or scope expansion; confirm stack runnability and then use it for real pilot sessions.
+- **Next step:** Execute **M21 - Pilot execution and iteration** as in docs/M20_DECISION_OUTPUT.md: run the narrow private pilot with 2–5 users, collect feedback via trial commands and aggregate reports, iterate on reliability and UX from evidence without scope creep. No new architecture or scope expansion; confirm stack runnability and then use it for real pilot sessions.

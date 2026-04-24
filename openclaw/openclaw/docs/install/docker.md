@@ -58,22 +58,22 @@ This script:
 
 Optional env vars:
 
-- `OPENCLAW_IMAGE` — use a remote image instead of building locally (e.g. `ghcr.io/openclaw/openclaw:latest`)
-- `OPENCLAW_DOCKER_APT_PACKAGES` — install extra apt packages during build
-- `OPENCLAW_EXTENSIONS` — pre-install extension dependencies at build time (space-separated extension names, e.g. `diagnostics-otel matrix`)
-- `OPENCLAW_EXTRA_MOUNTS` — add extra host bind mounts
-- `OPENCLAW_HOME_VOLUME` — persist `/home/node` in a named volume
-- `OPENCLAW_SANDBOX` — opt in to Docker gateway sandbox bootstrap. Only explicit truthy values enable it: `1`, `true`, `yes`, `on`
-- `OPENCLAW_INSTALL_DOCKER_CLI` — build arg passthrough for local image builds (`1` installs Docker CLI in the image). `docker-setup.sh` sets this automatically when `OPENCLAW_SANDBOX=1` for local builds.
-- `OPENCLAW_DOCKER_SOCKET` — override Docker socket path (default: `DOCKER_HOST=unix://...` path, else `/var/run/docker.sock`)
-- `OPENCLAW_ALLOW_INSECURE_PRIVATE_WS=1` — break-glass: allow trusted private-network
+- `OPENCLAW_IMAGE` - use a remote image instead of building locally (e.g. `ghcr.io/openclaw/openclaw:latest`)
+- `OPENCLAW_DOCKER_APT_PACKAGES` - install extra apt packages during build
+- `OPENCLAW_EXTENSIONS` - pre-install extension dependencies at build time (space-separated extension names, e.g. `diagnostics-otel matrix`)
+- `OPENCLAW_EXTRA_MOUNTS` - add extra host bind mounts
+- `OPENCLAW_HOME_VOLUME` - persist `/home/node` in a named volume
+- `OPENCLAW_SANDBOX` - opt in to Docker gateway sandbox bootstrap. Only explicit truthy values enable it: `1`, `true`, `yes`, `on`
+- `OPENCLAW_INSTALL_DOCKER_CLI` - build arg passthrough for local image builds (`1` installs Docker CLI in the image). `docker-setup.sh` sets this automatically when `OPENCLAW_SANDBOX=1` for local builds.
+- `OPENCLAW_DOCKER_SOCKET` - override Docker socket path (default: `DOCKER_HOST=unix://...` path, else `/var/run/docker.sock`)
+- `OPENCLAW_ALLOW_INSECURE_PRIVATE_WS=1` - break-glass: allow trusted private-network
   `ws://` targets for CLI/onboarding client paths (default is loopback-only)
-- `OPENCLAW_BROWSER_DISABLE_GRAPHICS_FLAGS=0` — disable container browser hardening flags
+- `OPENCLAW_BROWSER_DISABLE_GRAPHICS_FLAGS=0` - disable container browser hardening flags
   `--disable-3d-apis`, `--disable-software-rasterizer`, `--disable-gpu` when you need
   WebGL/3D compatibility.
-- `OPENCLAW_BROWSER_DISABLE_EXTENSIONS=0` — keep extensions enabled when browser
+- `OPENCLAW_BROWSER_DISABLE_EXTENSIONS=0` - keep extensions enabled when browser
   flows require them (default keeps extensions disabled in sandbox browser).
-- `OPENCLAW_BROWSER_RENDERER_PROCESS_LIMIT=<N>` — set Chromium renderer process
+- `OPENCLAW_BROWSER_RENDERER_PROCESS_LIMIT=<N>` - set Chromium renderer process
   limit; set to `0` to skip the flag and use Chromium default behavior.
 
 After it finishes:
@@ -157,9 +157,9 @@ images).
 
 Common tags:
 
-- `main` — latest build from `main`
-- `<version>` — release tag builds (for example `2026.2.26`)
-- `latest` — latest stable release tag
+- `main` - latest build from `main`
+- `<version>` - release tag builds (for example `2026.2.26`)
+- `latest` - latest stable release tag
 
 ### Base image metadata
 

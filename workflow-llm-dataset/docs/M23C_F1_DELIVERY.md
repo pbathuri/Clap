@@ -1,4 +1,4 @@
-# M23C-F1 — Desktop Action Adapter Contracts + Registry — Delivery
+# M23C-F1 - Desktop Action Adapter Contracts + Registry - Delivery
 
 ## 1. Files modified
 
@@ -99,16 +99,16 @@ pytest tests/test_desktop_adapters.py -v
 
 Tests included:
 
-- `test_list_adapters_at_least_four` — list returns ≥4 adapters including file_ops, notes_document, browser_open, app_launch.
-- `test_get_adapter_file_ops` — get_adapter("file_ops") returns contract with read_file action.
-- `test_get_adapter_browser_open` — get_adapter("browser_open") returns contract with open_url.
-- `test_get_adapter_unknown_returns_none` — get_adapter("unknown_xyz") returns None.
-- `test_check_availability_file_ops` — check_availability("file_ops") returns available=True, supports_simulate=True, supports_real_execution=False.
-- `test_check_availability_unknown` — check_availability("unknown_xyz") returns available=False.
-- `test_run_simulate_browser_open_url_success` — run_simulate("browser_open", "open_url", {"url": "https://example.com"}) success, preview contains "Would open URL" or "Simulate", real_execution_supported=False.
-- `test_run_simulate_file_ops_read_file` — run_simulate("file_ops", "read_file", {"path": "/tmp/foo.txt"}) success, preview contains "Target path" or "Simulate".
-- `test_run_simulate_unknown_adapter_fails` — run_simulate("unknown_adapter", "open_url", {}) success=False, message contains "not found".
-- `test_run_simulate_unknown_action_fails` — run_simulate("browser_open", "nonexistent_action", {}) success=False.
+- `test_list_adapters_at_least_four` - list returns ≥4 adapters including file_ops, notes_document, browser_open, app_launch.
+- `test_get_adapter_file_ops` - get_adapter("file_ops") returns contract with read_file action.
+- `test_get_adapter_browser_open` - get_adapter("browser_open") returns contract with open_url.
+- `test_get_adapter_unknown_returns_none` - get_adapter("unknown_xyz") returns None.
+- `test_check_availability_file_ops` - check_availability("file_ops") returns available=True, supports_simulate=True, supports_real_execution=False.
+- `test_check_availability_unknown` - check_availability("unknown_xyz") returns available=False.
+- `test_run_simulate_browser_open_url_success` - run_simulate("browser_open", "open_url", {"url": "https://example.com"}) success, preview contains "Would open URL" or "Simulate", real_execution_supported=False.
+- `test_run_simulate_file_ops_read_file` - run_simulate("file_ops", "read_file", {"path": "/tmp/foo.txt"}) success, preview contains "Target path" or "Simulate".
+- `test_run_simulate_unknown_adapter_fails` - run_simulate("unknown_adapter", "open_url", {}) success=False, message contains "not found".
+- `test_run_simulate_unknown_action_fails` - run_simulate("browser_open", "nonexistent_action", {}) success=False.
 
 ## 7. Remaining weaknesses (this phase only)
 
